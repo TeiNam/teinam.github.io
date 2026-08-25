@@ -21,10 +21,10 @@ social:
 newsletter_action: ""   # 예: https://buttondown.email/api/emails/embed-subscribe/rastalion
 
 adsense:
-  client: ""            # 예: ca-pub-0000000000000000
-  in_article: ""        # 슬롯 ID
-  sidebar: ""
-  leaderboard: ""
+  client: "ca-pub-8706947448795380"
+  in_article: "7707603154"    # gh-in-article
+  sidebar: "7091586135"       # gh-sidebar
+  leaderboard: "8404667808"   # gh-leaderboard
 
 # 실제 존재하는 페이지만 둔다. 항목을 추가하면 해당 파일도 같이 만든다.
 nav:
