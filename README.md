@@ -9,13 +9,19 @@ GitHub Pages(Jekyll)에 그대로 올라가는 스킨입니다. 디자인 화면
 3. `_config.yml`의 `title`, `author`, `url`, `social`, `adsense` 값을 바꿉니다.
 4. `git push` → 1~2분 후 배포됩니다.
 
-로컬 미리보기 — macOS 기본 ruby(2.6)로는 `bundle install` 이 실패합니다. `.ruby-version` 의 3.3.12 를 씁니다.
+로컬 미리보기 — macOS 기본 ruby(2.6)로는 `bundle install` 이 실패합니다. `.ruby-version` 과 같은 3.3.12 를 씁니다.
 
 ```bash
-rbenv install 3.3.12   # 없을 때만
+brew install ruby@3.3   # 없을 때만
+echo 'export PATH="/opt/homebrew/opt/ruby@3.3/bin:/opt/homebrew/lib/ruby/gems/3.3.0/bin:$PATH"' >> ~/.zshrc
+exec zsh
+
+gem install bundler
 bundle install
-bundle exec jekyll serve
+bundle exec jekyll serve            # http://127.0.0.1:4000
 ```
+
+`--livereload` 를 붙이면 저장할 때마다 브라우저가 새로고침되고, `--drafts` 는 `_drafts/` 의 초안까지 같이 미리봅니다.
 
 ## 구조
 
