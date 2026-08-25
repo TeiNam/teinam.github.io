@@ -1,0 +1,47 @@
+title: rastalion.dev
+tagline: 문서 설계, 도구, 협업에 관한 기록
+author: teinam
+email: hello@rastalion.dev
+description: 테크 라이터 teinam의 문서 설계 노트
+url: "https://rastalion.dev"
+baseurl: ""
+lang: ko
+
+permalink: /writing/:title/
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter_opts:
+    disable: false
+
+social:
+  x: rastalion
+  linkedin: rastalion
+  github: rastalion
+
+newsletter_action: ""   # 예: https://buttondown.email/api/emails/embed-subscribe/rastalion
+
+adsense:
+  client: ""            # 예: ca-pub-0000000000000000
+  in_article: ""        # 슬롯 ID
+  sidebar: ""
+  leaderboard: ""
+
+nav:
+  - { name: writing, url: /writing/ }
+  - { name: docs, url: /docs/ }
+  - { name: work, url: /work/ }
+  - { name: about, url: /about/ }
+
+defaults:
+  - scope: { path: "", type: posts }
+    values: { layout: post }
+  - scope: { path: "docs" }
+    values: { layout: docs }
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude: [Gemfile, Gemfile.lock, README.md, vendor]

@@ -1,0 +1,30 @@
+---
+layout: default
+---
+<div class="docs-shell">
+  <nav class="docs-nav">
+    {%- for group in site.data.docs_nav %}
+    <div class="nav-group">
+      <span class="label">{{ group.group }}</span>
+      {%- for item in group.items %}
+      <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} class="is-current"{% endif %}>{{ item.name }}</a>
+      {%- endfor %}
+    </div>
+    {%- endfor %}
+  </nav>
+
+  <div class="docs-body prose">
+    <span class="mono dim breadcrumb">{{ page.breadcrumb | default: 'Docs' }}</span>
+    <h1>{{ page.title }}</h1>
+    {{ content }}
+    <div class="doc-pager">
+      {%- if page.prev %}<a href="{{ page.prev.url | relative_url }}">← {{ page.prev.name }}</a>{% else %}<span></span>{% endif %}
+      {%- if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.name }} →</a>{% endif %}
+    </div>
+  </div>
+
+  <aside class="toc-rail docs-toc" data-toc>
+    <span class="label">On this page</span>
+    <nav class="toc"></nav>
+  </aside>
+</div>

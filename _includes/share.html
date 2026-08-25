@@ -1,0 +1,12 @@
+{%- assign u = page.url | absolute_url | uri_escape -%}
+{%- assign t = page.title | uri_escape -%}
+<div class="share">
+  <span class="label">Share / cross-post</span>
+  <div class="share-links">
+    <a href="https://x.com/intent/tweet?text={{ t }}&url={{ u }}" rel="nofollow noopener">X</a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ u }}" rel="nofollow noopener">LinkedIn</a>
+    <a href="https://www.threads.net/intent/post?text={{ t }}%20{{ u }}" rel="nofollow noopener">Threads</a>
+    <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+    <button class="copy-link" type="button" data-url="{{ page.url | absolute_url }}">copy link</button>
+  </div>
+</div>

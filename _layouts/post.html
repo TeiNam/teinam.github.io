@@ -1,0 +1,49 @@
+---
+layout: default
+---
+<div class="reading-progress"><i></i></div>
+<div class="article-grid">
+  <aside class="toc-rail" data-toc>
+    <span class="label">On this page</span>
+    <nav class="toc"></nav>
+  </aside>
+
+  <article class="prose">
+    <span class="kicker"><i></i>{{ page.category | default: 'writing' | upcase }}</span>
+    <h1>{{ page.title }}</h1>
+    <div class="meta-rule">
+      <span>{{ site.author }}</span>
+      <span>{{ page.date | date: '%Y-%m-%d' }}</span>
+      {%- if page.updated %}<span>updated {{ page.updated | date: '%m-%d' }}</span>{% endif %}
+      <span>{{ content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>
+    </div>
+
+    {{ content }}
+
+    {% include ad.html slot=site.adsense.in_article variant="in-article" %}
+
+    {%- if page.tags.size > 0 %}
+    <div class="tag-row">
+      {%- for tag in page.tags %}<span class="tag">#{{ tag }}</span>{% endfor %}
+    </div>
+    {%- endif %}
+
+    {% include share.html %}
+  </article>
+
+  <aside class="side-rail">
+    {%- if page.series %}
+    <div class="card">
+      <span class="label">In this series</span>
+      <strong>{{ page.series }}</strong>
+      <span class="mono dim">{{ page.series_index }}</span>
+    </div>
+    {%- endif %}
+    {%- assign related = site.posts | where_exp: "p", "p.url != page.url" | slice: 0, 3 %}
+    <div class="rail-list">
+      <span class="label">Related</span>
+      {%- for r in related %}<a href="{{ r.url | relative_url }}">{{ r.title }}</a>{% endfor %}
+    </div>
+    {% include ad.html slot=site.adsense.sidebar variant="sidebar" %}
+  </aside>
+</div>

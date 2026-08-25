@@ -1,0 +1,12 @@
+<header class="site-head">
+  <a class="wordmark" href="{{ '/' | relative_url }}">rastalion<span>.</span>dev</a>
+  <nav class="site-nav">
+    {%- for item in site.nav %}
+    <a href="{{ item.url | relative_url }}"{% if page.url contains item.url %} class="is-current"{% endif %}>{{ item.name }}</a>
+    {%- endfor %}
+  </nav>
+  <div class="head-actions">
+    <button class="btn-ghost" id="theme-toggle" type="button" aria-label="테마 전환">dark mode</button>
+    <a class="btn-solid" href="#newsletter">Subscribe</a>
+  </div>
+</header>

@@ -1,0 +1,25 @@
+---
+layout: default
+---
+{%- assign cats = site.posts | map: "category" | compact | uniq -%}
+<section class="archive-head">
+  <div>
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.subtitle | default: site.tagline }} · {{ site.posts.size }}편</p>
+  </div>
+  <div class="filters" data-filters>
+    <button class="is-active" data-filter="all" type="button">all</button>
+    {%- for c in cats %}<button data-filter="{{ c }}" type="button">{{ c }}</button>{% endfor %}
+  </div>
+</section>
+
+<section class="card-grid" data-cards>
+  {%- for post in site.posts %}
+  <a class="post-card" href="{{ post.url | relative_url }}" data-category="{{ post.category }}">
+    <span class="card-meta"><span>{{ post.date | date: '%Y-%m-%d' }}</span><span class="accent">{{ post.category }}</span></span>
+    <strong>{{ post.title }}</strong>
+    <span class="card-excerpt">{{ post.excerpt | strip_html | truncate: 90 }}</span>
+    <span class="mono dim card-read">{{ post.content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>
+  </a>
+  {%- endfor %}
+</section>

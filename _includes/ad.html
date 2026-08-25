@@ -1,0 +1,8 @@
+{%- assign slot = include.slot -%}
+{%- if site.adsense.client != "" and slot != "" -%}
+<div class="ad ad--{{ include.variant | default: 'in-article' }}">
+  <span class="label">Advertisement</span>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="{{ site.adsense.client }}" data-ad-slot="{{ slot }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+{%- endif -%}

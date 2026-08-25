@@ -1,0 +1,8 @@
+- group: Getting started
+  items:
+    - { name: Quickstart, url: /docs/quickstart/ }
+    - { name: Installation, url: /docs/installation/ }
+- group: Authentication
+  items:
+    - { name: API keys, url: /docs/api-keys/ }
+    - { name: Rate limits, url: /docs/rate-limits/ }
