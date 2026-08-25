@@ -1,8 +1,8 @@
 title: rastalion.dev
-tagline: 문서 설계, 도구, 협업에 관한 기록
+tagline: Database와 A.I 그리고 그 사이의 Data Pipeline
 author: teinam
-email: hello@rastalion.dev
-description: 테크 라이터 teinam의 문서 설계 노트
+email: teinam@rastalion.dev
+description: 
 url: "https://teinam.github.io"
 baseurl: ""
 lang: ko
@@ -27,11 +27,9 @@ adsense:
   sidebar: ""
   leaderboard: ""
 
+# 실제 존재하는 페이지만 둔다. docs/work/about 은 파일 만든 뒤 다시 추가.
 nav:
   - { name: writing, url: /writing/ }
-  - { name: docs, url: /docs/ }
-  - { name: work, url: /work/ }
-  - { name: about, url: /about/ }
 
 defaults:
   - scope: { path: "", type: posts }

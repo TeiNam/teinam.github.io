@@ -16,14 +16,16 @@ layout: default
       <a href="{{ lead.url | relative_url }}">read →</a>
     </div>
   </div>
+  {%- if lead.image %}
   <figure class="hero-fig">
-    {%- if lead.image %}<img src="{{ lead.image | relative_url }}" alt="{{ lead.image_alt }}">
-    {%- else %}<div class="ph">hero diagram — 4:3</div>{% endif %}
+    <img src="{{ lead.image | relative_url }}" alt="{{ lead.image_alt }}">
     {%- if lead.image_caption %}<figcaption>{{ lead.image_caption }}</figcaption>{% endif %}
   </figure>
+  {%- endif %}
 </section>
 
-{%- if site.data.pillars %}
+{%- comment %} 빈 배열도 Liquid 에서는 truthy 라 size 로 검사한다 {% endcomment %}
+{%- if site.data.pillars.size > 0 %}
 <section class="pillars">
   {%- for p in site.data.pillars %}
   <div class="pillar">
@@ -56,13 +58,16 @@ layout: default
 
 {% include ad.html slot=site.adsense.leaderboard variant="leaderboard" %}
 
+{%- comment %} newsletter_action 이 비어 있으면 폼이 현재 URL로 submit 되므로 섹션 자체를 숨긴다 {% endcomment %}
+{%- if site.newsletter_action != "" %}
 <section class="newsletter" id="newsletter">
   <div>
-    <h2>격주 한 편, 문서 설계 노트</h2>
+    <h2>{{ site.newsletter_title | default: site.tagline }}</h2>
     <span class="mono">no ads in email · unsubscribe anytime</span>
   </div>
   <form action="{{ site.newsletter_action }}" method="post" target="_blank">
-    <input type="email" name="email" placeholder="you@company.com" required>
+    <input type="email" name="email" placeholder="you@example.com" required>
     <button type="submit">Subscribe</button>
   </form>
 </section>
+{%- endif %}

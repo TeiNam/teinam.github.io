@@ -1,12 +1,7 @@
-- label: Series
-  title: Docs-as-Code 12주
-  body: Git·CI로 문서 파이프라인을 세우는 연재.
-  url: /writing/
-- label: Tool notes
-  title: Vale 규칙 다듬기
-  body: 스타일 가이드를 린터로 강제한 기록.
-  url: /writing/
-- label: Work with me
-  title: 문서 진단 2주 프로젝트
-  body: 기존 문서를 감사하고 우선순위 로드맵을 드립니다.
-  url: /work/
+# 홈 중단의 3칸 카드. 비워두면 섹션이 렌더되지 않는다.
+# 실제 연재·도구 노트·의뢰 페이지가 생기면 주석을 풀고 채운다.
+#
+# - label: Series
+#   title: 연재 제목
+#   body: 한 줄 설명.
+#   url: /writing/

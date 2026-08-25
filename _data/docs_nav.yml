@@ -1,8 +1,6 @@
-- group: Getting started
-  items:
-    - { name: Quickstart, url: /docs/quickstart/ }
-    - { name: Installation, url: /docs/installation/ }
-- group: Authentication
-  items:
-    - { name: API keys, url: /docs/api-keys/ }
-    - { name: Rate limits, url: /docs/rate-limits/ }
+# docs/ 사이드바 트리. 비워두면 사이드바가 렌더되지 않는다.
+# docs/ 에 문서를 추가할 때 여기에 실제 경로를 넣는다.
+#
+# - group: 그룹 이름
+#   items:
+#     - { name: 페이지 이름, url: /docs/page/ }

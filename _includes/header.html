@@ -7,6 +7,6 @@
   </nav>
   <div class="head-actions">
     <button class="btn-ghost" id="theme-toggle" type="button" aria-label="테마 전환">dark mode</button>
-    <a class="btn-solid" href="#newsletter">Subscribe</a>
+    {%- if site.newsletter_action != "" %}<a class="btn-solid" href="{{ '/#newsletter' | relative_url }}">Subscribe</a>{% endif %}
   </div>
 </header>
