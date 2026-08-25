@@ -65,4 +65,95 @@
       c.style.display = (b.dataset.filter === 'all' || c.dataset.category === b.dataset.filter) ? '' : 'none';
     });
   });
+  // 헤더 검색 — 글이 적어 색인 라이브러리 없이 부분 문자열 매칭으로 충분하다
+  // ponytail: 글이 수백 편이 되면 그때 lunr 같은 색인으로 교체
+  var searchBox = document.querySelector('[data-search]');
+  if (searchBox) {
+    var SEARCH_LIMIT = 8;
+    var input = searchBox.querySelector('input');
+    var panel = searchBox.querySelector('.search-results');
+    var docs = null;
+    var pending = null;
+
+    function setOpen(isOpen) {
+      panel.hidden = !isOpen;
+      input.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function showNote(text) {
+      panel.textContent = '';
+      var d = document.createElement('div');
+      d.className = 'search-note';
+      d.textContent = text;
+      panel.appendChild(d);
+      setOpen(true);
+    }
+
+    function loadIndex() {
+      if (docs) return Promise.resolve(docs);
+      if (!pending) {
+        pending = fetch(searchBox.dataset.search)
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(function (json) { docs = json; return docs; })
+          .catch(function (err) {
+            pending = null;
+            console.error('검색 색인 로드 실패:', err);
+            throw err;
+          });
+      }
+      return pending;
+    }
+
+    // 제목·본문 요약·태그를 textContent 로만 넣는다. 색인 값을 innerHTML 로 쓰면 XSS 경로가 열린다
+    function render(list) {
+      if (!list.length) { showNote('결과 없음'); return; }
+      panel.textContent = '';
+      list.forEach(function (d) {
+        var a = document.createElement('a');
+        a.href = d.url;
+        a.setAttribute('role', 'option');
+        var title = document.createElement('span');
+        title.className = 'r-title';
+        title.textContent = d.title;
+        var meta = document.createElement('span');
+        meta.className = 'r-meta';
+        meta.textContent = [d.date, d.category].filter(Boolean).join(' · ');
+        a.appendChild(title);
+        a.appendChild(meta);
+        panel.appendChild(a);
+      });
+      setOpen(true);
+    }
+
+    function runSearch() {
+      var q = input.value.trim().toLowerCase();
+      if (!q) { setOpen(false); return; }
+      loadIndex().then(function (all) {
+        render(all.filter(function (d) {
+          return (d.title + ' ' + d.excerpt + ' ' + d.tags + ' ' + d.category).toLowerCase().indexOf(q) !== -1;
+        }).slice(0, SEARCH_LIMIT));
+      }).catch(function () {
+        showNote('검색을 불러오지 못했습니다');
+      });
+    }
+
+    input.addEventListener('input', runSearch);
+    input.addEventListener('focus', runSearch);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { input.value = ''; setOpen(false); input.blur(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!searchBox.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+    });
+  }
 })();

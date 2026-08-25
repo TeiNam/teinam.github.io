@@ -3,7 +3,12 @@ layout: default
 ---
 {%- assign lead = site.posts.first -%}
 {%- assign rest = site.posts | slice: 1, 4 -%}
+{%- comment %} 디자인은 hero 글을 목록에서 뺀다. 다만 글이 1편이면 rest 가 비어 섹션이 통째로
+     사라지고 홈이 hero + 3칸으로 끝난다. 그때만 전체 목록으로 되돌린다.
+     Liquid 에서 범위 밖 slice 는 nil 이고 nil == 0 은 false 라 unless 로 검사한다 {% endcomment %}
+{%- unless rest.size > 0 %}{%- assign rest = site.posts -%}{%- endunless -%}
 
+{%- if lead %}
 <section class="hero">
   <div class="hero-copy">
     <span class="kicker"><i></i>{{ lead.category | default: 'writing' | upcase }}</span>
@@ -23,6 +28,7 @@ layout: default
   </figure>
   {%- endif %}
 </section>
+{%- endif %}
 
 {%- comment %} 빈 배열도 Liquid 에서는 truthy 라 size 로 검사한다 {% endcomment %}
 {%- if site.data.pillars.size > 0 %}
@@ -37,6 +43,7 @@ layout: default
 </section>
 {%- endif %}
 
+{%- if rest.size > 0 %}
 <section class="recent">
   <div class="section-head">
     <h2>Recent writing</h2>
@@ -55,11 +62,13 @@ layout: default
     {%- endfor %}
   </div>
 </section>
+{%- endif %}
 
 {% include ad.html slot=site.adsense.leaderboard variant="leaderboard" %}
 
-{%- comment %} newsletter_action 이 비어 있으면 폼이 현재 URL로 submit 되므로 섹션 자체를 숨긴다 {% endcomment %}
-{%- if site.newsletter_action != "" %}
+{%- comment %} action 이 비면 폼이 현재 URL로 submit 되므로 섹션을 숨긴다.
+     Liquid 는 빈 문자열도 truthy, nil != "" 도 true 라 두 조건이 모두 필요하다 {% endcomment %}
+{%- if site.newsletter_action and site.newsletter_action != "" %}
 <section class="newsletter" id="newsletter">
   <div>
     <h2>{{ site.newsletter_title | default: site.tagline }}</h2>

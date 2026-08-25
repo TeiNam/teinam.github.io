@@ -2,7 +2,7 @@ title: rastalion.dev
 tagline: Database와 A.I 그리고 그 사이의 Data Pipeline
 author: teinam
 email: teinam@rastalion.dev
-description: 
+description: Database와 A.I 그리고 그 사이의 Data Pipeline 을 다루는 teinam 의 기술 노트.
 url: "https://teinam.github.io"
 baseurl: ""
 lang: ko
@@ -15,9 +15,8 @@ kramdown:
     disable: false
 
 social:
-  x: rastalion
   linkedin: rastalion
-  github: rastalion
+  github: TeiNam
 
 newsletter_action: ""   # 예: https://buttondown.email/api/emails/embed-subscribe/rastalion
 
@@ -27,9 +26,12 @@ adsense:
   sidebar: ""
   leaderboard: ""
 
-# 실제 존재하는 페이지만 둔다. docs/work/about 은 파일 만든 뒤 다시 추가.
+# 실제 존재하는 페이지만 둔다. 항목을 추가하면 해당 파일도 같이 만든다.
 nav:
   - { name: writing, url: /writing/ }
+  - { name: docs, url: /docs/ }
+  - { name: work, url: /work/ }
+  - { name: about, url: /about/ }
 
 defaults:
   - scope: { path: "", type: posts }
