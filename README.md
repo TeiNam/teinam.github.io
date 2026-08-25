@@ -9,9 +9,10 @@ GitHub Pages(Jekyll)에 그대로 올라가는 스킨입니다. 디자인 화면
 3. `_config.yml`의 `title`, `author`, `url`, `social`, `adsense` 값을 바꿉니다.
 4. `git push` → 1~2분 후 배포됩니다.
 
-로컬 미리보기:
+로컬 미리보기 — macOS 기본 ruby(2.6)로는 `bundle install` 이 실패합니다. `.ruby-version` 의 3.3.12 를 씁니다.
 
 ```bash
+rbenv install 3.3.12   # 없을 때만
 bundle install
 bundle exec jekyll serve
 ```
@@ -35,13 +36,22 @@ bundle exec jekyll serve
 ```markdown
 ---
 layout: post
-title: 레퍼런스를 읽히게 만드는 다섯 가지 구조
-category: guides
-tags: [api-docs, information-architecture]
-excerpt: 파라미터를 늘리는 대신 독자의 경로를 먼저 설계한다.
+title: Postgres 17 의 스트리밍 복제 변경점
+category: database
+tags: [postgres, replication]
+excerpt: 한 줄 요약. 홈·아카이브 카드에 그대로 쓰인다.
 updated: 2026-08-24
 ---
 ```
+
+`category` 는 아래 셋 중 하나로 씁니다. `/writing/` 의 필터 버튼이 이 값에서 자동으로 생성되므로,
+슬러그가 흔들리면 필터가 쪼개집니다.
+
+| slug | 다루는 것 |
+| --- | --- |
+| `database` | 데이터베이스 소식, 엔진 내부, 운영 |
+| `data-engineering` | 파이프라인, 수집·적재, 워크플로 |
+| `ai-ml` | AI/ML 을 데이터 관점에서 |
 
 문서 페이지는 `docs/` 폴더에 `layout: docs`로 둡니다.
 
