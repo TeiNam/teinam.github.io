@@ -6,6 +6,13 @@
     {%- endfor %}
   </nav>
   <div class="head-actions">
+    {%- comment %} data-search 값이 색인 URL. baseurl 이 바뀌어도 JS 를 고칠 필요가 없다 {% endcomment %}
+    <div class="site-search" data-search="{{ '/search.json' | relative_url }}">
+      <input type="search" id="site-search" placeholder="search" autocomplete="off" spellcheck="false"
+             role="combobox" aria-expanded="false" aria-controls="site-search-results" aria-label="글 검색">
+      <kbd class="mono">⌘K</kbd>
+      <div class="search-results" id="site-search-results" role="listbox" hidden></div>
+    </div>
     <button class="btn-ghost" id="theme-toggle" type="button" aria-label="테마 전환">dark mode</button>
     {%- if site.newsletter_action and site.newsletter_action != "" %}<a class="btn-solid" href="{{ '/#newsletter' | relative_url }}">Subscribe</a>{% endif %}
   </div>

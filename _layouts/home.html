@@ -3,6 +3,10 @@ layout: default
 ---
 {%- assign lead = site.posts.first -%}
 {%- assign rest = site.posts | slice: 1, 4 -%}
+{%- comment %} 디자인은 hero 글을 목록에서 뺀다. 다만 글이 1편이면 rest 가 비어 섹션이 통째로
+     사라지고 홈이 hero + 3칸으로 끝난다. 그때만 전체 목록으로 되돌린다.
+     Liquid 에서 범위 밖 slice 는 nil 이고 nil == 0 은 false 라 unless 로 검사한다 {% endcomment %}
+{%- unless rest.size > 0 %}{%- assign rest = site.posts -%}{%- endunless -%}
 
 {%- if lead %}
 <section class="hero">
@@ -39,7 +43,6 @@ layout: default
 </section>
 {%- endif %}
 
-{%- comment %} 첫 글은 hero 가 쓰므로 글이 1편이면 rest 가 비고, 섹션 헤더만 남는다 {% endcomment %}
 {%- if rest.size > 0 %}
 <section class="recent">
   <div class="section-head">
