@@ -1,6 +1,8 @@
 ---
 title: "STAR & PAR"
-permalink: /handbook/career/aws-lp/star-par/
+permalink: /career/aws-lp/star-par/
+redirect_from:
+  - /handbook/career/aws-lp/star-par/
 description: "효과적으로 면접 답변을 하기 위한 말하기 방법"
 ---
 ## STAR 기법이란?

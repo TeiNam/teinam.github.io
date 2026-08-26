@@ -1,6 +1,8 @@
 ---
 title: "4. Are Right, A Lot"
-permalink: /handbook/career/aws-lp/are-right-a-lot/
+permalink: /career/aws-lp/are-right-a-lot/
+redirect_from:
+  - /handbook/career/aws-lp/are-right-a-lot/
 description: "판단력과 정확"
 ---
 ## 리더는 정확하고 옳아야 한다 (Are Right, A Lot):

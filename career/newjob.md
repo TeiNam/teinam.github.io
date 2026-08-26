@@ -1,6 +1,8 @@
 ---
 title: "이직 타이밍과 판단 기준"
-permalink: /handbook/career/newjob/
+permalink: /career/newjob/
+redirect_from:
+  - /handbook/career/newjob/
 description: "언제 이직을 해야할까?"
 ---
 ## 언제 이직해야 할까?

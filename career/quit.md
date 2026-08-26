@@ -1,6 +1,8 @@
 ---
 title: "퇴사 전 체크리스트"
-permalink: /handbook/career/quit/
+permalink: /career/quit/
+redirect_from:
+  - /handbook/career/quit/
 description: "퇴사 하기전에 알아야 하는 것들을 확인하고 점검해보기"
 ---
 ## 퇴사 전 필수 체크리스트

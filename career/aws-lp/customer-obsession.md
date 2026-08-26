@@ -1,6 +1,8 @@
 ---
 title: "1. Customer Obsession"
-permalink: /handbook/career/aws-lp/customer-obsession/
+permalink: /career/aws-lp/customer-obsession/
+redirect_from:
+  - /handbook/career/aws-lp/customer-obsession/
 description: "고객 중심의 사고방식"
 ---
 ## 고객에게 집착한다 (Customer Obsession):

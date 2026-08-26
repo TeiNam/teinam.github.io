@@ -1,6 +1,9 @@
 ---
-title: "Preparing for a job change"
-permalink: /handbook/career/
+title: "이직 준비 시작하기"
+permalink: /career/
+redirect_from:
+  - /handbook/career/
+  - /handbook/
 description: "IT 이직 준비 위키: 주니어를 위한 A to Z 가이드"
 ---
 ## IT직군 이직 준비하기
@@ -53,24 +56,24 @@ description: "IT 이직 준비 위키: 주니어를 위한 A to Z 가이드"
 
 #### 이직 준비
 
-- [언제 이직을 해야할까?](/handbook/career/newjob/) — 이직 타이밍과 판단 기준
-- [퇴사 준비는 어떻게 해야할까?](/handbook/career/quit/) — 퇴사 전 반드시 알아야 할 체크리스트
-- [왜 이직이 어려운걸까?](/handbook/career/junior/) — 주니어가 자주 실수하는 이직 전략
+- [언제 이직을 해야할까?](/career/newjob/) — 이직 타이밍과 판단 기준
+- [퇴사 준비는 어떻게 해야할까?](/career/quit/) — 퇴사 전 반드시 알아야 할 체크리스트
+- [왜 이직이 어려운걸까?](/career/junior/) — 주니어가 자주 실수하는 이직 전략
 
 #### 이력서 작성
 
-- [좋은 이력서 쓰기](/handbook/career/resume/) — 서류 통과율을 높이는 이력서 작성 전략
+- [좋은 이력서 쓰기](/career/resume/) — 서류 통과율을 높이는 이력서 작성 전략
 
 #### 면접 준비
 
-- [기술 면접](/handbook/career/technical/) — 기술 면접을 준비하고 대답하는 방법
-- [컬처핏 or 임원 면접](/handbook/career/interview/) — 행동면접 질문 대응법
-- [Amazon Leadership Principles](/handbook/career/aws-lp/) — AWS LP 면접 준비하기
-- [마지막 질문](/handbook/career/lastquestion/) — 마지막으로 궁금한거 있는지 물어볼 때
+- [기술 면접](/career/technical/) — 기술 면접을 준비하고 대답하는 방법
+- [컬처핏 or 임원 면접](/career/interview/) — 행동면접 질문 대응법
+- [Amazon Leadership Principles](/career/aws-lp/) — AWS LP 면접 준비하기
+- [마지막 질문](/career/lastquestion/) — 마지막으로 궁금한거 있는지 물어볼 때
 
 #### 연봉 협상
 
-- [연봉 협상](/handbook/career/nego/) — 가장 중요한건 누가 뭐래도 돈
+- [연봉 협상](/career/nego/) — 가장 중요한건 누가 뭐래도 돈
 
 ### 바램
 

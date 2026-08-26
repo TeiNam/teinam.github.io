@@ -1,6 +1,8 @@
 ---
 title: "14. Deliver Results"
-permalink: /handbook/career/aws-lp/deliver-results/
+permalink: /career/aws-lp/deliver-results/
+redirect_from:
+  - /handbook/career/aws-lp/deliver-results/
 description: "결과 중심의 태도"
 ---
 ## 성과를 낸다 (Deliver Results):

@@ -5,7 +5,7 @@ breadcrumb: Docs
 description: 한 편짜리 글로 흩어지면 찾기 어려운 기준 문서들.
 ---
 
-기준으로 삼고 반복해서 들춰 보는 문서를 모읍니다. 시점이 있는 기록은 [Writing]({{ '/writing/' | relative_url }}) 에, 일과 커리어는 [Handbook]({{ '/handbook/' | relative_url }}) 에 있습니다.
+기준으로 삼고 반복해서 들춰 보는 문서를 모읍니다. 시점이 있는 기록은 [Writing]({{ '/writing/' | relative_url }}) 에, 일과 커리어는 [Career]({{ '/career/' | relative_url }}) 에 있습니다.
 
 ## Database
 

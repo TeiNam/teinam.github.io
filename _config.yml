@@ -32,7 +32,7 @@ adsense:
 nav:
   - { name: writing, url: /writing/ }
   - { name: docs, url: /docs/ }
-  - { name: handbook, url: /handbook/ }
+  - { name: career, url: /career/ }
   - { name: work, url: /work/ }
   - { name: about, url: /about/ }
 
@@ -41,12 +41,13 @@ defaults:
     values: { layout: post }
   - scope: { path: "docs" }
     values: { layout: docs }
-  - scope: { path: "handbook" }
-    values: { layout: docs, nav_data: handbook_nav, breadcrumb: Handbook }
+  - scope: { path: "career" }
+    values: { layout: docs, nav_data: career_nav, breadcrumb: Career }
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-redirect-from   # /handbook/... 옛 주소를 /career/... 로 넘긴다
 
 exclude: [Gemfile, Gemfile.lock, README.md, vendor]

@@ -1,6 +1,8 @@
 ---
 title: "이직을 할 때 주니어들이 자주 하는 실수"
-permalink: /handbook/career/junior/
+permalink: /career/junior/
+redirect_from:
+  - /handbook/career/junior/
 description: "이직이 어려운 이유"
 ---
 ## 이직이 어려운 이유와 주니어의 이직 전략 실수

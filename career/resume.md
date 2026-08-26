@@ -1,6 +1,8 @@
 ---
 title: "이력서 쓰기 전략"
-permalink: /handbook/career/resume/
+permalink: /career/resume/
+redirect_from:
+  - /handbook/career/resume/
 description: "서류 통과 성공률을 높이기 위한 이력서 작성 방법"
 ---
 ## 이력서 쓰기 전략: 당신의 역량을 설득력 있게 드러내는 법

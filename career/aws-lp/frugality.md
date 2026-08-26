@@ -1,6 +1,8 @@
 ---
 title: "10. Frugality"
-permalink: /handbook/career/aws-lp/frugality/
+permalink: /career/aws-lp/frugality/
+redirect_from:
+  - /handbook/career/aws-lp/frugality/
 description: "자원의 효율적 활용"
 ---
 ## 절약한다 (Frugality):

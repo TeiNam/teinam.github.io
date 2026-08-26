@@ -1,6 +1,8 @@
 ---
 title: "AMAZON Leadership Principles"
-permalink: /handbook/career/aws-lp/
+permalink: /career/aws-lp/
+redirect_from:
+  - /handbook/career/aws-lp/
 description: "아마존 리더십 원칙"
 ---
 ## Amazon Leadership Principles 정리 & 인터뷰 준비
@@ -16,28 +18,28 @@ description: "아마존 리더십 원칙"
 
 #### STAR & PAR
 
-- [STAR & PAR](/handbook/career/aws-lp/star-par/) — 효과적인 답변을 위한 면접 답안 프레임워크
+- [STAR & PAR](/career/aws-lp/star-par/) — 효과적인 답변을 위한 면접 답안 프레임워크
 
 ### Amazon Leadership Principles (총 16개)
 
 다음은 Amazon의 핵심 리더십 원칙입니다. 인터뷰에서 자주 언급되며, 행동 기반 질문과 밀접하게 연결됩니다.
 
-- [1. Customer Obsession](/handbook/career/aws-lp/customer-obsession/) — 고객 중심의 사고방식
-- [2. Ownership](/handbook/career/aws-lp/ownership/) — 끝까지 책임지는 자세
-- [3. Invent and Simplify](/handbook/career/aws-lp/invent-and-simplify/) — 복잡함을 해결하고 혁신 추구
-- [4. Are Right, A Lot](/handbook/career/aws-lp/are-right-a-lot/) — 판단력과 정확도
-- [5. Learn and Be Curious](/handbook/career/aws-lp/learn-and-be-curious/) — 끊임없는 학습과 호기심
-- [6. Hire and Develop the Best](/handbook/career/aws-lp/hire-and-develop-the-best/) — 최고의 인재 채용 및 육성 (리더, 매니저 전용 질문)
-- [7. Insist on the Highest Standards](/handbook/career/aws-lp/insist-on-the-highest-standards/) — 높은 품질 기준 고수
-- [8. Think Big](/handbook/career/aws-lp/think-big/) — 스케일 있는 사고
-- [9. Bias for Action](/handbook/career/aws-lp/bias-for-action/) — 속도 있는 실행과 결정
-- [10. Frugality](/handbook/career/aws-lp/frugality/) — 자원의 효율적 활용 (Finance, Operations, Procurement, 프로젝트 관리)
-- [11. Earn Trust](/handbook/career/aws-lp/earn-trust/) — 신뢰 형성 및 유지
-- [12. Dive Deep](/handbook/career/aws-lp/dive-deep/) — 세부까지 파고드는 분석력
-- [13. Have Backbone; Disagree and Commit](/handbook/career/aws-lp/have-backbone-disagree-and-commit/) — 건설적 이견 제시와 수용
-- [14. Deliver Results](/handbook/career/aws-lp/deliver-results/) — 결과 중심의 태도
-- [15. Strive to be Earth’s Best Employer](/handbook/career/aws-lp/#strive-to-be-earths-best-employer) — 최고의 직장 문화 조성 (질문X)
-- [16. Success and Scale Bring Broad Responsibility](/handbook/career/aws-lp/#success-and-scale-bring-broad-responsibility) — 확장성과 책임의 균형 (질문X)
+- [1. Customer Obsession](/career/aws-lp/customer-obsession/) — 고객 중심의 사고방식
+- [2. Ownership](/career/aws-lp/ownership/) — 끝까지 책임지는 자세
+- [3. Invent and Simplify](/career/aws-lp/invent-and-simplify/) — 복잡함을 해결하고 혁신 추구
+- [4. Are Right, A Lot](/career/aws-lp/are-right-a-lot/) — 판단력과 정확도
+- [5. Learn and Be Curious](/career/aws-lp/learn-and-be-curious/) — 끊임없는 학습과 호기심
+- [6. Hire and Develop the Best](/career/aws-lp/hire-and-develop-the-best/) — 최고의 인재 채용 및 육성 (리더, 매니저 전용 질문)
+- [7. Insist on the Highest Standards](/career/aws-lp/insist-on-the-highest-standards/) — 높은 품질 기준 고수
+- [8. Think Big](/career/aws-lp/think-big/) — 스케일 있는 사고
+- [9. Bias for Action](/career/aws-lp/bias-for-action/) — 속도 있는 실행과 결정
+- [10. Frugality](/career/aws-lp/frugality/) — 자원의 효율적 활용 (Finance, Operations, Procurement, 프로젝트 관리)
+- [11. Earn Trust](/career/aws-lp/earn-trust/) — 신뢰 형성 및 유지
+- [12. Dive Deep](/career/aws-lp/dive-deep/) — 세부까지 파고드는 분석력
+- [13. Have Backbone; Disagree and Commit](/career/aws-lp/have-backbone-disagree-and-commit/) — 건설적 이견 제시와 수용
+- [14. Deliver Results](/career/aws-lp/deliver-results/) — 결과 중심의 태도
+- [15. Strive to be Earth’s Best Employer](/career/aws-lp/#strive-to-be-earths-best-employer) — 최고의 직장 문화 조성 (질문X)
+- [16. Success and Scale Bring Broad Responsibility](/career/aws-lp/#success-and-scale-bring-broad-responsibility) — 확장성과 책임의 균형 (질문X)
 
 ### 행동 기반 인터뷰 질문 예제 (Top 20)
 

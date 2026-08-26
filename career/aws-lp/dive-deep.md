@@ -1,6 +1,8 @@
 ---
 title: "12. Dive Deep"
-permalink: /handbook/career/aws-lp/dive-deep/
+permalink: /career/aws-lp/dive-deep/
+redirect_from:
+  - /handbook/career/aws-lp/dive-deep/
 description: "세부까지 파고드는 분석력"
 ---
 ## 깊게 고민한다 (Dive Deep):
