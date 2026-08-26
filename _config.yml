@@ -30,6 +30,7 @@ adsense:
 nav:
   - { name: writing, url: /writing/ }
   - { name: docs, url: /docs/ }
+  - { name: handbook, url: /handbook/ }
   - { name: work, url: /work/ }
   - { name: about, url: /about/ }
 
@@ -38,6 +39,8 @@ defaults:
     values: { layout: post }
   - scope: { path: "docs" }
     values: { layout: docs }
+  - scope: { path: "handbook" }
+    values: { layout: docs, nav_data: handbook_nav, breadcrumb: Handbook }
 
 plugins:
   - jekyll-feed

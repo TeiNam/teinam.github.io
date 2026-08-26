@@ -1,6 +1,9 @@
-# docs/ 사이드바 트리. 비워두면 사이드바가 렌더되지 않는다.
+# docs 섹션 사이드바. handbook_nav.yml 과 분리돼 있다.
 # docs/ 에 문서를 추가할 때 여기에 실제 경로를 넣는다.
-#
-# - group: 그룹 이름
-#   items:
-#     - { name: 페이지 이름, url: /docs/page/ }
+
+- group: Database
+  items:
+    - { name: "운영관리 지침서", url: /docs/database/ops/ }
+    - { name: "네이밍 규칙", url: /docs/database/naming/ }
+    - { name: "데이터 3법", url: /docs/database/data-3-law/ }
+    - { name: "데이터 암호화", url: /docs/database/encryption/ }

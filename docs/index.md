@@ -2,23 +2,16 @@
 title: Docs
 permalink: /docs/
 breadcrumb: Docs
+description: 한 편짜리 글로 흩어지면 찾기 어려운 기준 문서들.
 ---
 
-한 편짜리 글로 흩어지면 찾기 어려운 것들 — 설정 절차, 레퍼런스, 체크리스트 — 을 여기에 모읍니다.
+기준으로 삼고 반복해서 들춰 보는 문서를 모읍니다. 시점이 있는 기록은 [Writing]({{ '/writing/' | relative_url }}) 에, 일과 커리어는 [Handbook]({{ '/handbook/' | relative_url }}) 에 있습니다.
 
-<!-- 문서를 추가하면 아래 문단을 지우세요. -->
+## Database
 
-아직 올린 문서가 없습니다. 새 글은 [Writing]({{ '/writing/' | relative_url }}) 에 있습니다.
+- [표준 데이터베이스 운영관리 지침서]({{ '/docs/database/ops/' | relative_url }}) — 데이터베이스를 관리하는 기준점
+- [데이터베이스 네이밍 규칙]({{ '/docs/database/naming/' | relative_url }}) — MySQL·PostgreSQL 공통 식별자·타입 명명 규칙
+- [데이터 3법]({{ '/docs/database/data-3-law/' | relative_url }}) — 데이터 3법에 기반한 개인정보 처리 방침
+- [데이터 암호화]({{ '/docs/database/encryption/' | relative_url }}) — 개인정보 암호화 처리 방안
 
-## 문서 추가하기
-
-1. `docs/` 아래에 `.md` 파일을 만듭니다. `_config.yml` 의 defaults 가 `layout: docs` 를 자동으로 붙입니다.
-2. front matter 에 `title` 과 `permalink` 을 넣습니다.
-3. 왼쪽 목록에 띄우려면 `_data/docs_nav.yml` 에 경로를 추가합니다.
-
-```yaml
-# _data/docs_nav.yml
-- group: 시작하기
-  items:
-    - { name: 설치, url: /docs/install/ }
-```
+<!-- 문서를 추가하면 _data/docs_nav.yml 에도 넣어야 사이드바에 뜬다. -->
