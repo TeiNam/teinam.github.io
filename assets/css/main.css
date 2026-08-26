@@ -202,6 +202,8 @@ p { text-wrap: pretty; }
 .ad--leaderboard { padding: 0 48px 40px; }
 .ad ins { min-height: 110px; background: var(--line2); }
 .ad--sidebar ins { min-height: 250px; }
+/* docs·handbook 하단. 좌우 여백은 .docs-body 가 이미 갖고 있다 */
+.ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
 /* page (about / work) — 단독 산문 페이지 */
 .page-body { padding: 52px 48px 72px; max-width: 72ch; }
