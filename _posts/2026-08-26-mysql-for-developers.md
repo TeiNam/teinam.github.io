@@ -2,7 +2,6 @@
 title: "MySQL for Developers"
 category: database
 excerpt: "MySQL 개발에서 알아야 할 핵심 원칙과 안티패턴 — 정규화부터 인덱스, 드라이버 선택, 릴리스 정책까지."
-updated: 2026-08-26
 ---
 
 > **SUMMARY** — 요약

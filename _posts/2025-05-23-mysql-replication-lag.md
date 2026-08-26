@@ -1,4 +1,5 @@
 ---
+date: 2025-05-23 14:53:45 +0900
 title: "MySQL 복제지연"
 category: database
 excerpt: "MySQL의 복제 지연 현상 처리 방안"
