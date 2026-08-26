@@ -1,6 +1,8 @@
 ---
 title: "기술 면접"
-permalink: /handbook/career/technical/
+permalink: /career/technical/
+redirect_from:
+  - /handbook/career/technical/
 description: "기술 면접을 준비하고 대답하는 방법"
 ---
 ## 기술 면접 준비 및 응답 전략

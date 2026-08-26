@@ -1,6 +1,8 @@
 ---
 title: "연봉 협상하기"
-permalink: /handbook/career/nego/
+permalink: /career/nego/
+redirect_from:
+  - /handbook/career/nego/
 description: "몸 값을 높여 보자"
 ---
 ## 연봉 협상

@@ -1,6 +1,8 @@
 ---
 title: "2. Ownership"
-permalink: /handbook/career/aws-lp/ownership/
+permalink: /career/aws-lp/ownership/
+redirect_from:
+  - /handbook/career/aws-lp/ownership/
 description: "끝까지 책임지는 자세"
 ---
 ## 주인의식을 갖는다 (Ownership):

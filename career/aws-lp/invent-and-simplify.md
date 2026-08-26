@@ -1,6 +1,8 @@
 ---
 title: "3. Invent and Simplify"
-permalink: /handbook/career/aws-lp/invent-and-simplify/
+permalink: /career/aws-lp/invent-and-simplify/
+redirect_from:
+  - /handbook/career/aws-lp/invent-and-simplify/
 description: "복잡함을 해결하고 혁신 추구"
 ---
 ## 발명하고 단순화한다 (Invent and Simplify):

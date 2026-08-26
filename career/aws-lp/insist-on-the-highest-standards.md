@@ -1,6 +1,8 @@
 ---
 title: "7. Insist on the Highest Standards"
-permalink: /handbook/career/aws-lp/insist-on-the-highest-standards/
+permalink: /career/aws-lp/insist-on-the-highest-standards/
+redirect_from:
+  - /handbook/career/aws-lp/insist-on-the-highest-standards/
 description: "높은 품질 기준 고수"
 ---
 ## 최고의 기준을 추구한다 (Insist on the Highest Standards):

@@ -1,0 +1,33 @@
+# career 섹션 사이드바. docs_nav.yml 과 분리해 둔다 — 트리가 섞이면 안 된다.
+# 페이지를 추가하면 여기에도 넣어야 사이드바에 뜬다.
+
+- group: 이직 준비
+  items:
+    - { name: "시작하기", url: /career/ }
+    - { name: "이직 타이밍과 판단 기준", url: /career/newjob/ }
+    - { name: "퇴사 전 체크리스트", url: /career/quit/ }
+    - { name: "이직을 할 때 주니어들이 자주 하는 실수", url: /career/junior/ }
+    - { name: "이력서 쓰기 전략", url: /career/resume/ }
+    - { name: "행동 면접 준비하기", url: /career/interview/ }
+    - { name: "기술 면접", url: /career/technical/ }
+    - { name: "마지막 질문", url: /career/lastquestion/ }
+    - { name: "연봉 협상하기", url: /career/nego/ }
+
+- group: AWS Leadership Principles
+  items:
+    - { name: "개요", url: /career/aws-lp/ }
+    - { name: "STAR & PAR", url: /career/aws-lp/star-par/ }
+    - { name: "1. Customer Obsession", url: /career/aws-lp/customer-obsession/ }
+    - { name: "2. Ownership", url: /career/aws-lp/ownership/ }
+    - { name: "3. Invent and Simplify", url: /career/aws-lp/invent-and-simplify/ }
+    - { name: "4. Are Right, A Lot", url: /career/aws-lp/are-right-a-lot/ }
+    - { name: "5. Learn and Be Curious", url: /career/aws-lp/learn-and-be-curious/ }
+    - { name: "6. Hire and Develop the Best", url: /career/aws-lp/hire-and-develop-the-best/ }
+    - { name: "7. Insist on the Highest Standards", url: /career/aws-lp/insist-on-the-highest-standards/ }
+    - { name: "8. Think Big", url: /career/aws-lp/think-big/ }
+    - { name: "9. Bias for Action", url: /career/aws-lp/bias-for-action/ }
+    - { name: "10. Frugality", url: /career/aws-lp/frugality/ }
+    - { name: "11. Earn Trust", url: /career/aws-lp/earn-trust/ }
+    - { name: "12. Dive Deep", url: /career/aws-lp/dive-deep/ }
+    - { name: "13. Have Backbone; Disagree and Commit", url: /career/aws-lp/have-backbone-disagree-and-commit/ }
+    - { name: "14. Deliver Results", url: /career/aws-lp/deliver-results/ }

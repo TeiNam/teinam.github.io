@@ -1,6 +1,8 @@
 ---
 title: "마지막 질문"
-permalink: /handbook/career/lastquestion/
+permalink: /career/lastquestion/
+redirect_from:
+  - /handbook/career/lastquestion/
 description: "마지막으로 궁금한거 있어요? 라고 물어 볼때 대답하는 법"
 ---
 ## 마지막 면접

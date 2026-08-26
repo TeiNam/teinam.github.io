@@ -1,6 +1,8 @@
 ---
 title: "8. Think Big"
-permalink: /handbook/career/aws-lp/think-big/
+permalink: /career/aws-lp/think-big/
+redirect_from:
+  - /handbook/career/aws-lp/think-big/
 description: "케일 있는 사고"
 ---
 ## 크게 생각한다 (Think Big):

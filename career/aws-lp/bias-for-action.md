@@ -1,6 +1,8 @@
 ---
 title: "9. Bias for Action"
-permalink: /handbook/career/aws-lp/bias-for-action/
+permalink: /career/aws-lp/bias-for-action/
+redirect_from:
+  - /handbook/career/aws-lp/bias-for-action/
 description: "속도 있는 실행과 결정"
 ---
 ## 신속하게 판단하고 행동한다 (Bias for Action):

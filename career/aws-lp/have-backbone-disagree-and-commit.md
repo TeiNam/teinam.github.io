@@ -1,6 +1,8 @@
 ---
 title: "13. Have Backbone; Disagree and Commit"
-permalink: /handbook/career/aws-lp/have-backbone-disagree-and-commit/
+permalink: /career/aws-lp/have-backbone-disagree-and-commit/
+redirect_from:
+  - /handbook/career/aws-lp/have-backbone-disagree-and-commit/
 description: "건설적 이견 제시와 수용"
 ---
 ## 소신을 갖고 반대하거나 받아들인다 (Have Backbone; Disagree and Commit):
