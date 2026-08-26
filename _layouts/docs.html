@@ -21,10 +21,15 @@ layout: default
     <span class="mono dim breadcrumb">{{ page.breadcrumb | default: 'Docs' }}</span>
     <h1>{{ page.title }}</h1>
     {{ content }}
+    {%- comment %} prev/next 가 없으면 빈 가로줄만 남으므로 통째로 감춘다 {% endcomment %}
+    {%- if page.prev or page.next %}
     <div class="doc-pager">
       {%- if page.prev %}<a href="{{ page.prev.url | relative_url }}">← {{ page.prev.name }}</a>{% else %}<span></span>{% endif %}
       {%- if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.name }} →</a>{% endif %}
     </div>
+    {%- endif %}
+
+    {% include ad.html slot=site.adsense.docs variant="docs" %}
   </div>
 
   <aside class="toc-rail docs-toc" data-toc>

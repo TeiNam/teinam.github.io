@@ -5,10 +5,12 @@ category: database
 excerpt: "MySQL의 복제 지연 현상 처리 방안"
 updated: 2025-05-23
 ---
+## MySQL 복제 지연 현상
+
 - MySQL 복제지연(replication lag)은 복제 설정에서 주 서버(Primary)와 보조 서버(Replica) 간의 데이터 동기화가 지연되는 현상을 의미한다.
 - 복제지연은 데이터 일관성 문제를 일으킬 수 있으며, 특히 읽기 부하 분산을 위해 보조 서버를 활용하는 환경에서 심각한 문제가 될 수 있다.
 
-## 복제 지연이 발생하는 이유
+### 복제 지연이 발생하는 이유
 
 - 네트워크 이슈
 - I/O 이슈
@@ -20,7 +22,7 @@ I/O에 관한 문제는 결국 디스크 성능에 가장 큰 영향을 받는�
 
 세번째로 MySQL 설정으로 인한 이슈는 my.cnf 혹은 AWS라면 RDS의 파라미터 그룹 변경을 통해 해결할 수 있다.
 
-## 복제 지연에 영향을 주는 파라미터 값들
+### 복제 지연에 영향을 주는 파라미터 값들
 
 MySQL의 InnoDB 스토리지 엔진은 디스크 I/O 작업을 관리하기 위해 다양한 파라미터를 제공하는데, 그 중 하나가 `innodb_io_capacity` 이다. 이 파라미터는 InnoDB가 내부 작업(특히 버퍼 풀에서 디스크로의 플러시 작업)을 처리할 때 사용할 수 있는 I/O 작업의 최대 수를 설정한다. 이 설정은 복제지연(replication lag)에 직접적인 영향을 미칠 수 있다.
 
@@ -43,72 +45,72 @@ AWS RDS 의 경우 IOPS의 계산식은
 
 으로 블럭 크기는 DBMS마다 기준이 다르다. Oracle, MS-SQL, PostgreSQL은 8KB, MySQL은 16KB 이다.
 
-### RDS의 스토리지 타입에 따른 스토리지 성능
+#### RDS의 스토리지 타입에 따른 스토리지 성능
 
-#### gp2
+##### gp2
 
 ![RDS gp2 — DB 엔진과 스토리지 크기별 기준 IOPS, 기준 처리량, 버스트 IOPS 표](/assets/img/ebs-gp2-iops.png)
 
-#### gp3
+##### gp3
 
 ![RDS gp3 — DB 엔진과 스토리지 크기별 프로비저닝 IOPS 범위와 최대 처리량 표](/assets/img/ebs-gp3-iops.png)
 
 서비스 사용되고 있는 스토리지 크기에 의해 최대 IOPS가 결정되니, 최대 IOPS에서 7~80% 수준의 IOPS를 `innodb_io_capacity_max` 값으로 설정하면 된다.
 
-### slave_parallel_workers
+#### slave_parallel_workers
 
 `slave_parallel_workers`은 복제 사용하는 프로세스 수를 결정한다. `slave_parallel_workers`에 설정된 수 만큼의 멀티 프로세스를 통해 병렬로 복제를 진행할 수 있는데, 이 값은 복제서버의 CPU 코어수에 영향을 미치기 때문에 복제 서버가 가지고 있는 코어를 복제에 다 사용하지 않도록 구성하는 것이 중요하다.
 
 RDS에서 읽기 복제를 생성하면 `slave_parallel_workers`의 기본값이 `4`이기 때문에 너무 작은 인스턴스를 복제 인스턴스로 사용하면 복제하는데 모든 CPU 코어를 사용해버리기 때문에 문제가 생길수 있다. 수동으로 값을 줄여주거나, 인스턴스 사이즈를 키워야하는 경우가 발생할 수 있다.
 
-### 그 밖에 복제 지연에 영향을 줄 수 있는 파라미터
+#### 그 밖에 복제 지연에 영향을 줄 수 있는 파라미터
 
-#### sync_binlog
+##### sync_binlog
 
 - 설명: 이 파라미터는 MySQL이 트랜잭션 로그를 디스크에 기록할 때 얼마나 자주 fsync를 호출할지 결정한다.
 - 권장 설정: sync_binlog=1은 데이터 일관성을 보장하지만, 성능에 영향을 줄 수 있다. 데이터 무결성을 유지하면서도 성능을 개선하려면 이 값을 적절히 조정해야 한다.
 
-#### innodb_flush_log_at_trx_commit
+##### innodb_flush_log_at_trx_commit
 
 - 설명: 이 파라미터는 트랜잭션 커밋 시점에 로그를 디스크에 기록하는 빈도를 제어한다.
 - 권장 설정: innodb_flush_log_at_trx_commit=1은 데이터 무결성을 보장한다. 그러나 성능을 고려해 2로 설정하면 디스크 쓰기 빈도가 줄어 성능이 개선될 수 있다. 단, 데이터 손실 가능성이 증가할 수도 있다.
 
-#### read_buffer_size와 read_rnd_buffer_size
+##### read_buffer_size와 read_rnd_buffer_size
 
 - 설명: 이 파라미터들은 MySQL이 테이블을 읽을 때 사용할 버퍼의 크기를 설정한다. 복제 지연에 영향을 줄 수 있는 쿼리 성능을 최적화하는 데 도움이 된다.
 - 권장 설정: 기본값을 적절히 조정하여 서버의 메모리 용량에 맞게 설정한다.
 
-#### log_slave_updates
+##### log_slave_updates
 
 - 설명: 이 파라미터는 보조 서버가 자신이 받은 복제 이벤트를 자신의 바이너리 로그에 기록할지 여부를 결정한다.
 - 권장 설정: 보조 서버에서 추가적인 복제를 설정하려는 경우 이 값을 ON으로 설정해야 하지만, 일반적인 복제 성능을 위해서는 OFF로 설정하는 것이 좋다.
 
-#### innodb_buffer_pool_size
+##### innodb_buffer_pool_size
 
 - 설명: InnoDB 버퍼 풀은 디스크 I/O를 줄이고 데이터베이스 성능을 향상시키는 데 중요한다.
 - 권장 설정: 전체 시스템 메모리의 60-80% 정도로 설정하여 InnoDB가 메모리에서 대부분의 데이터를 처리할 수 있도록 한다.
 
-#### innodb_flush_method
+##### innodb_flush_method
 
 - 설명: 이 파라미터는 InnoDB가 디스크로 데이터를 플러시할 때 사용할 방법을 지정한다.
 - 권장 설정: O_DIRECT를 사용하여 페이지 캐시를 우회하고, O_DSYNC를 사용하여 로그 플러시를 최적화할 수 있다.
 
-#### relay_log_space_limit
+##### relay_log_space_limit
 
 - 설명: 이 파라미터는 보조 서버가 리레이 로그에 사용할 수 있는 최대 디스크 공간을 지정한다.
 - 권장 설정: 충분히 큰 값으로 설정하여 보조 서버가 필요한 로그를 모두 저장할 수 있도록 한다.
 
-#### innodb_thread_concurrency
+##### innodb_thread_concurrency
 
 - 설명: InnoDB가 동시에 실행할 수 있는 스레드의 수를 제한한다.
 - 권장 설정: 시스템의 CPU 코어 수에 따라 적절히 조정하여 병목 현상을 줄인다.
 
-#### innodb_log_file_size
+##### innodb_log_file_size
 
 - 설명: InnoDB 로그 파일의 크기를 설정한다.
 - 권장 설정: 큰 값으로 설정하면 체크포인트를 줄이고 성능을 향상시킬 수 있습니다. 일반적으로 512MB에서 1GB 사이로 설정한다.
 
-#### innodb_flush_neighbors
+##### innodb_flush_neighbors
 
 - 설명: 이 파라미터는 InnoDB가 플러시할 때 인접한 페이지들을 함께 플러시할지 여부를 결정한다.
 - 권장 설정: SSD를 사용하는 경우 0으로 설정하여 불필요한 플러시 작업을 줄인다.
