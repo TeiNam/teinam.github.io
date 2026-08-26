@@ -1,9 +1,13 @@
 ---
 layout: default
 ---
+{%- comment %} 섹션마다 사이드바 트리가 다르다. front matter 의 nav_data 로 고르고,
+     없으면 docs_nav 를 쓴다 (_config.yml defaults 가 handbook 에 handbook_nav 를 지정) {% endcomment -%}
+{%- assign nav_key = page.nav_data | default: "docs_nav" -%}
+{%- assign nav_tree = site.data[nav_key] -%}
 <div class="docs-shell">
   <nav class="docs-nav">
-    {%- for group in site.data.docs_nav %}
+    {%- for group in nav_tree %}
     <div class="nav-group">
       <span class="label">{{ group.group }}</span>
       {%- for item in group.items %}

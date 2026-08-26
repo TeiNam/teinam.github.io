@@ -160,13 +160,18 @@ p { text-wrap: pretty; }
   padding: 16px 20px; font-size: 15.5px; line-height: 1.7; color: var(--ink);
 }
 .prose blockquote p { color: inherit; font-size: inherit; }
-.prose blockquote strong:first-child { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--accent); }
+/* 콜아웃 라벨은 첫 문단 맨 앞의 strong 하나뿐이다.
+   blockquote strong:first-child 로 두면 인용 안 목록의 굵은 글씨까지 라벨이 된다. */
+.prose blockquote > p:first-child > strong:first-child { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--accent); }
 .prose div.highlight, .prose pre {
   position: relative; margin: 0; background: var(--code-bg); color: var(--code-ink);
   border: 1px solid var(--line); border-radius: 2px; padding: 15px 14px; overflow: auto;
   font-family: var(--mono); font-size: 13px; line-height: 1.75;
 }
-.prose div.highlight pre { border: 0; padding: 0; background: transparent; }
+/* 안쪽 pre 는 스크롤하지 않는다. overflow 를 물려받으면 padding:0 인 pre 가
+   스크롤 컨테이너가 되어 가로 스크롤바가 코드 위에 겹쳐 그려진다.
+   스크롤은 패딩을 가진 바깥 div.highlight 가 맡는다. */
+.prose div.highlight pre { border: 0; padding: 0; background: transparent; overflow: visible; }
 .copy-code {
   position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 10.5px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink3);
