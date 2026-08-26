@@ -3,7 +3,9 @@ title: "AMAZON Leadership Principles"
 permalink: /handbook/career/aws-lp/
 description: "아마존 리더십 원칙"
 ---
-## AWS 인터뷰 준비 포인트
+## Amazon Leadership Principles 정리 & 인터뷰 준비
+
+### AWS 인터뷰 준비 포인트
 
 - Amazon의 면접은 **행동 기반 인터뷰(BI: Behavioral Interview)**가 중심입니다.
 - 총 16가지 리더십 원칙 중 일부가 특히 자주 강조됩니다:
@@ -12,11 +14,11 @@ description: "아마존 리더십 원칙"
   - **Invent and Simplify (발명과 단순화)**
   - **Bias for Action (신속한 실행)**
 
-### STAR & PAR
+#### STAR & PAR
 
 - [STAR & PAR](/handbook/career/aws-lp/star-par/) — 효과적인 답변을 위한 면접 답안 프레임워크
 
-## Amazon Leadership Principles (총 16개)
+### Amazon Leadership Principles (총 16개)
 
 다음은 Amazon의 핵심 리더십 원칙입니다. 인터뷰에서 자주 언급되며, 행동 기반 질문과 밀접하게 연결됩니다.
 
@@ -37,7 +39,7 @@ description: "아마존 리더십 원칙"
 - [15. Strive to be Earth’s Best Employer](/handbook/career/aws-lp/#strive-to-be-earths-best-employer) — 최고의 직장 문화 조성 (질문X)
 - [16. Success and Scale Bring Broad Responsibility](/handbook/career/aws-lp/#success-and-scale-bring-broad-responsibility) — 확장성과 책임의 균형 (질문X)
 
-## 행동 기반 인터뷰 질문 예제 (Top 20)
+### 행동 기반 인터뷰 질문 예제 (Top 20)
 
 아래 질문들은 Amazon의 실제 BI 질문 유형입니다. STAR (Situation, Task, Action, Result) 구조로 준비하세요.
 
@@ -51,39 +53,39 @@ description: "아마존 리더십 원칙"
 | 16–18 | **Ownership / Reflection** | 실수, 실패, 회고 |
 | 19–20 | **Customer Obsession** | 고객 응대 중심 |
 
-### 인터뷰 예상 질문 리스트
+#### 인터뷰 예상 질문 리스트
 
-#### 성과 & 임팩트 중심
+##### 성과 & 임팩트 중심
 
 1. 가장 자랑스러운 프로젝트는 무엇인가요?
 2. 가장 복잡했던 프로젝트는 무엇이었나요?
 3. 기대 이상 성과를 낸 경험을 말씀해주세요.
 4. 기존 틀을 깨는 아이디어로 큰 영향을 준 경험이 있나요?
 
-#### 빠른 결정 & 실행력
+##### 빠른 결정 & 실행력
 
 4. 중요한 결정을 빠르게 내려야 했던 때는 언제인가요?
 5. 최근 6개월 중 가장 어려웠던 결정은 무엇이었나요?
 6. 리스크를 감수했던 경험과 그 결과는 어땠나요?
 
-#### 학습과 문제 해결
+##### 학습과 문제 해결
 
 8. 업무 수행을 위해 새로운 것을 배워야 했던 적이 있나요?
 9. 어려운 문제를 해결했던 경험을 말해주세요.
 
-#### 팀워크와 리더십
+##### 팀워크와 리더십
 
 9. 누군가를 코칭했던 경험이 있다면 말씀해주세요.
 10. 팀의 큰 장애물을 해결한 경험은 무엇인가요?
 11. 프로젝트 진행 중 방향이 크게 바뀌었던 경험이 있나요?
 
-#### 신뢰와 갈등 대응
+##### 신뢰와 갈등 대응
 
 13. 까다로운 이해관계자를 상대했던 경험은요?
 14. 프로젝트에서 위기를 극복한 사례는 무엇인가요?
 15. 동료와의 의견 충돌을 어떻게 해결했나요?
 
-#### 회고 및 고객 대응
+##### 회고 및 고객 대응
 
 16. 본인의 실수 경험을 공유해주세요.
 17. 달성하지 못한 목표에 대해 말해주세요.
@@ -91,7 +93,7 @@ description: "아마존 리더십 원칙"
 19. 불만을 가진 고객을 어떻게 대응했나요?
 20. 부정적인 피드백을 받고 어떻게 대응했나요?
 
-## 준비 전략 요약
+### 준비 전략 요약
 
 - **STAR 방식**으로 스토리 구조화
 - **실제 지표/수치 기반**으로 임팩트 설명
