@@ -24,7 +24,7 @@ MongoDB의 Text Search는 형태소 분석 방법만 지원합니다. 한국어 
 
 첫 번째 대안은 Percona MongoDB를 사용하는 방법입니다. [이전 포스팅](/writing/mongodb-ngram-full-text-search/)에서 [Precona MongoDB](https://www.percona.com/software/mongodb/percona-server-for-mongodb)의 N-Gram 사용법을 다룬 적이 있었습니다. Percona의 fork 버전에서는 N-Gram을 지원하기 때문에 별도의 검색 엔진을 구축할 필요가 없으며, MongoDB를 많이 사용하기로 유명한 모 IT기업에서도 Percona 버전을 도입해 사용합니다.
 
-두 번째 대안은 ElasticSearch 같은 전문 검색 엔진을 붙여서 사용하는 방법입니다. 엘라스틱 서치는 MongoDB와 비슷하게 JSON 파일로 데이터를 저장하기 때문에 [Monstache로 MongoDB의 컬렉션을 엘라스틱 서치에 동기화](/writing/mongodb-to-elasticsearch-realtime-sync/)하거나, 키바나, 카프카 같은 툴로 다른 데이터베이스에 마이그레이션해서 전문 검색 엔진을 구축하는 방법입니다.
+두 번째 대안은 ElasticSearch 같은 전문 검색 엔진을 붙여서 사용하는 방법입니다. 엘라스틱 서치는 MongoDB와 비슷하게 JSON 파일로 데이터를 저장하기 때문에 Monstache로 MongoDB의 컬렉션을 엘라스틱 서치에 동기화하거나, 키바나, 카프카 같은 툴로 다른 데이터베이스에 마이그레이션해서 전문 검색 엔진을 구축하는 방법입니다.
 
 MongoDB의 클라우드 버전인 [아틀라스](https://www.mongodb.com/cloud/atlas/lp/try2?utm_source=google&utm_campaign=gs_apac_south_korea_search_core_brand_atlas_desktop&utm_term=atlas%20mongodb&utm_medium=cpc_paid_search&utm_ad=e&utm_ad_campaign_id=12212624365&gclid=CjwKCAjw7J6EBhBDEiwA5UUM2nQWA2PvUzJIp_DwLPydnqwRzj_xJ7tpVi8Nisqe36AsEAVbrIJnOxoC0MgQAvD_BwE)에서는 한국어 전문 검색을 지원하며, 엘라스틱 서치와 마찬가지로 Nori 형태소 분석기를 사용합니다. 아틀라스에서 N-Gram을 지원하지 않고 형태소 분석을 선택했기 때문에, 2021년 내에 MongoDB 5 버전이 정식 출시될 때 과연 아틀라스와 마찬가지로 Nori 형태소 분석기를 지원할지, N-Gram을 탑재할지 궁금합니다.
 
