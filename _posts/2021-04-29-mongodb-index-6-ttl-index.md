@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — TTL 인덱스의 동작 조건과 `ttlMonitorSleepSecs` 조정 방법은 현재도 동일합니다. 예제 프롬프트가 레거시 `mongo` 셸 기준이고, 5.3 이후에는 clustered collection 의 `expireAfterSeconds` 로 별도 TTL 인덱스를 대체할 수도 있습니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 이전 포스트
 
 MongoDB Index #.5 Full Text Search Index

@@ -6,8 +6,6 @@ excerpt: "SCHEMA 생성 SCHEMA는 Object들의 논리적 집합체 입니다. TA
 updated: 2026-09-17
 ---
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 > **전제조건:** PostgreSQL 9.3 이상, CREATE SCHEMA 권한 또는 SUPERUSER 권한
 
 ## SCHEMA 생성

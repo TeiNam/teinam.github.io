@@ -6,8 +6,6 @@ excerpt: "현재 시간 조회 postgres=# select now(); 현재 타임존 조회 
 updated: 2026-09-17
 ---
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 PostgreSQL의 날짜·시간 관련 함수와 타임존 설정 방법을 정리했다. 각 예제는 `psql` 클라이언트에서 바로 실행할 수 있다.
 
 ## 현재 시간 조회

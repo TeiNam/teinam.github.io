@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 인증 기반 복제·SST(rsync/xtrabackup/mariabackup) 설명은 현재도 유효하며 Galera 4 이후 mariabackup 사용 주의문도 이미 반영돼 있다. 다만 TokuDB 지원 예정 언급은 무효(TokuDB 는 이후 MariaDB 에서 제거됨 — 문서 원문 확인 불가)이고, MySQL 용 Galera Cluster 는 2026-09-30 로 유지보수 종료가 공지되어 MariaDB 계열로의 이전이 권고된다.
 
-![Galera Cluster 로고](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## Galera Cluster: 다중 마스터 복제
 
 갈레라 클러스터는 코더십이 만든 동기적 다중 마스터 방법입니다. MariaDB의 공식 클러스터입니다. 갈레라 클러스터는 인증 기반 복제를 제공합니다. 데이터 완전성은 자동으로 관리합니다.

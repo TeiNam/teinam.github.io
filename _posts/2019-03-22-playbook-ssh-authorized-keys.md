@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — authorized_key 모듈은 ansible-core 에 포함되지 않고 ansible.posix 컬렉션으로 분리되어, 현재 문서는 FQCN ansible.posix.authorized_key 사용과 ansible-galaxy collection install ansible.posix 를 안내한다. 플레이북의 나머지 흐름은 유효하다.
 
-![Ansible SSH 키 배포 다이어그램](/assets/img/wp/2019/03/6ae3881c84d526d859ed64f1edfce04bbcaa6359.png)
-
 ## Ansible 마스터 노드에서 각 호스트에 SSH RSA 키 전파
 
 **전제조건:** Ansible 설치 완료, 인벤토리 파일 준비, 대상 호스트에 초기 SSH 접근 가능

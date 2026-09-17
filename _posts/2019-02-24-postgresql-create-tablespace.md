@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — CREATE TABLESPACE 구문과 pg_tablespace·\db 조회는 현재도 동일하다. 다만 "테이블스페이스는 오라클과 PostgreSQL에만 존재"라는 서술은 사실이 아니다(DB2, InnoDB 등에도 존재).
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 **Tablespace**
 
 데이터베이스에서 Tablespace는 오라클과 PostgreSQL에서만 존재하는 개념입니다.

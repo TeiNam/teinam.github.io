@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 스크립트의 shmmax/shmall 계산식 자체는 그대로 동작하지만, PostgreSQL 은 기본적으로 익명 mmap 공유 메모리를 사용해 공식 문서가 '기본 공유 메모리 설정으로 충분하다'고 명시한다(shared_memory_type=sysv 로 되돌린 경우만 예외). System V 공유 메모리를 쓰는 Oracle 계열에는 여전히 유효하다.
 
-![](/assets/img/wp/2019/02/수정됨_fcfdee7682c7e8e8a9a10b10f770b890.png)
-
 ## 시스템 사양에 맞는 세마포어 값 계산해주는 스크립트
 
 ### shmmax, shmall 계산

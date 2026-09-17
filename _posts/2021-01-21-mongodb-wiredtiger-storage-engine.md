@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — WiredTiger 의 공유 캐시·이빅션·체크포인트·MVCC 설명은 현재 버전에서도 유효합니다. 다만 예시에 나오는 `storage.journal.enabled` 는 6.1 부터 제거되어 저널링을 끌 수 없고(항상 활성), MMAPv1 은 4.2 에서 이미 제거됐습니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB의 wiredTiger 스토리지 엔진
 
 ### WiredTiger 스토리지 엔진

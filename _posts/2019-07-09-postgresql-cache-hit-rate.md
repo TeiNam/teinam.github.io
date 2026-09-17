@@ -6,8 +6,6 @@ excerpt: "PostgreSQL의 Cache hit rate가 가지는 의미는 오라클과 비�
 updated: 2026-09-17
 ---
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 PostgreSQL의 Cache hit rate가 가지는 의미는 오라클과 비슷합니다.
 
 Shared buffer에 올라와 있는 데이터를 가져다 쓰는 비율을 나타내며, 90% 이상의 효율을 유지하는 것이 성능에 유리합니다.

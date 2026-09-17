@@ -6,8 +6,6 @@ excerpt: "MySQL 쿼리 실행 구조 Parser – 파서는 사용자의 요청으
 updated: 2026-09-17
 ---
 
-![MySQL](/assets/img/wp/2019/04/mysql_PNG19.png)
-
 ## MySQL 쿼리 실행 구조
 
 ![MySQL 쿼리 실행 아키텍처 다이어그램](/assets/img/wp/2019/06/수정됨_mysql-architecture.png)

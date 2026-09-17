@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — insertOne/insertMany 예제는 현재 권장 API 와 일치합니다. 다만 출력 형식이 레거시 `mongo` 셸 기준이라 `mongosh` 에서는 `{ acknowledged: true, insertedId: ... }` 형태로 다르게 표시됩니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB 도큐먼트 생성하기
 
 MongoDB의 도큐먼트와 생성 방법을 알아보는 포스팅입니다.

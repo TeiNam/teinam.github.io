@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 멀티 키 인덱스의 인덱스 바운드와 `$elemMatch` 설명은 지금도 정확합니다. 예제 중 `db.survay.insert(...)` 는 deprecated 된 API 이므로 insertOne 으로 바꿔야 합니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 이전 포스팅
 
 MongoDB Index#.3 Hash Index

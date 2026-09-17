@@ -6,8 +6,6 @@ excerpt: "MySQL 트랜잭션 트랜잭션이란? 데이터베이스의 상태를
 updated: 2026-09-17
 ---
 
-![MySQL 로고](/assets/img/wp/2019/04/mysql_PNG19.png)
-
 ## MySQL 트랜잭션
 
 ### 트랜잭션이란?

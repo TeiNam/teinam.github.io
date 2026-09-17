@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 밸런서 정지 → mongos → 샤드 → config 서버 순으로 내리고 역순으로 올리는 절차와 `sh.stopBalancer()`/`sh.startBalancer()`/`db.shutdownServer()` 는 현재도 유효합니다. 셸 명령은 6.0 에서 제거된 `mongo` 대신 `mongosh` 로 실행하세요(본문 3.1 의 mongos 기동 명령은 `mongos --config` 오타).
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB Shard Cluster 재구동 순서
 
 샤드 클러스터는 샤드 클러스터에 등록된 Replica Set과 Config 서버 등 다양한 리소스가 물려 있기 때문에 재구동 절차에도 신경을 써야 합니다.

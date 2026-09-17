@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — insertOne/insertMany 를 쓰고 있어 CRUD API 자체는 현재 기준과 맞습니다. 다만 프롬프트와 `"acknowledged" : true` 형태의 출력은 6.0 에서 제거된 레거시 `mongo` 셸 것이므로 예제는 `mongosh` 로 실행해야 합니다.
 
-![MongoDB Collection 생성 화면](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ### MongoDB Collection 생성하기
 
 데이터베이스를 생성하려면 Collection을 생성해야 한다고 했습니다. 그럼 Collection이라는 것이 무엇일까요? RDBMS를 주로 다루던 분들은 쉽게 TABLE처럼 인식합니다.

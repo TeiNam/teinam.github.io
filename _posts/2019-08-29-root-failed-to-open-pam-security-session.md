@@ -6,8 +6,6 @@ excerpt: "(root) FAILED to open PAM security session (Permission denied) /var/lo
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2019/02/수정됨_fcfdee7682c7e8e8a9a10b10f770b890.png)
-
 ```
 (root) FAILED to open PAM security session (Permission denied)
 ```

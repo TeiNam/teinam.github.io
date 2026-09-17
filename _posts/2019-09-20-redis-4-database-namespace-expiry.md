@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — SELECT·MOVE·EXPIRE·SETEX·TTL·PERSIST·EXPIREAT·FLUSHDB/FLUSHALL 은 현재도 유효하며 SETEX 는 폐기되지 않았습니다(`SET key value EX seconds` 와 동일). 단 "Redis 의 MRU(Most Recently Used) 캐싱 알고리즘"은 사실이 아니고 축출 정책은 근사 LRU/LFU(4.0 이후)와 LRM(8.6 신규)이며, Redis Cluster 는 0번 DB만 지원하므로 SELECT/MOVE 로 네임스페이스를 나누는 방식은 클러스터에서 쓸 수 없습니다. "200GB 넘으면 장애"는 근거를 확인할 수 없습니다.
 
-![Redis 로고](/assets/img/wp/2019/09/redis.png)
-
 ## Namespace
 
 Redis의 네임스페이스란 Database를 말합니다. 쉽게 말해서 PostgreSQL은 하나의 클러스터 안에 여러 개의 Database를 생성하여 용도를 나눠 사용할 수 있듯이 Redis는 네임스페이스를 나눠서 Database를 구분합니다. 네임스페이스는 숫자로 구분되며, 0이 설치되면 접속해서 사용할 수 있는 디폴트 네임스페이스입니다.

@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 잠금 범위(Global/Database/Collection/Document)와 모드(S/X/IS/IX), 인텐션 락, `db.fsyncLock()`, Lock Yield 설명은 현재도 유효합니다. 다만 표에 나오는 인덱스 생성 Background 옵션은 4.2 에서 폐기됐고 map-reduce 는 5.0, `reIndex` 는 6.0 에서 각각 deprecated 됐습니다.
 
-![MongoDB Lock 아키텍처](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB Lock
 
 다른 DBMS와 마찬가지로 MongoDB도 멀티 쓰레드의 동시 처리 중 발생할 수 있는 쓰레드 간 충돌 문제를 방지하기 위해 Lock을 사용합니다. DB의 동시성을 유지하기 위해 사용하는 메카니즘입니다. MongoDB가 WiredTiger 스토리지 엔진 아키텍처를 채용하면서 MongoDB 서버 차원에서 처리되는 Lock과 각 스토리지 엔진에서 처리되는 Lock으로 크게 나누어 볼 수 있습니다. WiredTiger 스토리지 엔진이 도입된 3.2 버전부터 여러 계층의 데이터베이스 오브젝트의 동시처리를 위해 인텐션 락(Intention Lock)이 도입되어 활용되고 있으며, 다중 레벨의 잠금(multi-granularity locking)을 사용합니다.

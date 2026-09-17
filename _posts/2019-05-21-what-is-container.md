@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — chroot·jail·cgroups·LXC 로 이어지는 역사와 OS/애플리케이션 컨테이너 구분은 지금도 유효합니다. 다만 쿠버네티스는 1.24 에서 dockershim 을 제거해 런타임이 CRI(containerd·CRI-O) 중심으로 재편되었으므로 'Docker=컨테이너 런타임' 서술은 현재 기준으로 보완이 필요합니다.
 
-![컨테이너 기술 소개 이미지](/assets/img/wp/2019/04/docker_facebook_share.png)
-
 **컨테이너란?**
 
 **– 애플리케이션의 종속성과 함께 애플리케이션 자체를 캡슐화한 것**

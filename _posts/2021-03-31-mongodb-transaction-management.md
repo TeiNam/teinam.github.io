@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — WriteConflict 재시도 동작, 스냅샷 격리, 단일/다중 도큐먼트 트랜잭션, 트랜잭션 기본 제한 60초, Read/Write Concern 설명은 현재도 유효합니다. 본문 표의 API 링크와 버전 기준(4.2/4.4)은 오래되었고, 해당 버전들은 모두 지원 종료 상태입니다.
 
-![MongoDB 로고](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB Transaction Management
 
 ### MongoDB의 트랜잭션

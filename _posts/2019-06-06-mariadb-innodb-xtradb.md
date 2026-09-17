@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — MariaDB 10.2 부터 XtraDB 대신 InnoDB 를 쓴다는 서술은 지금도 맞고 역사적 설명으로 유효하다. 다만 MySQL 5.5/5.6 기준으로 소개한 innodb_undo_logs, innodb_log_files_in_group 등은 MySQL 8.0 계열에서 제거·대체(innodb_redo_log_capacity)되었으므로 8.0/8.4 에는 그대로 적용되지 않는다.
 
-![MariaDB 로고](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## MariaDB의 InnoDB 엔진, XtraDB 엔진
 
 ## InnoDB의 기능

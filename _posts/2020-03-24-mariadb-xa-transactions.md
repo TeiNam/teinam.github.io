@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 분산 트랜잭션·2PC·XA 인터페이스 설명과 Internal/External XA 구분은 지금도 유효합니다. 다만 innodb_support_xa 로 XA 를 끄는 방법은 MySQL 8.0 에서 변수 자체가 제거돼 통하지 않으며(MariaDB 최신 버전의 상태는 확인 불가), 엔진 목록은 10.4 시절 기준입니다.
 
-![MariaDB 로고](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 #### 분산 트랜잭션(Distributed Transactions)이란?
 
 글로벌 트랜잭션(Global transaction)이라고도 불리며 여러 개의 분산된 리소스들(예: 프린터 드라이버, 데이터베이스 등) 각각에 대한 트랜잭션들을 하나의 트랜잭션으로 묶은 것을 의미합니다. 이 경우 하나의 리소스가 실패하면 전체를 rollback 합니다.

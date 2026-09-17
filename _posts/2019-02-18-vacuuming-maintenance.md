@@ -6,8 +6,6 @@ excerpt: "주기적인 유지관리 Vacuuming 1-1. Vacuum 기초 – PostgreSQL�
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 ## 주기적인 유지관리 Vacuuming
 
 ### 1-1. Vacuum 기초

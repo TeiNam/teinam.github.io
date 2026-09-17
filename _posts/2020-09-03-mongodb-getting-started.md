@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — use, show dbs, db.dropDatabase(), db.getCollectionInfos(), db.serverStatus() 는 현재도 동일하게 동작합니다. 예제는 레거시 `mongo` 셸(6.0 에서 제거) 기준이고 출력에 찍힌 4.4.0 은 2024-02-29 EOL 버전이므로 `mongosh` 와 지원 버전(7.0 이상)으로 다시 확인해야 합니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ### MongoDB 시작하기
 
 #### 데이터베이스 생성

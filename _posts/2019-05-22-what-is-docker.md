@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 도커의 개념·장점 설명은 유효하지만 스토리지 드라이버 언급이 낡았습니다 — AUFS 는 v19.03 에서 deprecated, v24.0 에서 제거되어 현재 기본값은 overlay2 입니다. Kubernetes 도 1.24 부터 Docker 를 런타임으로 직접 쓰지 않습니다.
 
-![도커 로고](/assets/img/wp/2019/04/docker_facebook_share.png)
-
 **도커란?**
 
 `Namespace`, `cgroups`, `SELinux`, `AppArmor` 프로파일을 비롯한 여러 리눅스 커널 기능을 `AUFS`와 `BTRFS` 같은 Union 파일시스템과 엮어서 이미지를 모듈 방식으로 구성합니다. WORA(Write-Once-Run-Anywhere) 원칙을 실현할 수 있고, 여러 프로세스가 협업하는 분산 시스템을 구축할 수 있으며 확장성이 뛰어납니다.

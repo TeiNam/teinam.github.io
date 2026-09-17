@@ -6,8 +6,6 @@ excerpt: "MySQL Engine Lock MySQL에서 사용하는 Lock은 크게 스토리지
 updated: 2026-09-17
 ---
 
-![MySQL Lock 아키텍처](/assets/img/wp/2019/04/mysql_PNG19.png)
-
 ## MySQL Engine Lock
 
 MySQL에서 사용하는 Lock은 크게 스토리지 엔진 레벨과 MySQL 엔진 레벨로 나눌 수 있습니다. MySQL 엔진 레벨의 Lock은 모든 스토리지 엔진에 영향을 미치게 되지만, 스토리지 엔진 레벨의 Lock은 스토리지 엔진 간 상호 영향을 미치지 않습니다.

@@ -6,8 +6,6 @@ excerpt: "이전 포스트 공간 검색 인덱스 (Geospatial Index) MongoDB의
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 이전 포스트
 
 MongoDB Index #.6 TTL Index

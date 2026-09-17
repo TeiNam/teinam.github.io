@@ -6,8 +6,6 @@ excerpt: "MERN Stack 이란? 최근 MongoDB에 대한 자료들을 찾아보다 
 updated: 2026-09-17
 ---
 
-![MERN Stack 로고](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MERN Stack 이란?
 
 MongoDB 자료를 찾아보면 해외 사이트에서 자주 등장하는 단어입니다. Udemy 같은 온라인 교육 사이트에는 MERN Stack 통합 교육과정도 업로드되고 있습니다.

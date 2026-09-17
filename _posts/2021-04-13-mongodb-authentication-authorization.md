@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — SCRAM/x.509 인증과 내장 role 목록(read, readWrite, dbAdmin, clusterManager, root 등), `security.authorization` 활성화 방법은 현재도 유효합니다. 다만 5.3 부터 클러스터 내부 인증에는 SCRAM-SHA-1 을 쓸 수 없고 SCRAM-SHA-256 만 지원됩니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB의 인증과 권한
 
 MongoDB 클러스터에서 권한을 활성화하면, 인증이 적용되고 사용자는 역할에 따라 권한이 부여된 작업만 가능합니다.

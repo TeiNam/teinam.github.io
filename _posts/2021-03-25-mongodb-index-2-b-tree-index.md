@@ -6,8 +6,6 @@ excerpt: "MongoDB Index#.2 B-Tree Index 이전 포스팅 B-Tree Index 이전 포
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB Index#.2 B-Tree Index
 
 이전 포스팅

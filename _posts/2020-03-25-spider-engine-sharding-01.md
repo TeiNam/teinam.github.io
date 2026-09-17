@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — Spider 는 여전히 MariaDB 에 번들되는 Stable 엔진이고 install_spider.sql·CREATE SERVER 절차도 유효하다. 다만 MariaDB 10.7.5 부터 Spider 의 HA 기능은 삭제되어(MDEV-28479) 복제나 Galera 를 쓰라고 안내하며, condition pushdown 미구현으로 샤드 분산 쿼리 성능 제약이 남아 있다.
 
-![Spider 엔진 로고](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 > **전제:** sysbench 1.0.19 사용, 루트 또는 관리자 권한
 
 ## Spider 엔진?

@@ -6,8 +6,6 @@ excerpt: "MySQL 아키텍쳐 MySQL은 크게 “MySQL” 엔진과 “스토리�
 updated: 2026-09-17
 ---
 
-![MySQL 로고](/assets/img/wp/2019/04/mysql_PNG19.png)
-
 **MySQL 아키텍쳐**
 
 MySQL은 크게 MySQL 엔진과 스토리지 엔진으로 구성되어 있습니다.

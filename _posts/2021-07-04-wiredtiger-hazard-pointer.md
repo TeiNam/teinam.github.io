@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — Hazard Pointer 로 이빅션 대상 페이지를 보호하는 메커니즘 설명 자체는 스토리지 엔진 내부 원리라 버전과 무관하게 읽을 수 있습니다. 다만 기준으로 삼은 MongoDB 4.4/WiredTiger 10.0.1 은 지원 종료(2024-02) 버전이고 링크된 레퍼런스도 보관 문서이며, 최신 WiredTiger 소스와의 세부 구조 차이는 확인 불가입니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## WiredTiger의 Hazard Pointer
 
 > **전제조건:** MongoDB 4.4·WiredTiger 10.0.1 기준

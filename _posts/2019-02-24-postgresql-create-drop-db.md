@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — createdb/dropdb 와 CREATE DATABASE 기본 구문은 그대로 유효하다. 다만 예제 프롬프트가 9.6(2021-11 EOL)이고, 현재 구문에는 STRATEGY·LOCALE_PROVIDER·BUILTIN_LOCALE·ICU_LOCALE·OID 옵션이 추가돼 있다.
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 PostgreSQL을 관리하거나 운영하는 방법은 크게 두 가지로 분류할 수 있습니다.
 
 - 터미널을 이용한 커맨드라인 사용  

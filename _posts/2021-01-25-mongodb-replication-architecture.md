@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — OpLog(`local.oplog.rs`) 기반 복제 구조, 초기 동기화, OpLog 크기 기본값(여유 디스크의 5%) 설명은 현재도 유효합니다. 다만 "세컨더리에서는 셸 명령을 직접 입력할 수 없다"는 서술은 legacy `mongo` 셸 기준으로, mongosh 는 read preference 를 secondary 계열로 지정하면 바로 읽을 수 있습니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB 복제 아키텍처
 
 MongoDB는 Secondary가 Primary에서 OpLog를 가져온 다음 OpLog를 재생해서 데이터를 동기화합니다. Secondary 멤버는 Primary뿐만 아니라 다른 Secondary 멤버의 OpLog를 재생할 수도 있습니다.

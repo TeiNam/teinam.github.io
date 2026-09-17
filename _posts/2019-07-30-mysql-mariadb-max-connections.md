@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — systemd 서비스에 LimitNOFILE drop-in 을 두고 open_files_limit 을 올리는 절차는 현행 systemd 배포판에서도 유효합니다. 다만 /etc/security/limits.d/90-nproc.conf 는 EL6 시절 경로이고 systemd 로 기동되는 데몬에는 limits.conf 가 적용되지 않으므로, 서비스 drop-in 설정만으로 충분합니다.
 
-![](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## MariaDB, MySQL max_connections 값 변경
 
 > **전제:** Linux (systemd), MariaDB/MySQL, root 권한

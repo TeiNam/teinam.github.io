@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — sysbench 최신 릴리스는 여전히 1.0.20(2020-04)이고 1.1 정식 릴리스가 없어 본문의 옵션 표와 prepare/run/cleanup 사용법은 그대로 유효하다. 설치 예시의 CentOS·yum 은 CentOS 7 EOL(2024-06-30) 이후 RHEL 9 계열 dnf 로 바꿔야 한다.
 
-![](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## Sysbench란?
 
 시스템 성능을 측정하는 툴로, MySQL 내부 프로젝트로 시작해 Lua 스크립트를 지원하는 0.5 버전까지 나왔다가 오랜 기간 개발이 중지되었다. 2016년에 다시 개발이 시작되었고 현재 1.0 버전대 개발이 진행 중이다. 기존에는 소스코드로 설치하는 방식이 많았지만, 현재는 yum 레포지토리로 설치할 수 있다. 시스템뿐만 아니라 MySQL, MariaDB, PostgreSQL 성능 평가가 가능하다. 오라클은 Swingbench를 많이 쓰고, MariaDB는 sysbench나 DBT2(<https://dev.mysql.com/downloads/benchmarks.html>) 등을 사용한다.

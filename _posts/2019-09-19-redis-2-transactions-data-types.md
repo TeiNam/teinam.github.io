@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — SET/GET/MGET/INCR/MULTI/EXEC/DISCARD 와 List·Hash·Set 기본 동작은 Redis 8.10 에서도 그대로 유효하지만, 예제에 쓰인 `HMSET` 은 Redis 4.0 부터, `RPOPLPUSH`/`BRPOPLPUSH` 는 Redis 6.2 부터 폐기 예고되어 각각 `HSET`, `LMOVE`/`BLMOVE` 로 대체되었습니다. "키 하나당 2^23개 또는 40억 개"는 부정확하며 컬렉션 최대 원소 수는 2^32-1(약 42.9억)이고, 현재 Redis 는 Stream(5.0)·JSON·Time series·확률형 자료구조·Vector set 까지 기본 제공합니다.
 
-![Redis 로고](/assets/img/wp/2019/09/redis.png)
-
 **SET과 GET**
 
 - **SET**: 키 값을 추가할 수 있다. Key-Value 쌍 두 개의 매개변수가 필요하다.

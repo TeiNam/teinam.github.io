@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — db.createUser()·db.createRole()·passwordPrompt() 와 인증 데이터베이스 개념은 현재도 동일합니다. 다만 전제 버전으로 잡은 4.2/4.4 는 EOL 이고 예제 프롬프트 `mongo>` 는 6.0 에서 제거된 레거시 셸이므로 `mongosh` 로 바꿔 실행해야 합니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB의 일반 계정 생성
 
 > **전제조건:** MongoDB 4.2+ 설치 완료, mongod 서비스 구동 중, admin 계정 설정 완료 (미설정 시 [MongoDB 4.2 admin 계정 설정하기](/writing/mongodb-42-admin-account/ "MongoDB 4.2 admin 계정 설정하기") 참조).

@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — ZADD·ZINCRBY·ZRANGE·ZUNIONSTORE·ZINTERSTORE 및 WEIGHTS/AGGREGATE 옵션 설명은 현재도 정확합니다. 다만 예제의 `ZREVRANGE`, `ZRANGEBYSCORE`, `ZREVRANGEBYSCORE` 는 Redis 6.2 부터 폐기 예고되어 `ZRANGE ... REV` / `ZRANGE ... BYSCORE` 로 대체되었습니다.
 
-![Redis 로고](/assets/img/wp/2019/09/redis.png)
-
 **Sort SET**
 
 Sort SET은 Redis가 가진 각 데이터 타입의 특성을 고루 가진다. List처럼 정렬되며, Set처럼 고유한 값을 갖는다. Hash처럼 키 필드와 값의 쌍으로 된 데이터를 갖지만, 문자열 대신 값의 순서를 나타내는 지수(score)를 사용한다. Sort SET은 무작위로 액세스하는 우선순위 큐(priority queue)와 비슷하다. 내부적으로 Sort SET은 값을 정렬된 상태로 유지한다. 따라서 데이터를 추가할 때 Sort SET의 소요시간은 log(N)의 시간이 필요하다. N은 Set 크기이다.

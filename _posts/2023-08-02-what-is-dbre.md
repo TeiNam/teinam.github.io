@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — DBRE 역할·DBA 대비 차이 설명은 유효하나, DBRE 라는 용어는 Laine Campbell·Charity Majors 의 O'Reilly 『Database Reliability Engineering』(2017)에서 정착한 것으로 Ben Treynor Sloss 가 정의한 것이 아니다. 본문의 '구글 SRE 부서 해체' 언급도 사실과 다르며 sre.google 은 현재도 채용·자료 발간이 이어지는 현행 조직으로 소개된다.
 
-![](/assets/img/wp/2021/04/sm_5b46d890d85b8.jpg)
-
 ### 데이터베이스 신뢰성 엔지니어(Database Reliability Engineer, DBRE)
 
 IT에 종사하면서 DB를 만지게 되는 직군은 크게 세 가지입니다.

@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — pg_settings.context 로 restart/reload 여부를 판별하는 방법은 현재도 유효하다. 단 reload 컨텍스트 값은 'signup' 이 아니라 'sighup' 이며(본문 오타), ALTER SYSTEM 으로 설정을 바꾸는 방법이 빠져 있다.
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 ## PostgreSQL 온라인 적용 가능 파라미터 확인
 
 PostgreSQL의 파라미터 (postgresql.conf) 중에 반드시 restart로 적용해야 하는 파라미터가 있는가 하면,

@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — wsrep_gtid_mode 필수 설정(wsrep_gtid_domain_id, log_slave_updates, log_bin)과 Galera 4(10.4.6+) 신규 기능 설명은 개념적으로 유효하다. 단 전제로 삼은 10.1~10.4 는 모두 커뮤니티 지원이 끝났고, 현재 기준으로는 11.4/11.8/12.3 LTS 에서 확인해야 한다.
 
-![갈레라 클러스터 로고](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## 갈레라 클러스터 WSREP GTID
 
 > **전제조건:** MariaDB 10.1 이상 (Galera 4는 MariaDB 10.4.6부터)

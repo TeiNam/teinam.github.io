@@ -6,8 +6,6 @@ excerpt: "PostgreSQL 테이블스페이스 및 오브젝트 사용량 확인 테
 updated: 2026-09-17
 ---
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 ## PostgreSQL 테이블스페이스 및 오브젝트 사용량 확인
 
 **전제조건:** PostgreSQL 9.0 이상, `psql` 또는 쿼리를 실행할 수 있는 클라이언트 접근 권한

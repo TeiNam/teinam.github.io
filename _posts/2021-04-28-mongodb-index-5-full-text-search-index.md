@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — text 인덱스가 형태소 분석만 지원하고 한국어에 약하다는 진단은 여전히 유효합니다. 다만 "5.0 정식 출시 때 n-gram 을 넣을지"라는 추측은 시효가 지났고, 현재는 Atlas 뿐 아니라 자체 관리형 배포에서도 MongoDB Search/Vector Search 를 사용할 수 있습니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 이전 포스트
 
 MongoDB Index #.4 Multi key Index

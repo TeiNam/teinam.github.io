@@ -6,8 +6,6 @@ excerpt: "Process 별로 CPU, MEM 사용량 모니터링 특별히 모니터링 
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2019/02/수정됨_fcfdee7682c7e8e8a9a10b10f770b890.png)
-
 ## Process 별로 CPU, MEM 사용량 모니터링
 
 특별히 모니터링 툴이나 다른 방법이 없을 때 OS에서 `ps` 명령으로 모니터링하는 방법입니다.

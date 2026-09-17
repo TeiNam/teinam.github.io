@@ -6,8 +6,6 @@ excerpt: "MongoDB Developer Workshop 후기 (with Google Cloud) 오랜만에 포
 updated: 2026-09-17
 ---
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## MongoDB Developer Workshop 후기 (with Google Cloud)
 
 오랜만에 포스팅입니다. 정말 오랜만이네요. 이직하고나서 딱히 쓸 글이 없었습니다. 다들 저보다 잘하시고, 연차는 쌓여가는데 초급 포스팅만 계속 하기도 좀 그랬습니다.

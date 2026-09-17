@@ -6,8 +6,6 @@ excerpt: "샤드 (Shard: Database Architecture) 데이터베이스 샤드는 데
 updated: 2026-09-17
 ---
 
-![샤드 아키텍처 다이어그램](/assets/img/wp/2019/05/CxvR4Rax_400x400.jpg)
-
 ## 샤드 (Shard: Database Architecture)
 
 데이터베이스 샤드는 데이터베이스 또는 검색엔진의 수평적 파티션을 말합니다. 각각의 파티션을 샤드 또는 데이터베이스 샤드라고 합니다. 각 샤드는 별도의 데이터베이스 서버 인스턴스에 분리 저장되어 부하를 분산시킵니다.

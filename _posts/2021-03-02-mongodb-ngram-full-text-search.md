@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — Percona Server for MongoDB 8.0 에도 ngram 전문 검색이 유지되어 접근법 자체는 유효합니다. 다만 기능 비교표와 링크는 4.4 시절 기준이며, 현재는 Atlas 및 자체 관리형 배포에서 MongoDB Search/Vector Search 를 쓰는 선택지도 있습니다.
 
-![](/assets/img/wp/2020/04/37_2019081518484308.jpg)
-
 ## Percona MongoDB
 
 MongoDB를 헤비하게 사용하던 K사에 다니셨던 지인분이 MongoDB 커뮤니티를 사용할 것이라면 Percona MongoDB를 사용해보는 건 어떠냐고 권장하셨습니다. K사에서도 Percona 버전을 사용했다고 하시더군요. Percona MongoDB를 추천받게 된 계기는 이렇습니다.

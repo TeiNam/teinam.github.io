@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — LC_* 카테고리, initdb 로케일 결정, C 로케일과 LIKE 인덱스 관계 설명은 현재도 유효하다. 다만 15 부터 ICU, 17 부터 builtin 로케일 프로바이더가 추가돼 CREATE DATABASE 에 LOCALE_PROVIDER·ICU_LOCALE·BUILTIN_LOCALE 옵션이 있고, 16 에서 읽기 전용 변수 lc_collate/lc_ctype 이 제거됐다.
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 ## PostgreSQL Localization
 
 > **전제조건:** PostgreSQL 9.1 이상, initdb 실행 권한

@@ -8,8 +8,6 @@ updated: 2026-09-17
 
 > **검증 노트 (2026-09) · 참고** — 버그 식별·리포트 작성 요령은 지금도 유효하나, 현재 공식 창구는 pgsql-bugs 메일이 아니라 웹 양식(postgresql.org/account/submitbug/)이고 보안 건은 security@postgresql.org 다. 본문의 postgresql.kr·database.sarang.net 링크 생존 여부는 확인 불가.
 
-![PostgreSQL 로고](/assets/img/wp/2019/02/postgresql-logo_7SyLG2o.png)
-
 **PostgreSQL 버그 리포팅 가이드라인**
 
 오픈소스 프로젝트의 장점과 단점은 명확하다.
