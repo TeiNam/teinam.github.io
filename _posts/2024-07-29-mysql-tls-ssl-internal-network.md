@@ -1,7 +1,7 @@
 ---
 date: 2024-07-29 21:00:01 +0900
 title: "MySQL의 TLS/SSL: 내부 네트워크에서 정말 필요할까?"
-category: security
+category: mysql
 excerpt: "MySQL의 암호화 통신 데이터베이스 보안은 모든 조직의 IT 인프라에서 핵심적인 부분입니다. 특히 MySQL과 같은 관계형 데이터베이스 시스템을 사용할 때, 데이터 전송 중 보안을 위해 TLS(Transport Layer Security) 또는 그 전신인 SSL(Secure So…"
 updated: 2026-09-17
 ---

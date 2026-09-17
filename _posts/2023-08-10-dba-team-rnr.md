@@ -1,7 +1,7 @@
 ---
 date: 2023-08-10 16:19:54 +0900
 title: "DBA 혹은 DB팀의 R&R을 정의 할 때"
-category: security
+category: dbops
 excerpt: "DBA 혹은 DB팀의 R&R을 정의 할 때 대기업의 경우는 DBA 포지션이 오래전부터 유지된 경우가 많아 그 회사에 맞는 R&R이 이미 정의 되어 있는 경우가 많습니다. 반면 스타트업의 경우 DBA가 없다가 생기는 경우에는 R&R과..."
 updated: 2026-09-17
 ---
