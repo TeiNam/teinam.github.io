@@ -2,13 +2,25 @@
 date: 2021-11-23 14:54:56 +0900
 title: "Redis 요약 정리"
 category: redis
-excerpt: "Redis 시리즈를 마무리하며 핵심 내용을 정리합니다. Sentinel과 Cluster의 차이, 데이터 영속성 메커니즘, 그리고 운영 시 주의할 포인트들을 빠르게 훑을 수 있도록 구성했습니다. Redis Sentinel은 고가용성(HA)에 집중한 솔루션입니다. 단일 primary를 여…"
-updated: 2026-09-17
+excerpt: "Redis 시리즈를 마무리하며 라이선스와 자료형 변화, Sentinel과 Cluster의 차이, 영속성 메커니즘, 운영 시 주의할 점을 정리합니다."
+updated: 2026-09-20
 ---
 
-> **다시 씀 (2026-09)** — 2021년에 쓴 글을 2026년 9월 기준으로 새로 썼습니다. 버전·명령·기본값을 현재 Redis 문서에 맞췄습니다.
+Redis 시리즈를 마무리하며 핵심 내용을 정리합니다. 라이선스와 자료형의 변화, Sentinel과 Cluster의 차이, 데이터 영속성 메커니즘, 그리고 운영 시 주의할 포인트들을 빠르게 훑을 수 있도록 구성했습니다.
 
-Redis 시리즈를 마무리하며 핵심 내용을 정리합니다. Sentinel과 Cluster의 차이, 데이터 영속성 메커니즘, 그리고 운영 시 주의할 포인트들을 빠르게 훑을 수 있도록 구성했습니다.
+## 라이선스와 자료형
+
+Redis는 8.0부터 제품 이름이 Redis Open Source로 바뀌고 라이선스가 3중 구조가 되었습니다. 사용자가 세 가지 중 하나를 골라 적용합니다 — Redis Source Available License v2(RSALv2), Server Side Public License v1(SSPLv1), GNU Affero General Public License v3(AGPLv3). 공식 문서는 RSALv2와 SSPLv1을 오픈소스 라이선스가 아니라고 명시하고, 세 가지 중 AGPLv3만 OSI 승인 오픈소스라고 적습니다.
+
+| 버전 | 라이선스 |
+|---|---|
+| 7.2.x 이하 | BSD 3-Clause |
+| 7.4.x ~ 7.8.x (Redis Community Edition) | RSALv2 또는 SSPLv1 |
+| 8.0 이상 (Redis Open Source) | RSALv2 · SSPLv1 · AGPLv3 중 택 1 |
+
+BSD 라이선스를 유지하려는 쪽에서는 Redis OSS 7.2.4를 포크한 Valkey가 나왔습니다. Valkey는 `INFO` 응답에 여전히 `redis_version:7.2.4`를 함께 보고하므로, 버전 문자열만 보고 제품을 판별하면 안 됩니다.
+
+자료형도 2021년보다 넓어졌습니다. 현재 Redis Open Source가 구현하는 자료형은 String(Bitmap·Bitfield 포함), Array, Geospatial index, Hash, JSON, List, 확률형 자료형(Bloom filter·Cuckoo filter·Count-min sketch·HyperLogLog·t-digest·Top-K), Set, Sorted Set, Stream, Time series, Vector set입니다. 별도 모듈로 배포되던 RediSearch·RedisJSON·RedisTimeSeries·RedisBloom은 Redis 8부터 Redis Open Source의 구성 요소로 편입되어 같은 라이선스를 따릅니다.
 
 ## Redis Cluster와 Sentinel의 차이점
 
@@ -39,7 +51,7 @@ Redis Sentinel은 **고가용성(HA)에 집중한 솔루션**입니다. 단일 p
 |---|---|---|
 | Failover 중 쓰기 실패 | Failover Timeout 만큼 쓰기 요청이 실패합니다 | 데이터량에 따라 최적의 timeout 값을 찾고 `sentinel.conf`에 적용 |
 | Replica → Primary 승격 실패 | Replica 다운 → Primary 다운 → Replica 재시작 순서일 때, 재시작된 서버는 여전히 `redis.conf`에 `replicaof` 설정을 갖고 있어 Primary로 전환되지 않음 | 재시작 전 `replicaof` 설정을 삭제하거나, 수동으로 `REPLICAOF NO ONE` 실행 |
-| Master 정보 조회 오류 | Primary/Replica 모두 다운 후 `get-master-addr-by-name`으로 조회하면 다운된 서버 정보를 반환 | `INFO sentinel` 명령으로 마스터 status를 직접 확인 |
+| Primary 정보 조회 오류 | Primary/Replica 모두 다운 후 `get-master-addr-by-name`으로 조회하면 다운된 서버 정보를 반환 | `INFO sentinel` 명령으로 primary status를 직접 확인 |
 
 **단점**
 
@@ -72,9 +84,9 @@ slot = CRC16(key) mod 16384
 **클러스터 HA 동작**
 
 - Primary 노드가 shutdown되면 **gossip protocol**로 상태를 확인하고, replica 중 하나를 primary로 승격시킵니다
-- Gossip은 Redis 노드 간 직접 연결로 동작하며, **클라이언트 포트 + 10000** 포트를 사용합니다 (예: 클라이언트 포트 6379 → 버스 포트 16379)
+- Gossip은 Redis 노드 간 직접 연결로 동작하며, 기본값은 **클라이언트 포트 + 10000** 입니다 (예: 클라이언트 포트 6379 → 버스 포트 16379). `cluster-port` 설정으로 따로 지정할 수 있습니다
 - 기존 primary가 재시작되면 자동으로 승격된 replica의 새 replica로 구성됩니다
-- **마스터 과반에 도달하지 못한 파티션은 쿼리 수용을 중단합니다** (`cluster-node-timeout` 경과 후)
+- **primary 과반에 도달하지 못한 노드는 쿼리 수용을 중단합니다** (`cluster-node-timeout` 경과 후)
 
 **클러스터 관리**
 
@@ -107,7 +119,7 @@ redis-cli --cluster check 127.0.0.1:7000
 
 **Docker / NAT 환경**
 
-Redis 공식 문서는 **`--net=host` 모드**를 권장합니다. NAT나 포트 포워딩을 사용해야 한다면 `redis.conf`에서 다음 4가지 값을 정적으로 설정할 수 있습니다:
+공식 문서는 Redis Cluster가 NAT 환경과 IP·포트가 재매핑되는 환경을 지원하지 않는다고 못 박고, Docker에서는 호스트 네트워킹 모드(**`--net=host`**)를 쓰라고 안내합니다. 포트를 그대로 노출할 수 없다면 `redis.conf`에서 노드가 알릴 주소를 정적으로 지정합니다:
 
 ```conf
 cluster-announce-ip 10.1.1.5
@@ -156,8 +168,9 @@ Redis는 인메모리 DB이지만 디스크에 데이터를 기록하는 두 가
 
 **설정**
 
+배포되는 `redis.conf`에는 세 개의 저장 지점이 기본값으로 적혀 있습니다.
+
 ```conf
-# 기본값 (redis.conf 주석)
 save 3600 1 300 100 60 10000
 # 3600초 동안 1번 이상 변경 or 300초 동안 100번 이상 변경 or 60초 동안 10000번 이상 변경
 ```
@@ -171,7 +184,7 @@ save 3600 1 300 100 60 10000
 **장점**
 
 - RDB보다 **데이터 유실 가능성이 낮습니다**
-- 사람이 읽을 수 있는 포맷입니다
+- 증분 파일은 Redis 프로토콜과 같은 포맷이라 사람이 읽고 편집할 수 있습니다. 예를 들어 실수로 `FLUSHALL`을 실행했다면, rewrite가 일어나기 전이라면 서버를 멈추고 그 명령 한 줄을 지워 되살릴 수 있습니다
 
 **단점**
 
@@ -182,7 +195,11 @@ save 3600 1 300 100 60 10000
 
 데이터가 많아지면 현재 시점의 데이터셋을 만들어낼 수 있는 **최소한의 로그만 남기고 압축**합니다. 예를 들어 같은 키에 100번의 `SET`이 있었다면 마지막 값 하나만 기록합니다.
 
+Redis 7.0부터는 AOF가 단일 파일이 아니라 **multi-part AOF** 구조입니다. base 파일(최대 1개, RDB 또는 AOF 포맷 스냅샷)과 증분 파일 여러 개를 `appenddirname` 디렉터리에 두고 manifest 파일로 추적합니다. rewrite 중에는 부모 프로세스가 새 증분 파일에 계속 기록하므로, 예전처럼 rewrite 중 쓰기가 메모리에 버퍼링되지 않습니다.
+
 **설정**
+
+AOF는 기본적으로 꺼져 있고(`appendonly no`), 켜면 `appendfsync`의 기본값은 `everysec`입니다.
 
 ```conf
 appendonly yes
@@ -197,11 +214,12 @@ appendfsync everysec   # always | everysec | no
 
 **권장 설정**
 
-- 영속성이 반드시 필요한 경우 **AOF + `appendfsync everysec`**를 사용합니다
-- 캐시로만 사용하거나 데이터 유실을 감수할 수 있다면 RDB/AOF 모두 off해도 됩니다
-- Replication 환경에서는 **replica에서만 영속성을 활성화**하는 것이 일반적입니다 (primary 성능 확보)
+- 관계형 DB 수준의 데이터 안전성이 필요하면 공식 문서는 **RDB와 AOF를 함께 쓰라**고 권합니다. AOF 단독 구성은 백업·재시작 속도와 AOF 엔진 버그 대비 때문에 권하지 않습니다
+- 몇 분 정도의 유실을 감수할 수 있다면 RDB만 써도 됩니다. 캐시로만 쓴다면 둘 다 off해도 됩니다
+- 둘 다 켜져 있으면 재시작 시 **AOF로 복구**합니다. AOF가 더 완전한 데이터셋을 보장하기 때문입니다
+- 복제를 쓴다면 primary와 replica **양쪽에 영속성을 켜는 것**이 공식 권고입니다
 
-> **주의:** Primary에서 영속성을 끄고 자동 재시작을 켜두면, 재시작 시 빈 데이터셋이 replica로 전파되어 모든 데이터가 날아갑니다. Sentinel 환경에서도 동일한 위험이 있습니다.
+> **WARNING** — 디스크가 느려서 primary의 영속성을 껐다면 **자동 재시작을 반드시 끄십시오.** 빈 데이터셋으로 살아난 primary가 replica 전체를 비워 버립니다. Sentinel 환경에서는 primary가 너무 빨리 재시작되어 Sentinel이 장애를 감지하지 못하는 경로로 같은 일이 벌어집니다.
 
 ## Redis 사용 시 주의사항
 
@@ -210,7 +228,7 @@ appendfsync everysec   # always | everysec | no
 **Collection 안에 너무 많은 아이템을 저장하지 마세요.** Hash/Set/Sorted Set은 규격상 2³²-1 요소까지 가능하지만, 큰 컬렉션은 O(N) 명령(예: `HGETALL`)과 메모리 사용으로 문제가 될 수 있습니다. `redis-cli --bigkeys`로 진단하세요.
 
 - Hash, Sorted Set, Set은 메모리를 많이 사용합니다
-- Redis 7.0부터는 listpack 기반 인코딩(`hash-max-listpack-entries` 등)을 사용하면 메모리 효율이 개선되지만, 속도는 다소 느려집니다
+- 작은 컬렉션은 listpack으로 압축 저장되고, `hash-max-listpack-entries` 같은 임계값을 넘으면 해시테이블·스킵리스트 인코딩으로 전환됩니다. 임계값을 크게 올리면 메모리는 줄지만 조회가 선형 탐색에 가까워집니다
 - Hash는 Redis 7.4부터 `HEXPIRE` 계열 명령으로 필드별 TTL이 가능하고, Set/Sorted Set/List는 여전히 키 단위 TTL만 지원합니다
 
 ### 2. 메모리 관리
@@ -243,13 +261,13 @@ Redis 8.6 기준 축출 정책은 다음과 같습니다:
 
 ### 3. 단일 스레드와 `io-threads`
 
-**Redis는 여전히 단일 스레드 아키텍처입니다.** 명령 실행 자체는 한 번에 하나씩 처리됩니다.
+**명령 실행은 여전히 한 번에 하나씩입니다.** Redis 6.0에 도입된 `io-threads`는 소켓 읽기·쓰기와 프로토콜 파싱을 별도 스레드로 넘기는 설정이고, 명령 실행 자체를 병렬화하지는 않습니다.
 
-Redis 6.0에 도입된 **`io-threads`가 8.0에서 재구현**되어, **I/O와 프로토콜 파싱을 별도 스레드로 오프로딩**할 수 있습니다.
+`redis.conf`에서 이 스레딩은 **기본적으로 꺼져 있습니다.** 공식 설정 파일은 코어가 4개 이상인 머신에서만 켜기를 권하고, `io-threads 1`은 예전처럼 메인 스레드만 쓴다는 뜻이라고 적습니다.
 
 ```conf
 # redis.conf (기본 비활성)
-# io-threads 4   # 4코어 이상이면 3, 8코어 이상이면 7
+# io-threads 4
 ```
 
 **주의할 명령**
@@ -283,7 +301,7 @@ redis-cli --latency-history
 **비동기 복제 특성**
 
 - Replication은 **비동기 방식**입니다. Primary에서 ack된 쓰기도 failover 시 유실될 수 있습니다
-- `WAIT` 명령으로 N개 replica의 ack를 보장할 수 있지만, CP 강일관성이 되지는 않습니다
+- `WAIT` 명령으로 N개 replica의 ack를 확인할 수 있지만, 이것으로 CP 강일관성이 되지는 않습니다. 유실 확률을 크게 낮추는 장치일 뿐입니다
 
 **설정 지시어**
 
@@ -295,28 +313,30 @@ Redis 5.0부터 **slave 표기가 replica로 바뀌었고**, master/primary 표�
 
 **기타 주의사항**
 
-- `redis-cli --rdb` 명령은 메모리 스냅샷을 가져오기 때문에 서버가 죽을 수 있습니다 (운영 환경 주의)
-- Replication lag이 일정 이상 발생하면 연결을 끊고 다시 full sync를 시도하므로 부하가 발생할 수 있습니다
+- `redis-cli --rdb`는 복제 첫 동기화와 같은 경로로 RDB를 받아 갑니다. fork와 전체 데이터셋 전송이 일어나므로 운영 인스턴스에 아무 때나 걸지 않습니다
+- 연결이 끊긴 동안 밀린 양이 primary의 replication backlog를 넘어서면 partial resync가 불가능해져 **full sync**로 떨어집니다. 이때 fork와 전송 부하가 다시 발생합니다
 
 ### 5. 권장 운영 설정
 
 ```conf
 # 클라이언트 연결 수
-maxclients 10000   # 8.10.1 기본값. 필요에 따라 조정
+maxclients 10000   # 기본값. 파일 디스크립터 한도에 걸리면 실제 상한이 더 낮아짐
 
 # 영속성
 save ""           # RDB off (캐시용)
-appendonly no     # AOF off (캐시용)
+appendonly no     # AOF off (캐시용, 기본값)
 
-# 위험 명령 차단 (ACL 권고, rename-command는 8.10.1에서 deprecated)
+# 위험 명령은 rename-command 대신 ACL 로 차단
 # ACL SETUSER default -keys -flushall -flushdb -config
 
 # 보안
 requirepass <강력한_비밀번호>
 ```
 
+`maxclients`는 프로세스가 열 수 있는 파일 디스크립터 soft limit을 확인해 그보다 크면 자동으로 낮춰 잡습니다. 연결 수를 올릴 때는 `ulimit -n`도 같이 올려야 합니다. 명령 차단에는 `rename-command`를 쓰지 않는 편이 낫습니다 — 공식 설정 파일이 이 항목을 deprecated로 표시하고, 기본 사용자에서 명령을 제거하는 ACL 방식을 권합니다.
+
 `KEYS`와 예기치 않은 `save` 트리거는 대표적인 장애 원인입니다. `KEYS`는 O(N)이라 정규 애플리케이션 코드에서 사용하지 말아야 하고, `save` 설정은 "N초 안에 키가 M개 바뀌면 자동으로 RDB를 dump"하는데, 예상치 못한 시점에 fork가 발생해 메모리를 2배로 소비할 수 있습니다.
 
 ---
 
-이상으로 Redis 요약 정리를 마칩니다. Sentinel과 Cluster의 역할 차이, 영속성 메커니즘, 그리고 운영 시 피해야 할 함정들을 숙지하고 계시면 안정적인 Redis 운영에 큰 도움이 될 것입니다.
+Sentinel과 Cluster의 역할 차이, 영속성 메커니즘, 그리고 운영에서 피해야 할 함정 — 이 세 가지가 Redis 운영의 뼈대입니다. 버전이 올라가면서 라이선스와 자료형은 크게 바뀌었지만, 단일 스레드로 명령을 처리하고 fork로 디스크에 쓴다는 기본 구조는 그대로입니다.
