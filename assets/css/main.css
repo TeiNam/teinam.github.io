@@ -199,9 +199,9 @@ p { text-wrap: pretty; }
    그러면 `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 폭을 고정한다.
    마크다운 표에 `{: .col-table}` 을 붙여 쓴다. */
 .col-table { table-layout: fixed; }
-.col-table td:nth-child(1) { width: 20%; overflow-wrap: break-word; }
-.col-table td:nth-child(2) { width: 48%; }
-.col-table td:nth-child(3) { width: 32%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+.col-table td:nth-child(1) { width: 18%; overflow-wrap: break-word; }
+.col-table td:nth-child(2) { width: 56%; }
+.col-table td:nth-child(3) { width: 26%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
 /* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
@@ -231,7 +231,11 @@ p { text-wrap: pretty; }
 .ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
 /* page (about / work) — 단독 산문 페이지 */
-.page-body { padding: 52px 48px 72px; max-width: 72ch; }
+/* 읽기 폭 제한은 컨테이너가 아니라 자식에 둔다 — .prose·.docs-body 와 같은 규칙이다.
+   컨테이너를 72ch 로 묶으면 표가 그 안에 갇혀 칼럼이 짓눌린다. */
+.page-body { padding: 52px 48px 72px; }
+.page-body > * { max-width: 72ch; min-width: 0; }
+.page-body > table, .page-body > .table-scroll { max-width: 100%; }
 
 /* archive */
 .archive-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding: 44px 48px 22px; border-bottom: 1px solid var(--line); }
