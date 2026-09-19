@@ -1,13 +1,28 @@
 ---
 layout: default
 ---
-{%- comment %} 섹션마다 사이드바 트리가 다르다. front matter 의 nav_data 로 고르고,
-     없으면 docs_nav 를 쓴다 (_config.yml defaults 가 handbook 에 handbook_nav 를 지정) {% endcomment -%}
-{%- assign nav_key = page.nav_data | default: "docs_nav" -%}
-{%- assign nav_tree = site.data[nav_key] -%}
+{%- comment %} 가이드(여러 쪽으로 나뉜 한 주제)는 front matter 의 guide·order 두 줄로만 정의한다.
+     사이드바와 이전/다음을 같은 목록에서 계산하므로 페이지마다 prev/next 를 적지 않는다.
+     guide 가 없는 문서는 종전대로 nav_data(기본 docs_nav) 트리를 쓴다. {% endcomment -%}
+{%- assign guide_pages = "" -%}
+{%- if page.guide -%}
+  {%- assign guide_pages = site.pages | where: "guide", page.guide | sort: "order" -%}
+{%- endif -%}
+
 <div class="docs-shell">
   <nav class="docs-nav">
-    {%- for group in nav_tree %}
+    {%- if page.guide %}
+    {%- assign guide_home = guide_pages | first %}
+    <div class="nav-group">
+      <a class="nav-up" href="{{ '/docs/' | relative_url }}">← Docs</a>
+      <span class="label">{{ guide_home.title }}</span>
+      {%- for item in guide_pages %}
+      <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} class="is-current"{% endif %}>{{ item.nav_title | default: item.title }}</a>
+      {%- endfor %}
+    </div>
+    {%- else %}
+    {%- assign nav_key = page.nav_data | default: "docs_nav" %}
+    {%- for group in site.data[nav_key] %}
     <div class="nav-group">
       <span class="label">{{ group.group }}</span>
       {%- for item in group.items %}
@@ -15,14 +30,39 @@ layout: default
       {%- endfor %}
     </div>
     {%- endfor %}
+    {%- endif %}
   </nav>
 
   <div class="docs-body prose">
     <span class="mono dim breadcrumb">{{ page.breadcrumb | default: 'Docs' }}</span>
     <h1>{{ page.title }}</h1>
     {{ content }}
-    {%- comment %} prev/next 가 없으면 빈 가로줄만 남으므로 통째로 감춘다 {% endcomment %}
-    {%- if page.prev or page.next %}
+
+    {%- comment %} guide 가 있으면 목록에서 앞뒤를 찾는다. 배열 인덱싱 대신 순회로 잡아
+         Liquid 구현 차이를 피한다. guide 가 없는 문서는 front matter 의 prev/next 를 그대로 쓴다. {% endcomment -%}
+    {%- assign has_prev = false -%}
+    {%- assign has_next = false -%}
+    {%- if page.guide -%}
+      {%- assign found = false -%}
+      {%- for p in guide_pages -%}
+        {%- if found -%}
+          {%- unless has_next -%}{%- assign next_page = p -%}{%- assign has_next = true -%}{%- endunless -%}
+        {%- else -%}
+          {%- if p.url == page.url -%}
+            {%- assign found = true -%}
+          {%- else -%}
+            {%- assign prev_page = p -%}{%- assign has_prev = true -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if has_prev or has_next %}
+    <div class="doc-pager">
+      {%- if has_prev %}<a href="{{ prev_page.url | relative_url }}">← {{ prev_page.nav_title | default: prev_page.title }}</a>{% else %}<span></span>{% endif %}
+      {%- if has_next %}<a href="{{ next_page.url | relative_url }}">{{ next_page.nav_title | default: next_page.title }} →</a>{% endif %}
+    </div>
+    {%- elsif page.prev or page.next %}
     <div class="doc-pager">
       {%- if page.prev %}<a href="{{ page.prev.url | relative_url }}">← {{ page.prev.name }}</a>{% else %}<span></span>{% endif %}
       {%- if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.name }} →</a>{% endif %}

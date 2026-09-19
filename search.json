@@ -2,6 +2,14 @@
 permalink: /search.json
 sitemap: false
 ---
+{%- comment %}
+  헤더 검색의 색인. theme.js 가 title·excerpt·tags·category 를 이어 붙여 부분 문자열로 훑는다.
+
+  글(site.posts)은 excerpt 만 넣는다 — 본문은 길고, 제목·요약으로 찾는 편이 자연스럽다.
+  docs 는 본문 전체를 넣는다. 한 주제가 여러 쪽으로 나뉘어 있어 제목만으로는
+  "접속기록 3년" 같은 말이 어느 쪽에 있는지 찾을 수 없다.
+{% endcomment -%}
+{%- assign doc_pages = site.pages | where_exp: "p", "p.url contains '/docs/'" | sort: "url" -%}
 [
   {%- for post in site.posts %}
   {
@@ -11,6 +19,16 @@ sitemap: false
     "category": {{ post.category | default: '' | jsonify }},
     "tags": {{ post.tags | join: ' ' | jsonify }},
     "excerpt": {{ post.excerpt | strip_html | strip_newlines | strip | jsonify }}
+  },
+  {%- endfor %}
+  {%- for doc in doc_pages %}
+  {
+    "title": {{ doc.title | jsonify }},
+    "url": {{ doc.url | relative_url | jsonify }},
+    "date": {{ doc.updated | default: '' | jsonify }},
+    "category": {{ doc.breadcrumb | default: 'Docs' | jsonify }},
+    "tags": {{ doc.description | default: '' | jsonify }},
+    "excerpt": {{ doc.content | strip_html | strip_newlines | strip | jsonify }}
   }{%- unless forloop.last %},{% endunless %}
   {%- endfor %}
 ]
