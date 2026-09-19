@@ -197,11 +197,15 @@ p { text-wrap: pretty; }
 .table-scroll table { min-width: 100%; }
 /* 칼럼 폭을 내용 길이에 맡기면 긴 산문 칼럼이 폭을 다 먹고 나머지가 짓눌린다.
    그러면 `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 폭을 고정한다.
-   마크다운 표에 `{: .col-table}` 을 붙여 쓴다. */
+   마크다운 표에 `{: .col-table}` 을 붙여 쓴다.
+   양 끝 칼럼은 가장 긴 값 하나가 한 줄에 들어갈 만큼만 주고, 남는 폭은 산문 칼럼이 받는다.
+   기준값: 이름 `oracle-migration-analyzer` 25자, 스택 `Rust · MySQL 5.7+ / PostgreSQL 13–17` 36자.
+   퍼센트로 두는 이유 — `ch` 는 셀 자기 글꼴로 계산되는데 table-layout: fixed 는 첫 행(th)에서
+   폭을 정하고 th 와 td 의 글꼴이 달라서(10.5px 대 12px mono) 값이 어긋난다. */
 .col-table { table-layout: fixed; }
-.col-table td:nth-child(1) { width: 18%; overflow-wrap: break-word; }
-.col-table td:nth-child(2) { width: 56%; }
-.col-table td:nth-child(3) { width: 26%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+.col-table td:nth-child(1) { width: 16%; overflow-wrap: break-word; }
+.col-table td:nth-child(2) { width: 59%; }
+.col-table td:nth-child(3) { width: 25%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
 /* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
