@@ -38,6 +38,15 @@
     bar.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
   }, { passive: true });
 
+  // 표는 본문보다 넓게 쓰므로, 좁은 화면에서 넘칠 때 가로 스크롤 컨테이너로 감싼다
+  document.querySelectorAll('.prose table').forEach(function (t) {
+    if (t.parentElement.classList.contains('table-scroll')) return;
+    var w = document.createElement('div');
+    w.className = 'table-scroll';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+
   // 코드 복사
   document.querySelectorAll('.prose div.highlight, .prose pre').forEach(function (block) {
     if (block.querySelector('.copy-code')) return;
@@ -128,13 +137,24 @@
       setOpen(true);
     }
 
+    // 한국어에는 단어 경계가 없어 부분 문자열로 훑어야 한다. 그래서 docs 본문까지 색인하면
+    // 짧은 영문 질의가 다른 낱말 안에서 걸린다(ARIA → VARIABLE). 필터는 그대로 두고,
+    // 제목·설명에서 맞은 것을 본문에서만 맞은 것보다 위로 올려 노이즈를 눌러 둔다.
+    function scoreOf(d, q) {
+      if ((d.title || '').toLowerCase().indexOf(q) !== -1) return 0;
+      if ((d.tags || '').toLowerCase().indexOf(q) !== -1) return 1;
+      if ((d.category || '').toLowerCase().indexOf(q) !== -1) return 2;
+      if ((d.excerpt || '').toLowerCase().indexOf(q) !== -1) return 3;
+      return 4;
+    }
+
     function runSearch() {
       var q = input.value.trim().toLowerCase();
       if (!q) { setOpen(false); return; }
       loadIndex().then(function (all) {
-        render(all.filter(function (d) {
-          return (d.title + ' ' + d.excerpt + ' ' + d.tags + ' ' + d.category).toLowerCase().indexOf(q) !== -1;
-        }).slice(0, SEARCH_LIMIT));
+        var hits = all.filter(function (d) { return scoreOf(d, q) < 4; });
+        hits.sort(function (a, b) { return scoreOf(a, q) - scoreOf(b, q); });
+        render(hits.slice(0, SEARCH_LIMIT));
       }).catch(function () {
         showNote('검색을 불러오지 못했습니다');
       });

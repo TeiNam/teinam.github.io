@@ -145,7 +145,11 @@ p { text-wrap: pretty; }
 .toc a.lvl3 { padding-left: 26px; font-size: 12.5px; }
 .toc a:hover { text-decoration: none; color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--accent); }
-.prose { max-width: 70ch; display: flex; flex-direction: column; gap: 22px; }
+/* 읽기 폭 제한은 .prose 가 아니라 자식에 둔다. 표만 가운데 칼럼 전체를 쓰게
+   하려면 부모가 70ch 로 묶고 있으면 안 된다. */
+.prose { display: flex; flex-direction: column; gap: 22px; }
+.prose > * { max-width: 70ch; min-width: 0; }
+.prose > table, .prose > .table-scroll { max-width: 100%; }
 .prose > h1 { font-size: clamp(28px, 3.4vw, 42px); line-height: 1.18; }
 .prose h2 { font-size: 26px; margin-top: 12px; scroll-margin-top: 96px; }
 .prose h3 { font-size: 20px; margin-top: 8px; scroll-margin-top: 96px; }
@@ -178,10 +182,19 @@ p { text-wrap: pretty; }
   padding: 3px 8px; cursor: pointer; opacity: 0; transition: opacity 0.15s;
 }
 .prose div.highlight:hover .copy-code, .prose pre:hover .copy-code { opacity: 1; }
-.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
-.prose th { text-align: left; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--ink3); padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); }
-.prose td { padding: 11px 12px 11px 0; border-bottom: 1px solid var(--line2); color: var(--ink2); }
-.prose td:first-child { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.55; }
+.prose th { text-align: left; vertical-align: bottom; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--ink3); padding: 10px 16px 9px 0; border-bottom: 1px solid var(--line); }
+/* 셀 높이가 제각각인 표에서 middle 정렬은 짧은 셀을 허공에 띄운다. */
+.prose td { vertical-align: top; padding: 11px 16px 11px 0; border-bottom: 1px solid var(--line2); color: var(--ink2); }
+.prose th:last-child, .prose td:last-child { padding-right: 0; }
+/* 첫 칼럼에 mono 를 강제하면 Sentry·Mandrill 같은 고유명사까지 고정폭이 된다.
+   식별자는 마크다운에서 이미 백틱으로 감싸므로 code 가 mono 를 맡는다. */
+.prose td:first-child { color: var(--ink); }
+/* anywhere 는 min-content 폭 계산에 반영되므로 긴 식별자가 칼럼 폭을 밀어내지
+   않는다. break-word 는 반영되지 않아 여기서는 쓸 수 없다. */
+.prose th code, .prose td code { overflow-wrap: anywhere; }
+.table-scroll { overflow-x: auto; }
+.table-scroll table { min-width: 100%; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
 .share { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--line); }
@@ -230,11 +243,17 @@ p { text-wrap: pretty; }
 .nav-group a { font-size: 13.5px; line-height: 1.5; padding: 4px 0 4px 10px; border-left: 2px solid transparent; color: var(--ink2); }
 .nav-group a:hover { text-decoration: none; color: var(--ink); border-left-color: var(--accent); }
 .nav-group a.is-current { color: var(--ink); border-left-color: var(--accent); }
-.docs-body { padding: 36px 40px 64px; max-width: 72ch; }
+/* .prose 와 같은 이유로 폭 제한을 자식에 둔다 (표만 본문보다 넓게). */
+.docs-body { padding: 36px 40px 64px; }
+.docs-body > * { max-width: 72ch; min-width: 0; }
+.docs-body > table, .docs-body > .table-scroll { max-width: 100%; }
 .breadcrumb { font-size: 11px; }
 .docs-toc { border-left: 1px solid var(--line); padding: 36px 20px; }
 .doc-pager { display: flex; justify-content: space-between; gap: 12px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; }
 .doc-pager a { color: var(--ink2); }
+/* 가이드 안에서는 사이드바가 그 가이드의 쪽 목록으로 바뀌므로 Docs 로 돌아갈 길을 남긴다 */
+.nav-up { font-family: var(--mono); font-size: 11px; color: var(--ink2); padding-left: 0 !important; border-left: 0 !important; margin-bottom: 10px; }
+.nav-up:hover { color: var(--ink); border-left: 0 !important; }
 
 @media (max-width: 1100px) {
   .article-grid { grid-template-columns: 200px minmax(0, 1fr); }
