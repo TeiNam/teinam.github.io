@@ -3,12 +3,10 @@ date: 2019-02-18 21:16:00 +0900
 title: "주기적인 유지관리 Vacuuming #.4 배큠 시간을 줄이는 방법"
 category: postgresql
 excerpt: "튜닝을 시작하기 전에 전제 하나를 분명히 해 둡니다. PostgreSQL 공식 문서는 기본값·상한·하한·클램프 규칙만 규정하고, 워크로드별 권장값을 제시하지 않습니다. 아래에 나오는 숫자는 대부분 문서가 규정한 기본값이거나 한계값입니다. 그 밖의 값은 서드파티 저자의 경험치이거나 공식…"
-updated: 2026-09-18
+updated: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "4 / 4"
 ---
-
-> **다시 씀 (2026-09)** — 2019년에 쓴 글을 PostgreSQL 18 기준으로 다시 썼습니다.
 
 **시리즈** · [1. 배큠의 기초와 VACUUM FULL](/writing/vacuuming-maintenance/) · [2. dead tuple 을 지우지 못할 때](/writing/vacuuming-maintenance-2-blocked-cleanup/) · [3. 장애가 되는 경로](/writing/vacuuming-maintenance-3-outages/) · **4. 시간을 줄이는 방법**
 

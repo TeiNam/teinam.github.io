@@ -2,13 +2,11 @@
 date: 2019-02-19 23:31:35 +0900
 title: "PostgreSQL 버그 리포팅 가이드 라인"
 category: postgresql
-excerpt: "PostgreSQL 버그 리포팅 가이드 라인 ● 오픈소스 프로젝트의 장점과 단점은 명확하다. – 오라클이나 MSSQL 같이 비싼 라이센스 비용을 지불하지 않아도 상업적으로 이용이 가능하다. – 단점은 국내에 오픈소스의 프로젝트들의 유지보수 업체나 전문가가 많지 않아 장애처리가..."
-updated: 2026-09-17
+excerpt: "PostgreSQL 공식 버그 보고 지침 요약입니다. 버그 식별 기준, 리포트 작성 요령, 제출 경로(웹 양식, 메일링 리스트), 보안 취약점 보고 경로 등을 다룹니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — 버그 식별·리포트 작성 요령은 지금도 유효하나, 현재 공식 창구는 pgsql-bugs 메일이 아니라 웹 양식(postgresql.org/account/submitbug/)이고 보안 건은 security@postgresql.org 다. 본문의 postgresql.kr·database.sarang.net 링크 생존 여부는 확인 불가.
-
-**PostgreSQL 버그 리포팅 가이드라인**
+> **NOTE** — 이 글은 PostgreSQL 공식 [버그 보고 지침](https://www.postgresql.org/docs/current/bug-reporting.html)을 요약한 것입니다.
 
 오픈소스 프로젝트의 장점과 단점은 명확하다.
 
@@ -55,18 +53,23 @@ updated: 2026-09-17
 
 ## 버그 리포트를 보낼 곳
 
-`pgsql-bugs@postgresql.org`
+버그 리포트는 다음 두 가지 방법으로 제출할 수 있습니다:
 
-또는 프로젝트 웹사이트에서 버그 리포트 웹 양식에 입력한다.
+1. **웹 양식** (권장): https://www.postgresql.org/account/submitbug/
+2. **메일링 리스트**: `pgsql-bugs@lists.postgresql.org`
 
-- 버그 리포트에 보안 관련 사항이 있어 공용 아카이브에 공개되지 않기를 원한다면 `security@postgresql.org`로 개인적으로 리포트할 수 있다.
-- 프로젝트가 제공하는 문서에 문제가 있을 경우 `pgsql-doc@postgresql.org`로 보낸다.
-- 개발 제안, 플랫폼 이식 등의 문제는 개발자의 메일링 리스트 `pgsql-hackers@postgresql.org`로 보낸다.
+웹 양식으로 제출한 리포트도 메일링 리스트로 전달됩니다.
 
-> **참고:** 리포트는 영어로 작성해서 보내야 한다.
+### 다른 종류의 리포트
 
-## 참고 사이트
+- **보안 취약점**: 공용 아카이브에 공개되지 않기를 원한다면 `security@postgresql.org`로 비공개 리포트할 수 있습니다.
+- **문서 문제**: `pgsql-docs@lists.postgresql.org`로 보냅니다.
+- **플랫폼 이식 문제**: 지원되지 않는 플랫폼의 이식성 문제는 `pgsql-hackers@lists.postgresql.org`로 보냅니다.
 
-- PostgreSQL 프로젝트 홈페이지: https://www.postgresql.org/
-- PostgreSQL 한국 홈페이지: http://postgresql.kr/
-- 데이터베이스사랑.net: http://database.sarang.net
+> **WARNING** — 사용자 질문 리스트(`pgsql-sql`, `pgsql-general`)에 버그를 보고하지 마십시오. 이들 리스트는 질문에 답하기 위한 것이며 버그를 수정하지 않습니다. 일반 버그 리포트를 개발자 리스트(`pgsql-hackers`)로도 보내지 마십시오.
+
+## 참고
+
+- PostgreSQL 공식 홈페이지: https://www.postgresql.org/
+- PostgreSQL 공식 버그 보고 지침: https://www.postgresql.org/docs/current/bug-reporting.html
+- PostgreSQL 버그 제출 웹 양식: https://www.postgresql.org/account/submitbug/

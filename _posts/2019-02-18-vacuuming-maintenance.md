@@ -3,12 +3,10 @@ date: 2019-02-18 21:13:43 +0900
 title: "주기적인 유지관리 Vacuuming #.1 배큠의 기초와 VACUUM FULL"
 category: postgresql
 excerpt: "PostgreSQL 문서는 배큠을 각 테이블마다 정기적으로 실행해야 하는 이유를 네 가지로 정리합니다. 네 번째는 성질이 다른 카운터 두 개를 묶은 것이라 나눠 봅니다. 서술 기준은 PostgreSQL 18(2025-09-25 릴리스, 최신 GA)입니다. UPDATE 나 DELETE…"
-updated: 2026-09-18
+updated: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "1 / 4"
 ---
-
-> **다시 씀 (2026-09)** — 2019년에 쓴 글을 PostgreSQL 18 기준으로 다시 썼습니다.
 
 **시리즈** · **1. 배큠의 기초와 VACUUM FULL** · [2. dead tuple 을 지우지 못할 때](/writing/vacuuming-maintenance-2-blocked-cleanup/) · [3. 장애가 되는 경로](/writing/vacuuming-maintenance-3-outages/) · [4. 시간을 줄이는 방법](/writing/vacuuming-maintenance-4-reducing-time/)
 
@@ -145,12 +143,14 @@ aggressive vacuum 의 발동 조건과 anti-wraparound vacuum(랩어라운드 �
 
 ### 온라인 재구성 대안 — CLUSTER · pg_repack · pg_squeeze
 
-| 방법 | 락 | 인덱스 재생성 | 추가 디스크 | 코어 여부 |
-|---|---|---|---|---|
-| `CLUSTER` | 전 구간 `ACCESS EXCLUSIVE` | 예 | 테이블+인덱스 (정렬 경로면 테이블 2배+인덱스) | 코어 |
-| `REINDEX CONCURRENTLY` | `SHARE UPDATE EXCLUSIVE` | 예 (인덱스만) | 인덱스 사본 | 코어 |
-| `pg_repack` | 시작·종료에 짧은 `ACCESS EXCLUSIVE`, 중간은 `SHARE UPDATE EXCLUSIVE` | 예 | 테이블+인덱스의 약 2배 | 확장 |
-| `pg_squeeze` | 마지막 확정 단계에만 exclusive lock | 예 | 테이블+인덱스의 약 2배 | 확장 |
+| 방법 | 락 | 추가 디스크 | 제공 형태 |
+|---|---|---|---|
+| `CLUSTER` | 전 구간 `ACCESS EXCLUSIVE` | 테이블+인덱스 (정렬 경로면 테이블 2배+인덱스) | 코어 |
+| `REINDEX CONCURRENTLY` | `SHARE UPDATE EXCLUSIVE` | 인덱스 사본 | 코어 |
+| `pg_repack` | 시작·종료에 짧은 `ACCESS EXCLUSIVE`, 중간은 `SHARE UPDATE EXCLUSIVE` | 테이블+인덱스의 약 2배 | 확장 |
+| `pg_squeeze` | 마지막 확정 단계에만 exclusive lock | 테이블+인덱스의 약 2배 | 확장 |
+
+네 방법 모두 인덱스를 다시 만듭니다. `REINDEX CONCURRENTLY` 만 인덱스에서 끝나고, 나머지 셋은 테이블까지 다시 씁니다.
 
 **`CLUSTER`** 는 VACUUM FULL 과 같은 재작성 경로에 지정 인덱스 순서의 물리적 재정렬을 더합니다. `MAINTAIN` 권한이 필요하고, 정렬은 일회성이라 이후 갱신분은 정렬되지 않습니다. 순서 유지에는 `fillfactor` 를 100 아래로 두는 것이 도움이 됩니다. 실행 후 `ANALYZE` 를 권고하고, 15 부터 파티션 테이블을 지원합니다(이때 인덱스 생략 불가).
 

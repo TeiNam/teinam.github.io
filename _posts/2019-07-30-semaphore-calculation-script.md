@@ -2,19 +2,19 @@
 date: 2019-07-30 11:49:05 +0900
 title: "시스템 사양에 맞는 세마포어 값 계산해주는 스크립트"
 category: database
-excerpt: "시스템 사양에 맞는 세마포어 값 계산해주는 스크립트 shmmax, shmall 계산 DB를 설치하고 사용 할 때, 많이 수정하는 OS 커널 파라미터 입니다. postgresql 이나, mysql의 max_connections 값을 조정하거나 오라클을 설치할 때도 기본적으로 수정을…"
-updated: 2026-09-17
+excerpt: "System V 공유 메모리 파라미터(shmmax, shmall)를 시스템 메모리 기준으로 계산하는 스크립트입니다. PostgreSQL은 기본 설정에서 mmap을 사용하므로 필요하지 않지만, Oracle이나 PostgreSQL의 shared_memory_type=sysv 설정 시 유용합니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — 스크립트의 shmmax/shmall 계산식 자체는 그대로 동작하지만, PostgreSQL 은 기본적으로 익명 mmap 공유 메모리를 사용해 공식 문서가 '기본 공유 메모리 설정으로 충분하다'고 명시한다(shared_memory_type=sysv 로 되돌린 경우만 예외). System V 공유 메모리를 쓰는 Oracle 계열에는 여전히 유효하다.
+## 공유 메모리 파라미터 계산 스크립트
 
-## 시스템 사양에 맞는 세마포어 값 계산해주는 스크립트
+### 적용 대상
 
-### shmmax, shmall 계산
+이 스크립트는 **System V 공유 메모리**를 사용하는 데이터베이스의 `shmmax`, `shmall` 값을 계산합니다.
 
-DB를 설치하고 사용할 때 많이 수정하는 OS 커널 파라미터입니다.
+**PostgreSQL**: 기본 설정(`shared_memory_type = mmap`)에서는 익명 mmap 공유 메모리를 사용하므로 이 스크립트가 필요하지 않습니다. `shared_memory_type = sysv`로 명시한 경우에만 적용됩니다.
 
-PostgreSQL이나 MySQL의 max_connections 값을 조정하거나 Oracle을 설치할 때도 기본적으로 수정을 합니다.
+**Oracle 계열**: System V 공유 메모리를 사용하므로 여전히 유효합니다.
 
 ### shmsetup.sh
 
@@ -56,5 +56,23 @@ echo kernel.shmmax = $shmmax
 echo \# Maximum number of shared memory segments in pages
 echo kernel.shmall = $shmall
 ```
+
+### 파라미터 설명
+
+- `kernel.shmmax` — 단일 공유 메모리 세그먼트의 최대 크기 (바이트)
+- `kernel.shmall` — 시스템 전체 공유 메모리의 최대 크기 (페이지 수)
+
+스크립트는 물리 메모리의 50%를 공유 메모리로 할당할 수 있도록 값을 계산합니다.
+
+### 적용 방법
+
+```bash
+./shmsetup.sh >> /etc/sysctl.conf
+sysctl -p
+```
+
+### System V 세마포어
+
+PostgreSQL의 세마포어 요구량은 `postgres -D $PGDATA -C num_os_semaphores` 명령으로 확인할 수 있습니다. Linux와 FreeBSD는 POSIX 세마포어를 사용하므로 커널 제한이 없습니다.
 
 출처: <https://gist.github.com/redterror/6732387>

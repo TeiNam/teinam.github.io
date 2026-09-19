@@ -2,29 +2,53 @@
 date: 2019-11-15 03:36:59 +0900
 title: "PostgreSQL Localization"
 category: postgresql
-excerpt: "PostgreSQL Localization 로케일 지원은 initdb를 이용해 클러스터를 구성하면 자동으로 초기화 됩니다. 특별히 옵션을 넣지 않으면 en_US.UTF8로 설정이 됩니다. LC_COLLATE String 정렬 순서 LC_CTYPE 문자 분류 (어떤글자인지, 대문자도…"
-updated: 2026-09-17
+excerpt: "PostgreSQL 로케일 지원은 initdb를 이용해 클러스터를 구성하면 자동으로 초기화됩니다. 옵션을 지정하지 않으면 환경 변수에서 상속되며, 환경 변수가 없으면 C 로케일로 설정됩니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — LC_* 카테고리, initdb 로케일 결정, C 로케일과 LIKE 인덱스 관계 설명은 현재도 유효하다. 다만 15 부터 ICU, 17 부터 builtin 로케일 프로바이더가 추가돼 CREATE DATABASE 에 LOCALE_PROVIDER·ICU_LOCALE·BUILTIN_LOCALE 옵션이 있고, 16 에서 읽기 전용 변수 lc_collate/lc_ctype 이 제거됐다.
+로케일 지원은 `initdb`를 이용해 클러스터를 구성하면 자동으로 초기화됩니다. `initdb`는 실행 환경의 로케일 설정을 기본으로 사용합니다. 환경 변수(`LC_ALL`, `LC_COLLATE`, `LANG` 등)가 설정되지 않았다면 `C` 로케일로 기본값이 설정됩니다.
 
-## PostgreSQL Localization
-
-> **전제조건:** PostgreSQL 9.1 이상, initdb 실행 권한
-
-- 로케일 지원은 initdb를 이용해 클러스터를 구성하면 자동으로 초기화됩니다.
-- 옵션을 지정하지 않으면 en\_US.UTF8로 설정됩니다.
-
-|  |  |
+| 카테고리 | 설명 |
 | --- | --- |
-| LC\_COLLATE | String 정렬 순서 |
-| LC\_CTYPE | 문자 분류 (어떤 글자인지, 대문자도 동일한지) |
-| LC\_MESSAGES | 메시지 언어 |
-| LC\_MONETARY | 통화 형식 |
-| LC\_NUMERIC | 숫자 형식 |
-| LC\_TIME | 날짜 및 시간 형식 |
+| `LC_COLLATE` | String 정렬 순서 |
+| `LC_CTYPE` | 문자 분류 (어떤 글자인지, 대문자도 동일한지) |
+| `LC_MESSAGES` | 메시지 언어 |
+| `LC_MONETARY` | 통화 형식 |
+| `LC_NUMERIC` | 숫자 형식 |
+| `LC_TIME` | 날짜 및 시간 형식 |
 
 **예:** 로케일을 한국으로 설정하되 통화 형식은 달러를 쓴다면, `initdb --locale=ko_KR --lc-monetary=en_US`로 클러스터를 구성하면 됩니다.
+
+## 로케일 프로바이더
+
+PostgreSQL 15부터 로케일 프로바이더를 선택할 수 있습니다. 프로바이더는 로케일 동작을 정의하는 라이브러리를 지정합니다.
+
+| 프로바이더 | 설명 |
+| --- | --- |
+| `libc` | 운영체제 C 라이브러리 로케일 사용 (기본값) |
+| `icu` | 외부 ICU 라이브러리 사용 (빌드 시 ICU 지원 필요) |
+| `builtin` | 내장 연산 사용 (PostgreSQL 17+). `C`, `C.UTF-8`, `PG_UNICODE_FAST` 로케일만 지원 |
+
+**ICU 프로바이더 장점:**
+- 운영체제와 데이터베이스 인코딩과 무관하게 동작
+- 플랫폼 간 이식 시 동일한 결과 보장
+- BCP 47 언어 태그로 다양한 콜레이션 옵션 지원
+
+**예제:**
+```sql
+-- ICU 프로바이더로 데이터베이스 생성
+CREATE DATABASE mydb
+    LOCALE_PROVIDER = icu
+    ICU_LOCALE = 'ko-KR'
+    TEMPLATE = template0;
+
+-- builtin 프로바이더로 데이터베이스 생성 (PostgreSQL 17+)
+CREATE DATABASE fastdb
+    LOCALE_PROVIDER = builtin
+    BUILTIN_LOCALE = 'C.UTF-8'
+    ENCODING = 'UTF8'
+    TEMPLATE = template0;
+```
 
 PostgreSQL에서 C 또는 POSIX가 아닌 다른 로케일을 사용할 때의 단점은 성능입니다. 문자 처리가 느려지고 LIKE에서 사용되는 일반 인덱스를 사용하지 못합니다. 이러한 이유로, 실제로 필요한 경우에만 로케일을 사용해야 합니다.
 
@@ -32,13 +56,19 @@ C가 아닌 로케일에서 LIKE 절을 사용한 인덱스를 PostgreSQL이 이
 
 시스템에 로케일 지원이 안 되는 것처럼 하고 싶으면 특수한 로케일 이름인 C 또는 동등하게 POSIX를 사용해야 합니다.
 
-일부 로케일 카테고리는 데이터베이스가 생성될 때 고정된 값이어야 합니다.
+## 로케일 카테고리 변경 가능 여부
 
-서로 다른 데이터베이스에 대해 서로 다른 설정을 사용할 수는 있지만, 데이터베이스가 생성된 다음에는 설정을 변경할 수 없습니다.
+`LC_COLLATE`와 `LC_CTYPE`는 데이터베이스 생성 시 고정됩니다. 이들은 인덱스 정렬 순서에 영향을 미치므로 변경할 수 없으며, 데이터베이스 운영 중 변경하면 인덱스 손상이 발생합니다. 서로 다른 데이터베이스는 서로 다른 `LC_COLLATE`/`LC_CTYPE` 설정을 가질 수 있지만, 생성 후에는 변경할 수 없습니다.
 
-인덱스 정렬 순서에 영향을 미치므로 고정된 상태로 유지되어야 하며, 데이터베이스 운영 중 변경하면 인덱스 손상이 발생합니다.
+나머지 로케일 카테고리(`LC_MESSAGES`, `LC_MONETARY`, `LC_NUMERIC`, `LC_TIME`)는 언제든지 변경 가능합니다. 이들은 서버 구성 파라미터로 제공되며, `initdb`에서 선택된 값은 `postgresql.conf`에 기본값으로 작성됩니다. `postgresql.conf`에서 제거하면 서버가 실행 환경에서 설정을 상속받습니다.
 
-initdb에서 선택된 값은 postgresql.conf에 작성되어 서버 시작 시 기본값으로 사용됩니다. 이 값을 postgresql.conf에서 제거하면 서버가 실행 환경에서 설정을 상속받습니다.
+> **NOTE** — PostgreSQL 16부터 `lc_collate`와 `lc_ctype`는 서버 파라미터가 아니라 데이터베이스 속성입니다. `SHOW lc_collate;` 명령은 오류를 발생시킵니다. 대신 `pg_database` 카탈로그를 조회합니다:
+>
+> ```sql
+> SELECT datcollate, datctype
+> FROM pg_database
+> WHERE datname = current_database();
+> ```
 
 리눅스가 처음부터 ko\_KR.UTF8로 설정되어 있다면, initdb 시 옵션을 넣지 않아도 ko\_KR.UTF8로 설정됩니다.
 

@@ -2,18 +2,15 @@
 date: 2020-09-03 11:58:24 +0900
 title: "MongoDB 시작하기"
 category: mongodb
-excerpt: "MongoDB 시작하기 데이터베이스 생성 만들고자 하는 데이터베이스 명을 use 뒤에 넣어줍니다. 바로 생성되는 것은 아니고 use database 후에 collection이 생성이 되면 database가 따라서 생성이 됩니다. Database의 이름을 변경하는 명령어는 존재하지…"
-updated: 2026-09-17
+excerpt: "MongoDB의 데이터베이스와 컬렉션을 생성·조회·삭제하는 기본 명령을 정리합니다. mongosh 셸에서 사용하는 use, show dbs, db.createCollection(), db.dropDatabase() 명령과 데이터베이스 상태 조회 방법을 다룹니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — use, show dbs, db.dropDatabase(), db.getCollectionInfos(), db.serverStatus() 는 현재도 동일하게 동작합니다. 예제는 레거시 `mongo` 셸(6.0 에서 제거) 기준이고 출력에 찍힌 4.4.0 은 2024-02-29 EOL 버전이므로 `mongosh` 와 지원 버전(7.0 이상)으로 다시 확인해야 합니다.
+## 데이터베이스 생성
 
-### MongoDB 시작하기
+생성할 데이터베이스 명을 use 뒤에 입력합니다. 바로 생성되지 않으며, use database 후에 collection이 생성되면 database가 생성됩니다. Database의 이름을 변경하는 명령어는 존재하지 않으며, 생성과 삭제만 가능합니다.
 
-#### 데이터베이스 생성
-
-생성할 데이터베이스 명을 use 뒤에 입력합니다. 바로 생성되지 않으며, use database 후에 collection이 생성되면 database가 생성됩니다.  
-Database의 이름을 변경하는 명령어는 존재하지 않으며, 생성과 삭제만 가능합니다.
+아래 예제는 `mongosh` 셸에서 실행합니다. 레거시 `mongo` 셸은 MongoDB 6.0에서 제거됐습니다.
 
 ```bash
 > use mydata
@@ -26,7 +23,7 @@ switched to db mydata
 
 이렇게 데이터베이스로 이동해서 collection을 생성하면 데이터베이스가 생성됩니다.
 
-#### 데이터베이스 조회
+## 데이터베이스 조회
 
 show dbs로 조회한다. 생성된 데이터베이스의 목록과 사용 중인 용량을 보여준다.
 
@@ -47,7 +44,7 @@ db 명령으로 현재 접속되어 있는 데이터베이스를 알 수 있다.
 myData
 ```
 
-#### 데이터베이스 삭제
+## 데이터베이스 삭제
 
 use database 명령으로 생성된 해당 데이터베이스로 접속합니다. db.dropDatabase() 명령으로 데이터베이스를 삭제한다.
 
@@ -65,7 +62,7 @@ local 0.000GB
 testDB 0.000GB
 ```
 
-#### 데이터베이스 상태 조회
+## 데이터베이스 상태 조회
 
 - db.getCollectionInfos() – 현재 데이터베이스의 컬렉션들의 정보를 리스트로 반환합니다. 이름과 타입, UUID 정보를 얻습니다.
 
@@ -95,7 +92,7 @@ testDB 0.000GB
 ]
 ```
 
-- db.serverStatus() – 호스트, 프로세스ID, LOCK 옵션, 스토리지 엔진 이름, 스토리지 엔진 통계와 같은 정보를 제공합니다.
+- db.serverStatus() – 호스트, 프로세스ID, LOCK 옵션, 스토리지 엔진 이름, 스토리지 엔진 통계와 같은 정보를 제공합니다. 아래 예제 출력은 4.4.0(2024-02-29 지원 종료) 기준입니다. 현행 지원 버전은 7.0/8.0/8.3입니다.
 
   
 ```json

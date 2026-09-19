@@ -2,34 +2,55 @@
 date: 2019-02-23 01:42:04 +0900
 title: "UID 일관 변경"
 category: etc
-excerpt: "Linux나 Unix 에서 RAC나 HA 구성중에 양쪽 노드에 유저명은 같은데 UID가 다르면 설치가 안되는 경우가 발생. 이중화 작업에는 항상 UID를 맞춰줘야 합니다. UID가 같지 않을경우 일괄 변경 하는 방법 $ usermod -u 501 oracle..."
-updated: 2026-09-17
+excerpt: "Linux나 Unix에서 RAC나 HA 구성 시 양쪽 노드의 UID가 다르면 설치가 실패할 수 있습니다. usermod로 UID를 변경한 후 find로 파일 소유권을 일괄 변경하는 방법을 정리합니다."
+updated: 2026-09-20
 ---
 
-> **전제조건:** root 권한이 필요합니다.
-
-Linux나 Unix에서 RAC나 HA 구성 중에 양쪽 노드에 유저명은 같은데 UID가 다르면 설치가 안 되는 경우가 발생합니다.
+Linux나 Unix에서 RAC나 HA 구성 시 양쪽 노드에 유저명은 같은데 UID가 다르면 설치가 실패하는 경우가 발생합니다. NFS를 사용하는 환경에서는 UID가 일치하지 않으면 파일 접근 권한 문제가 발생합니다.
 
 이중화 작업에는 항상 UID를 맞춰야 합니다.
 
-UID가 같지 않을 경우 일괄 변경하는 방법
+> **WARNING** — UID를 변경하는 동안 해당 사용자로 실행 중인 프로세스가 없어야 합니다. 사용자가 로그인되어 있거나 프로세스가 실행 중이면 `usermod` 가 실패하거나 파일 소유권이 불일치할 수 있습니다. 변경 전에 `ps -u <username>` 으로 확인하고, 실행 중인 프로세스를 종료하거나 해당 사용자를 로그아웃시킵니다.
+
+## UID 변경 방법
+
+예를 들어 `oracle` 사용자의 UID를 502에서 501로 변경한다고 가정합니다.
 
 ```bash
-$ usermod -u 501 oracle
+# usermod -u 501 oracle
 ```
 
-위와 같이 바꿔주면 기존에 oracle 계정으로 생성했던 파일들이 전부 유저명이 아닌 UID로 표시됩니다.
+`usermod` 는 홈 디렉터리 안의 파일 소유권만 자동으로 변경합니다. 홈 디렉터리 밖에 있는 파일들은 여전히 이전 UID (502)를 가리키므로, `ls -l` 로 확인하면 유저명 대신 숫자 502로 표시됩니다.
 
-그럴 경우
+## 파일 소유권 일괄 변경
+
+홈 디렉터리 밖의 모든 파일 소유권을 새 UID로 변경합니다.
 
 ```bash
-$ find / -user 502 -exec chown -h oracle {} \;
+# find / -user 502 -exec chown -h oracle {} \;
 ```
 
-기존 502번으로 되어 있던 권한이 oracle로 변경되고 id를 확인해 보면 501로 바뀝니다.
+이 명령은 시스템 전체(`/`)에서 UID 502로 소유된 모든 파일을 찾아 `oracle` 사용자로 변경합니다. `-h` 옵션은 심볼릭 링크 자체의 소유권을 변경합니다.
+
+## 그룹 일괄 변경
+
+마찬가지로 GID를 변경한 경우, 파일의 그룹 소유권을 일괄 변경할 수 있습니다.
 
 ```bash
-$ find / -user oracle -exec chgrp -h dba {} \;
+# groupmod -g 501 dba
+# find / -group 502 -exec chgrp -h dba {} \;
 ```
 
-이렇게 하면 그룹을 일괄 변경할 수 있습니다.
+또는 특정 사용자의 모든 파일 그룹을 변경하려면:
+
+```bash
+# find / -user oracle -exec chgrp -h dba {} \;
+```
+
+## 추가 작업
+
+UID/GID 변경 후에는 다음 항목도 수동으로 확인하고 변경해야 합니다.
+
+- **crontab 파일**: `/var/spool/cron/<username>` 의 소유권
+- **at 작업**: `/var/spool/at/` 아래의 작업 파일 소유권
+- **NIS 환경**: NIS 서버에서도 동일하게 변경해야 합니다

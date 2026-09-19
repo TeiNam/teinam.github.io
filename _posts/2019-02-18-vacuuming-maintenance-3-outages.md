@@ -3,12 +3,10 @@ date: 2019-02-18 21:15:00 +0900
 title: "주기적인 유지관리 Vacuuming #.3 배큠 시간이 늘어나 장애가 될 때"
 category: postgresql
 excerpt: "배큠이 오래 걸리는 이유를 dead tuple 개수로 설명하는 것은 대개 틀립니다. 2편에서 본 Percona 벤치마크에서 dead 개수는 같고 분포만 다르게 두었을 때의 결과가 이를 보여줍니다(인덱스 0개, 1000만 행 × 128B ≈ 172,414 힙 페이지 ≈ 1.3GB, VA…"
-updated: 2026-09-18
+updated: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "3 / 4"
 ---
-
-> **다시 씀 (2026-09)** — 2019년에 쓴 글을 PostgreSQL 18 기준으로 다시 썼습니다.
 
 **시리즈** · [1. 배큠의 기초와 VACUUM FULL](/writing/vacuuming-maintenance/) · [2. dead tuple 을 지우지 못할 때](/writing/vacuuming-maintenance-2-blocked-cleanup/) · **3. 장애가 되는 경로** · [4. 시간을 줄이는 방법](/writing/vacuuming-maintenance-4-reducing-time/)
 
@@ -156,18 +154,34 @@ This command would create a multixact with %u members, but the remaining space i
 - **배큠이 현실적으로 끝나지 않음** — Sentry: 구형 테스트 머신이 single-user mode 에서 "going on **24 hours**" 째 배큠 중이었습니다. Mandrill: "would take many days", 튜닝 후에도 "days or even weeks", 최악 추정 **40일**.
 
 마지막 두 항목이 특히 중요합니다. **장애 중에 "배큠을 끝까지 돌린다"는 선택지는 자주 성립하지 않습니다.** 그래서 공개 사례들의 실제 탈출 수단은 대부분 배큠 완주가 아니라 데이터나 작업량을 제거하는 쪽이었습니다.
+
 ## 공개된 장애 사례에서 배울 것
 
-| 사례 | 시점 | 유형 | 진짜 원인 | 탈출 수단 | 공개 다운타임 |
-|---|---|---|---|---|---|
-| Sentry | 2015-07-20 | XID 랩어라운드 | 배큠이 부하를 못 따라감 + 관측 부재 | 하드웨어 페일오버 + **TRUNCATE** | 미국 업무일 대부분 |
-| Mandrill | 2019-02-04~06 | XID 랩어라운드 | 샤드 편향으로 특정 샤드 autovacuum 낙오·실패 | **TRUNCATE**(대형 테이블 2개) | 약 40.5시간(발송 80% 유지) |
-| Duffel | 2021-11-22 | anti-wraparound vacuum × DDL 락 | 타임아웃 없는 DDL | DB 재시작 | 2h17m |
-| BattleMetrics | 2022-03-27 | XID 랩어라운드 | **인덱스 손상으로 배큠 실패** + XID 모니터링 부재 | **single-user mode 에서 DROP INDEX** | DB 복구 약 3시간, 전체 약 21시간 |
-| Metronome | 2025-05-10~19 | **MultiXact 멤버 공간** 소진 | FK × 동시 INSERT 의 O(n²) 멤버 증가 + 백필 | **non-index vacuum** + 백필·컨슈머 완전 정지 | 4회 × 각 1시간 이상 |
-| 익명 SaaS | 2026-02 | XID 랩어라운드 | **autovacuum 을 껐다 잊음** | 장기 트랜잭션 종료 + 수동 `VACUUM FREEZE` | 미공개 |
-| Figma | 2020-01-21~22 | (랩어라운드 아님) | 플래너 오추정. aggressive vacuum 은 악화 요인 | 쿼리 취소·IOPS 증설·버전 업그레이드 | 점검 창 약 75분 + 간헐 |
-| Joyent Manta | 2015-07-27 | XID 랩어라운드(2차 서술) | — | — | "10-hour outage"(2차 인용) |
+무엇이 터졌는지를 먼저 봅니다.
+
+| 사례 | 시점 | 유형 | 진짜 원인 |
+|---|---|---|---|
+| Sentry | 2015-07-20 | XID 랩어라운드 | 배큠이 부하를 못 따라감 + 관측 부재 |
+| Mandrill | 2019-02-04~06 | XID 랩어라운드 | 샤드 편향으로 특정 샤드 autovacuum 낙오·실패 |
+| Duffel | 2021-11-22 | anti-wraparound vacuum × DDL 락 | 타임아웃 없는 DDL |
+| BattleMetrics | 2022-03-27 | XID 랩어라운드 | **인덱스 손상으로 배큠 실패** + XID 모니터링 부재 |
+| Metronome | 2025-05-10~19 | **MultiXact 멤버 공간** 소진 | FK × 동시 INSERT 의 O(n²) 멤버 증가 + 백필 |
+| 익명 SaaS | 2026-02 | XID 랩어라운드 | **autovacuum 을 껐다 잊음** |
+| Figma | 2020-01-21~22 | (랩어라운드 아님) | 플래너 오추정. aggressive vacuum 은 악화 요인 |
+| Joyent Manta | 2015-07-27 | XID 랩어라운드(2차 서술) | — |
+
+그다음은 어떻게 빠져나왔는지입니다.
+
+| 사례 | 탈출 수단 | 공개 다운타임 |
+|---|---|---|
+| Sentry | 하드웨어 페일오버 + **TRUNCATE** | 미국 업무일 대부분 |
+| Mandrill | **TRUNCATE**(대형 테이블 2개) | 약 40.5시간(발송 80% 유지) |
+| Duffel | DB 재시작 | 2h17m |
+| BattleMetrics | **single-user mode 에서 DROP INDEX** | DB 복구 약 3시간, 전체 약 21시간 |
+| Metronome | **non-index vacuum** + 백필·컨슈머 완전 정지 | 4회 × 각 1시간 이상 |
+| 익명 SaaS | 장기 트랜잭션 종료 + 수동 `VACUUM FREEZE` | 미공개 |
+| Figma | 쿼리 취소·IOPS 증설·버전 업그레이드 | 점검 창 약 75분 + 간헐 |
+| Joyent Manta | — | "10-hour outage"(2차 인용) |
 
 **Duffel(2021)의 사슬은 세 단입니다.** 검색 결과를 시간 단위 파티션으로 저장하고(30분 만료) 파티션 생성·삭제 잡이 DDL 을 발행하는 구조였습니다. anti-wraparound autovacuum 이 `SHARE UPDATE EXCLUSIVE` 를 쥐고 있었고, 그 자체는 DML 을 막지 않지만 **파티션 생성 DDL 이 대기**하고, 그 DDL 이 락 큐에서 앞서면서 **모든 INSERT 가 뒤에 줄을 섰습니다.** 로그에 남은 두 줄이 사슬을 그대로 보여줍니다.
 
