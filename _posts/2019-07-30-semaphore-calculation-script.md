@@ -1,7 +1,7 @@
 ---
 date: 2019-07-30 11:49:05 +0900
 title: "시스템 사양에 맞는 세마포어 값 계산해주는 스크립트"
-category: dbops
+category: database
 excerpt: "시스템 사양에 맞는 세마포어 값 계산해주는 스크립트 shmmax, shmall 계산 DB를 설치하고 사용 할 때, 많이 수정하는 OS 커널 파라미터 입니다. postgresql 이나, mysql의 max_connections 값을 조정하거나 오라클을 설치할 때도 기본적으로 수정을…"
 updated: 2026-09-17
 ---

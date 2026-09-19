@@ -1,7 +1,7 @@
 ---
 date: 2019-08-09 00:30:17 +0900
 title: "Sysbench : MariaDB, MySQL, PostgreSQL Benchmark Tool."
-category: dbops
+category: database
 excerpt: "Sysbench ? 시스템 성능을 측정할 수 있는 툴로, MySQL에서 내부 프로젝트로 만들다가 Lua 스크립트를 적용한 0.5 버전까지 나왔다가 오랜기간 개발이 중지 되었습니다. 2016년에 다시 개발이 시작되었고 현재 1.0 버전대 개발이 진행중입니다. 기존에는 소스코드를 이용…"
 updated: 2026-09-17
 ---

@@ -1,7 +1,7 @@
 ---
 date: 2023-08-02 17:06:05 +0900
 title: "데이터베이스 신뢰성 엔지니어(Database Reliability Engineer, DBRE)"
-category: dbre
+category: database
 excerpt: "데이터베이스 신뢰성 엔지니어(Database Reliability Engineer, DBRE) IT에 종사하면서 DB를 만지게 되는 직군은 크게 세가지 입니다. 클라우드 인프라 관련 직군 – DevOps, SA, SRE, DB 관련 직군 – DA, DBA, 튜너, 컨설턴트 개발 관…"
 updated: 2026-09-17
 ---

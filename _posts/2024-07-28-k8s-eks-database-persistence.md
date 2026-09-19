@@ -1,7 +1,7 @@
 ---
 date: 2024-07-28 14:56:08 +0900
 title: "쿠버네티스와 EKS에서의 데이터베이스 영속성: PV, StorageClass, EBS 비교 분석"
-category: dbops
+category: database
 excerpt: "RDS 사용하기는 아깝고, EKS올리기엔 불안한 컨테이너 데이터베이스 EKS에 올라가는 서비스 중에 작은 서비스 혹은 Super Set이나 Airflow 같은 솔루션의 메타 정보를 담기위한 DB를 사용하기 위해 가격이 비싼 RDS를 배포하는 것은 낭비일수도 있습니다. 그런데 pod…"
 updated: 2026-09-17
 ---

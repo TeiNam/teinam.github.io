@@ -1,7 +1,7 @@
 ---
 date: 2019-02-23 01:42:04 +0900
 title: "UID 일관 변경"
-category: dbops
+category: database
 excerpt: "Linux나 Unix 에서 RAC나 HA 구성중에 양쪽 노드에 유저명은 같은데 UID가 다르면 설치가 안되는 경우가 발생. 이중화 작업에는 항상 UID를 맞춰줘야 합니다. UID가 같지 않을경우 일괄 변경 하는 방법 $ usermod -u 501 oracle..."
 updated: 2026-09-17
 ---
