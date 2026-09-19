@@ -1,43 +1,50 @@
 ---
-date: 2024-06-26 00:28:32 +0900
-title: "MySQL 처음 설치 시 놓치지 말아야 할 것들"
-category: mysql
-excerpt: "MySQL 설치 시 초기 파라미터 세팅 전략 처음 MySQL을 사용하는 개발자나 스타트업이라면 대부분 기본값으로 놓고 DB를 구성하게 됩니다. 하지만 나중을 생각해서 라도 기본값으로 사용해서는 안됩니다. 서비스가 한참 커진 후에는 처음에 놓치고 간 설정들 때문에..."
-updated: 2026-09-17
+title: "MySQL 초기 설치 체크리스트"
+permalink: /docs/database/mysql-install-checklist/
+breadcrumb: "Docs / Database"
+description: "MySQL 을 처음 설치할 때 기본값으로 두면 안 되는 파라미터"
+updated: 2026-09-19
+redirect_from:
+  - /writing/mysql-first-install-checklist/
 ---
 
-> **검증 노트 (2026-09) · 참고** — 초기 파라미터를 기본값으로 두지 말라는 전략과 문자셋·타임존·바이너리 로그 설정은 여전히 유효합니다. 다만 internal_tmp_mem_storage_engine 의 기본값은 MEMORY 가 아니라 TempTable 이고 temptable_max_mmap 기본값은 0(비활성), innodb_log_file_size 는 innodb_redo_log_capacity 로 대체됐으며, 기준으로 삼은 MySQL 8.0 은 2026-04-30 지원 종료입니다.
-
-## MySQL 설치 시 초기 파라미터 세팅 전략
+> **INFO** — 유효 범위
+>
+> 이 문서는 MySQL 8.x 를 기준으로 한다. 기준으로 삼은 **MySQL 8.0 은 2026-04-30 지원 종료**이므로,
+> 신규 구축이라면 8.4 LTS 이상을 대상으로 값을 다시 확인한다. 아래 세 파라미터는 현재 기본값이 본문과 다르다.
+>
+> - `internal_tmp_mem_storage_engine` 의 기본값은 `MEMORY` 가 아니라 `TempTable` 이다.
+> - `temptable_max_mmap` 의 기본값은 `0`(비활성)이다.
+> - `innodb_log_file_size` 는 `innodb_redo_log_capacity` 로 대체됐다.
 
 처음 MySQL을 사용하는 개발자나 스타트업이라면 대부분 기본값으로 놓고 DB를 구성하게 됩니다. 하지만 나중을 생각해서 라도 기본값으로 사용해서는 안됩니다. 서비스가 한참 커진 후에는 처음에 놓치고 간 설정들 때문에 데이터 정합성, 무결성 문제가 발생하는 경우도 많고 규모가 커진 상태에서 잘못된 것들을 잡으려면 너무나 힘들어 집니다. 그래서 주요 파라미터들은 처음에 세팅을 하고 가야하는데, DB가 주로 어떤 역할을 수행 하는지에 따라 가져가야 하는 초기 파라미터 값들이 다릅니다. 하지만 처음 MySQL을 쓰는 사람이 어떤 값을 설정해야하는지 아는 것은 정말 어렵습니다.
 
 오늘은 AWS 에서 Aurora for MySQL, RDS MySQL을 처음 구성하거나 MySQL을 설치하고 구동하기전에 파라미터 파일의 값중 세팅이 필요한 부분을 짚고 가려고 합니다.
 
-### Memory 영역
+## Memory 영역
 
 - 우선 메모리 영역은 초기 설정에서 크게 중요한 부분이 아닙니다. 사용 환경에 따라 성능 저하가 발생 했을때 튜닝을 진행해도 충분합니다. 하지만 몇몇 값들은 필수로 바꿔 주고 가면 좋습니다.
 
-#### key\_buffer\_size
+### `key_buffer_size`
 
 - `key_buffer_size = 16384`
 - `key_buffer_size` 파라미터는 MyISAM 스토리지 엔진에서 인덱스 블록을 캐싱하는 데 사용되는데 MySQL8 버전에는 대부분 InnoDB로 대체 되었고 MyISAM은 테이블 단위로 Lock이 발생하고 트랜잭션(`commit`/`rollback`)을 지원하지 않아 이제는 거의 사용하지 않기 때문에 MyiSAM을 사용하는 경우가 아니라면 `key_buffer_size`에 기본값인 `8MB`나 설정해 줄 이유가 없습니다. 따라서 최소 수준인 `16384`으로 설정을 해도 크게 문제는 없습니다.
 - 사용하지 않는다고 해서 `key_buffer_size`를 `0`으로 설정할 경우 MySQL 시작 시에 키 캐시가 초기화되지 않습니다.
 
-#### bulk\_insert\_buffer\_size
+### `bulk_insert_buffer_size`
 
 - `bulk_insert_buffer_size = 32768`
 - `bulk_insert_buffer_size` 파라미터도 주로 MyISAM 스토리지 엔진에서 사용됩니다. 이 파라미터는 대량 삽입 작업 중에 사용되는 버퍼의 크기를 지정하며, 특히 INSERT … SELECT, INSERT … VALUES (multiple rows), LOAD DATA INFILE 등의 작업에서 MyISAM 테이블의 성능을 향상시키기 위해 사용됩니다.
 - MySQL 8에서는 InnoDB가 기본 스토리지 엔진으로 사용되며, InnoDB는 `bulk_insert_buffer_size` 파라미터를 사용하지 않습니다. 따라서, MyISAM을 거의 사용하지 않는다면 이 값을 줄이거나 기본값으로 유지해도 무방합니다.
 
-#### innodb\_buffer\_pool\_size
+### `innodb_buffer_pool_size`
 
 - 전체 메모리 사이즈의 3/4 정도 설정해주는 것이 좋습니다. (AWS RDS 기본값)
 - MySQL Default = 12321772 (128MB)
 - InnoDB 버퍼 풀은 가장 최근에 액세스한 데이터를 캐싱하여 작동합니다. 메모리에 캐싱하면 디스크 대신 캐시에서 데이터를 다시 시도할 수 있습니다. 버퍼 풀은 두 개의 하위 목록을 관리하여 가장 자주 사용되는 데이터를 캐시에 보관하도록 설계되었습니다. 새로운 데이터에 액세스하면 ‘이전’ 목록의 맨 위에 저장됩니다. 이 목록에서 가장 오래된 항목은 제거되며 다시 쿼리할 경우 디스크에서 검색해야 합니다. 이 데이터는 다시 쿼리될 때 ‘최신’ 목록의 맨 위로 이동됩니다.
 - innodb\_buffer\_pool\_wait\_free 의 값이 지속적으로 늘어난다면 innodb\_buffer\_pool\_size가 충분하게 할당 되지 않은 것 입니다.
 
-#### internal\_tmp\_mem\_storage\_engine
+### `internal_tmp_mem_storage_engine`
 
 - 이 변수는 MySQL 서버가 메모리에 임시 테이블을 생성할 때 사용하는 스토리지 엔진을 결정합니다. 일반적으로 두 가지 옵션이 있습니다:
 
@@ -66,7 +73,7 @@ updated: 2026-09-17
    2. **메모리 사용량 관리:** 많은 데이터를 MEMORY 테이블에 저장하면 서버 메모리가 빠르게 소모될 수 있습니다. 서버 메모리 용량을 초과하지 않도록 주의해야 합니다.
    3. **데이터 타입 제한:** MEMORY 엔진은 BLOB, TEXT와 같은 데이터 타입을 지원하지 않습니다. 따라서 이러한 데이터 타입이 필요한 경우 다른 스토리지 엔진을 사용해야 합니다.
 
-#### tmp\_table\_size & max\_heap\_size
+### `tmp_table_size` · `max_heap_size`
 
 - `tmp_table_size`와 `max_heap_table_size`의 초기 값으로 일반적으로 제안되는 값은 `32MB`에서 `64MB`입니다. 중요한 점은 MySQL이 이 두 변수에 할당된 값 중 더 낮은 값을 사용한다는 것입니다.
 - `tmp_table_size` 값을 선택할 때, 메모리에 있을 임시 테이블의 예상 최대 크기를 고려해야 합니다. 설정된 `tmp_table_size`보다 내부 테이블이 크면 디스크에 저장됩니다. 디스크에 저장되면 성능이 저하되고 이러한 테이블을 사용하는 쿼리가 느려집니다.
@@ -77,13 +84,13 @@ updated: 2026-09-17
   - UNION 또는 UNION ALL이 있는 SELECT 목록의 열이 512바이트보다 큰 경우
   - 임시 테이블을 디스크 형식으로 변환되는 것을 방지하려면 CREATE TABLE ENGINE=MEMORY 명령을 사용할 수 있습니다. 이 명령을 사용할 때 최대 테이블 크기에 도달하면 더 이상 새로운 데이터가 추가되지 않고 테이블은 내부 메모리에 유지됩니다.
 
-#### temptable\_max\_ram
+### `temptable_max_ram`
 
 - `temptable_max_ram= GREATEST({DBInstanceClassMemory/32}, 209715200)`
 - MySQL 8.0.28에서 도입, 전체 메모리의 1/32 수준으로, 최소 200MiB 이상 설정
 - TempTable 엔진이 메모리에 사용할 수 있는 최대 메모리 양을 설정합니다. 이 한도를 초과하는 경우, MySQL은 더 이상 TempTable 엔진을 사용하지 않고 디스크 기반의 InnoDB 임시 테이블로 전환합니다.
 
-#### temptable\_max\_mmap
+### `temptable_max_mmap`
 
 - `temptable_max_mmap=GREATEST({DBInstanceClassMemory/5}, 3221225472)`
 - MySQL 8.0.28에서 도입, 전체 메모리의 1/5 수준으로 사용, 최소 3GiB 이상 설정
@@ -91,7 +98,7 @@ updated: 2026-09-17
 
 > 메모리 매핑 파일(memory-mapped file)은 운영체제의 메모리 관리 기능을 사용하여 파일의 내용을 메모리에 매핑하는 기술입니다. 이 방식은 파일의 내용을 디스크에서 직접 읽고 쓰지 않고, 메모리 주소 공간에 매핑하여 접근할 수 있게 합니다. 이를 통해 파일 입출력의 성능을 크게 향상시킬 수 있습니다.
 
-#### aurora\_tmptable\_enable\_per\_table\_limit (Aurora 한정)
+### `aurora_tmptable_enable_per_table_limit` (Aurora 한정)
 
 - `aurora_tmptable_enable_per_table_limit=1`
 - Aurora 3.04.0부터 추가된 파라미터, 변경된 임시 테이블처리 방식 적용 여부를 제어
@@ -99,15 +106,15 @@ updated: 2026-09-17
 - 0: MySQL 8.0.28 이전의 내부 임시 테이블 동작 방식, 기본값 (MEMORY 엔진을 사용하는 방식)
 - 업그레이드 후 Reader에서 ERROR1114의 잦은 발생을 방지하기 위해 도입한 것으로 추정합니다.
 
-#### cte\_max\_recursion\_depth
+### `cte_max_recursion_depth`
 
 - `cte_max_recursion_depth = 10`
 - MySQL에서 Common Table Expressions(CTE)의 재귀 깊이를 제한하는 설정입니다. 이 변수는 특히 재귀적 CTE를 사용할 때 유용하며, 무한 루프와 같은 문제를 방지하기 위해 재귀 호출의 최대 깊이를 설정합니다.
 - 기본값은 1000 이지만 10으로 재귀 깊이를 제한함으로써 무한 루프를 방지하고 리소스 보호할 수 있습니다.
 
-### 언어셋, 정렬셋, 타임존
+## 언어셋, 정렬셋, 타임존
 
-#### 언어셋(character\_set) 관련 파라미터
+### 언어셋(character_set) 관련 파라미터
 
 - `character_set_client`
 - `character_set_connection`
@@ -119,7 +126,7 @@ updated: 2026-09-17
 
 처음 DB구축할 때 세팅해줍니다. 사용중에 기본 언어셋을 바꾸면 문제가 생길 수도 있습니다. MySQL UTF8은 utf8mb3를 나타내는데 기본 문자의 바이트가 3바이트로 이모지를 저장할 수 없으면 MySQL에서 곧 Deprecate 될 예정입니다.
 
-#### 정렬셋(collation) 관련 파라미터
+### 정렬셋(collation) 관련 파라미터
 
 - `collation_connection`
 - `collation_server`  
@@ -127,7 +134,7 @@ updated: 2026-09-17
 
 어떤 언어를 주로 사용하느냐에 따라 바뀌지만, MySQL8의 기본값인 utf8mb4\_0900\_ai\_ci는 알파벳 문자를 기준으로 만들어진 정렬셋으로 동아시아 언어(한국어, 일본어 등)에서 치명적인 문자 인식 문제가 있습니다.  한글을 지원하는 문자셋은 많지만 특별한 상황이 아니라면 utf8mb4\_general\_ci로 설정하면 됩니다.
 
-#### 타임존
+### 타임존
 
 `time_zone`
 
@@ -136,11 +143,11 @@ updated: 2026-09-17
 
 서비스 되는 지역에 맞게 설정하면 됩니다.
 
-### binary log 활용
+## binary log 활용
 
 CDC혹은 복제기능을 이용해 데이터에 대한 2차 가공 혹은 업그레이드의 용이성을 올리기 위한 세팅입니다.
 
-#### binlog\_format
+### `binlog_format`
 
 1. `OFF`: MySQL의 복제기능을 사용하지 않을때 설정합니다.
 2. `ROW`: 행기반 복제. MySQL 복제 뿐만아니라 CDC를 사용하게 되면 반드시 ROW로 설정해줍니다. binlog의 사이즈가 증가할 수 있지만 AWS의 DMS나 Kafka Debezium 등 실시간 스트리밍을 위해선 반드시 ROW로 설정해줍니다. Aurora의 경우 재구동이 필요합니다.
@@ -151,12 +158,12 @@ CDC혹은 복제기능을 이용해 데이터에 대한 2차 가공 혹은 업�
 4. `MIXED`: ROW와 STATEMENT의 기능을 합쳐놓은 것인데 MySQL은 상황에 따라 가장 적합한 복제 방식을 자동으로 선택합니다.
    - MySQL Replication만을 위해 사용한다면 선택할 수 있습니다.
 
-#### binlog\_row\_image
+### `binlog_row_image`
 
 - `minimal`: CDC를 하지 않고 복제 기능만 사용할 때 설정합니다.
 - `full`: binlog를 통한 CDC를 사용하는 경우 설정해 줍니다.
 
-#### binlog\_cache\_size
+### `binlog_cache_size`
 
 - 기본값은 `32KB`입니다.
 - 큰 트랜잭션을 자주 사용하는 환경에서는 `binlog_cache_size`를 늘려야 할 수 있습니다. 그렇지 않으면 캐시가 꽉 차서 디스크의 임시 파일로 스왑되므로 성능 저하가 발생할 수 있습니다.
@@ -167,15 +174,13 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_use';
 SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
 ```
 
-#### binlog\_rows\_query\_log\_events
+### `binlog_rows_query_log_events`
 
 - `binlog_rows_query_log_events= 1`
 - MySQL에서 바이너리 로그(binlog)에 대한 설정 중 하나로, 행 기반 복제(Row-Based Replication) 시에 각 쿼리의 원본 SQL 문을 로그에 기록할지 여부를 결정합니다.
 - 기본적으로 행 기반 복제는 각 행의 변경 사항만을 기록하지만, 이 설정을 활성화하면 어떤 SQL 문이 이 변경을 초래했는지도 로그에 포함됩니다.
 
-### 
-
-### SQL\_MODE (중요)
+## SQL_MODE (중요)
 
 - 제약조건이나 여러가지 이유로 SQL\_MODE를 0으로 놓고 쓰는 업체가 많습니다. 몇몇 버전에서는 SQL\_MODE의 기본값이 0이였던적도 있었습니다. 하지만 이 파라미터를 0으로 놓고 쓰는 것은 데이터 무결성을 매우 해치는 결과를 가져오고, 따라서 정합성과 데이터 유실을 가져오는 결과를 가져옵니다.
 - 나중에 다른 DB로 이관을 하거나 버전업이나 데이터에 대한 검증이 필요한 시기가 오면 좌절을 맛보게 할 수 있는 파라미터 입니다.
@@ -184,7 +189,7 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
 
 - `sql_mode = TRADITIONAL, NO_AUTO_CREATE_USER`
 
-#### TRADITIONAL
+### TRADITIONAL
 
 - TRADITIONAL 모드를 사용하는 것은 데이터베이스의 신뢰성과 안정성을 높이는 데 중요한 역할을 합니다.
 - TRADITIONAL 모드는 여러 개의 개별 모드 조합으로 구성됩니다. 이 모드를 활성화하면 MySQL은 다음과 같은 기능을 수행합니다
@@ -196,20 +201,20 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
   - `NO_ENGINE_SUBSTITUTION`: 지정된 스토리지 엔진이 없을 때 MySQL이 대체 엔진을 사용하지 않도록 합니다. 이는 사용자가 의도한 스토리지 엔진을 정확하게 사용하도록 보장하여, 데이터베이스의 일관성을 유지할 수 있습니다. 새로운 테이블을 만들때 잘못된 스토리지 엔진을 설정한다면 에러를 반환합니다. 설정하지 않으면 기본 스토리지 엔진을 이용해 테이블을 생성합니다.
   - `ONLY_FULL_GROUP_BY`: GROUP BY 절에서 비집계 열이 명확하게 지정되지 않은 경우 오류를 발생시킵니다.
 
-##### TRADITIONAL 모드의 장점
+#### TRADITIONAL 모드의 장점
 
 1. **데이터 무결성 보장**: 잘못된 데이터가 데이터베이스에 삽입되지 않도록 하여 데이터 무결성을 유지할 수 있습니다.
 2. **버그 조기 발견**: 개발 단계에서 데이터 관련 오류를 조기에 발견하고 수정할 수 있습니다.
 3. **표준 준수**: SQL 표준에 더 가깝게 동작하므로, 다른 SQL 기반 시스템과의 호환성을 높일 수 있습니다.
 
-#### 그 밖의 SQL\_MODE 옵션
+### 그 밖의 SQL_MODE 옵션
 
 - `NO_AUTO_CREATE_USER`: 사용자가 GRANT 명령을 사용할 때 자동으로 사용자 계정을 생성하지 않도록 하는 기능을 제공합니다. 이 모드는 보안 강화와 사용자 계정 관리를 더욱 엄격하게 하기 위해 사용됩니다.
 - `TIME_TRUNCATE_FRACTIONAL`: MySQL에서 시간 값을 처리할 때 소수점 이하의 초 부분을 잘라내는 기능을 제공합니다. 이를 통해 시간 값을 보다 간단하게 관리할 수 있지만, 데이터 정밀도가 낮아질 수 있으므로 필요한 경우에만 사용해야 합니다. `2023-09-11 23:59:59.999999` 이런 시간 데이터를 `DATETIME` 컬럼에 입력하면 `2023-09-12 00:00:00.000` 이런식으로 반올림을 해버리는 경우가 발생합니다. 이런 반올림 현상을 막기위해 사용할 수 있습니다.
 
-### 건드려야 할 것 같아 보이지만 처음엔 수정할 필요가 없는 파라미터
+## 건드려야 할 것 같아 보이지만 처음엔 수정할 필요가 없는 파라미터
 
-#### sort\_buffer\_size
+### `sort_buffer_size`
 
 - `sort_buffer_size`는 ORDER BY 또는 GROUP BY를 사용하여 일부 쿼리에 대한 정렬을 수행합니다. `sort_buffer_size`를 구성하면 정렬 쿼리에 할당할 메모리 양이 결정됩니다.
 - 워크로드에 상당한 수의 정렬 쿼리가 필요한 경우 sort\_buffer\_size를 기본값에서 조정해야 할 수 있습니다. sort\_buffer\_size는 세션 레벨에서 정의됩니다.
@@ -217,7 +222,7 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
 - 쿼리 최적화나 인덱싱으로 더 이상 개선할 수 없는 정렬 작업 속도를 높이기 위해 `sort_buffer_size`를 늘리는 것을 고려할 수도 있습니다.
 - 잘못된 값을 선택하면 성능이 저하되고 메모리 소비가 증가할 수 있으므로 `sort_buffer_size`는 신중하게 구성해야 합니다. 충돌이 발생할 수도 있습니다. 적절한 값은 작업 부하에 따라 매우 다르므로 서버에 대해 어떤 값을 선택해야 할지 확실하지 않은 경우 기본값을 변경하면 안 됩니다.
 
-#### join\_buffer\_size
+### `join_buffer_size`
 
 - MySQL Default = `256KB`
 - 서버에 인덱스가 없는 전체 테이블 조인이 필요할 때 join\_buffer가 할당됩니다. 쿼리가 완료되면 메모리 할당이 해제됩니다.
@@ -225,11 +230,11 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
 - Join\_buffer 캐시 크기가 필요한 쿼리보다 큰 경우 상당한 성능 저하가 발생할 수 있습니다. 성능 향상을 위해 `Join_buffer_size`를 늘리는 대신 조인에 대한 인덱스를 추가하는 것이 좋습니다.
 - 인덱스 추가가 불가능한 경우 세션별로 `Join_buffer_size` 특정 쿼리에만 설정하는 방법도 있습니다.
 
-#### read\_buffer\_size
+### `read_buffer_size`
 
 - MyISAM에만 적용되며 InnoDB 스토리지 엔진에는 영향을 미치지 않습니다.
 
-#### read\_rnd\_buffer\_size
+### `read_rnd_buffer_size`
 
 - `read_rnd_buffer_size` 변수는 MyISAM 스토리지 엔진을 사용하여 정렬 후 정렬된 순서로 행을 읽는 데 가장 일반적으로 사용됩니다. 그러나 이 변수는 정렬 후 행을 최적으로 읽기 위해 InnoDB 엔진에서도 사용할 수도 있습니다.
 - 정렬 작업 후 이 버퍼에서 읽으면 시스템이 불필요한 디스크 검색을 피할 수 있습니다.

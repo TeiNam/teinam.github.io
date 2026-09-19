@@ -1,18 +1,20 @@
 ---
-date: 2021-03-15 12:48:11 +0900
-title: "MongoDB Shard Cluster 재구동 순서"
-category: mongodb
-excerpt: "MongoDB Shard Cluster 재구동 순서 샤드 클러스터는 샤드 클러스터에 등록된 Replica Set과 Config 서버 등 다양한 리소스가 물려 있기 때문에 재구동 절차에도 신경을 써야합니다. MongoDB Shard Cluster 종료 Mongos 종료 1.1 밸런서…"
-updated: 2026-09-17
+title: "MongoDB 샤드 클러스터 재구동 순서"
+permalink: /docs/database/mongodb-shard-restart/
+breadcrumb: "Docs / Database"
+description: "밸런서·mongos·샤드·config 서버의 종료와 기동 순서"
+updated: 2026-09-19
+redirect_from:
+  - /writing/mongodb-shard-cluster-restart-order/
 ---
 
-> **검증 노트 (2026-09) · 참고** — 밸런서 정지 → mongos → 샤드 → config 서버 순으로 내리고 역순으로 올리는 절차와 `sh.stopBalancer()`/`sh.startBalancer()`/`db.shutdownServer()` 는 현재도 유효합니다. 셸 명령은 6.0 에서 제거된 `mongo` 대신 `mongosh` 로 실행하세요(본문 3.1 의 mongos 기동 명령은 `mongos --config` 오타).
-
-## MongoDB Shard Cluster 재구동 순서
+> **INFO** — 셸
+>
+> 아래 JavaScript 명령은 `mongosh` 에서 실행한다. 레거시 `mongo` 셸은 **6.0 에서 제거**됐다.
 
 샤드 클러스터는 샤드 클러스터에 등록된 Replica Set과 Config 서버 등 다양한 리소스가 물려 있기 때문에 재구동 절차에도 신경을 써야 합니다.
 
-### MongoDB Shard Cluster 종료
+## MongoDB Shard Cluster 종료
 
 1. mongos 종료  
    1.1 밸런서 비활성화  
@@ -48,7 +50,7 @@ db.shutdownServer()
 db.shutdownServer()
 ```
 
-### MongoDB Shard Cluster 구동
+## MongoDB Shard Cluster 구동
 
 1. Config 서버 구동  
    systemctl 또는 설정 파일을 사용하여 구동합니다.
@@ -84,7 +86,7 @@ $ mongod --config <path-to-config-file>
 
    
 ```bash
-$ mongod --config <path-to-config-file>
+$ mongos --config <path-to-config-file>
 ```
 
    3.2 밸런서 시작

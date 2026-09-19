@@ -1,7 +1,12 @@
 ---
 title: "MySQL for Developers"
-category: mysql
-excerpt: "MySQL 개발에서 알아야 할 핵심 원칙과 안티패턴 — 정규화부터 인덱스, 드라이버 선택, 릴리스 정책까지."
+permalink: /docs/database/mysql-for-developers/
+breadcrumb: "Docs / Database"
+description: "MySQL 개발에서 지킬 핵심 원칙과 안티패턴 — 정규화·데이터 타입·인덱스·드라이버 선택·릴리스 정책"
+updated: 2026-08-26
+redirect_from:
+  - /writing/mysql-for-developers/
+  - /writing/mysql-guide-for-developers/
 ---
 
 > **SUMMARY** — 요약

@@ -3,7 +3,9 @@ title: "데이터베이스 네이밍 규칙"
 permalink: /docs/database/naming/
 breadcrumb: "Docs / Database"
 description: "MySQL 8.x 와 PostgreSQL 양쪽에 이식 가능한 식별자·타입 명명 규칙"
-updated: 2026-08-26
+updated: 2026-09-19
+redirect_from:
+  - /writing/why-snake-case-in-database/
 ---
 
 > **INFO** — 적용 범위
@@ -38,6 +40,14 @@ updated: 2026-08-26
 | --- | --- |
 | `authUser` | `auth_user` |
 | `Book_IDX` | `book_idx` |
+| `userloginattempt` | `user_login_attempt` |
+
+구분자를 아예 쓰지 않으면(`userloginattempt`) 이름이 길어질수록 읽기 어려워진다.
+snake_case 를 택하는 이유는 0장의 케이스 폴딩 외에 셋 더 있다.
+
+- **따옴표가 필요 없다.** 하이픈(`user-account`)이나 대문자를 섞은 이름은 따옴표로 감싸야 하므로 위 결론 3번이 깨진다.
+- **애플리케이션 코드와 스타일이 맞는다.** Python 처럼 snake_case 를 쓰는 언어에서는 쿼리 문자열의 식별자와 코드의 이름이 같은 형태가 된다.
+- **오래된 관행이다.** DB 설계에서 통용돼 온 형태라 팀 안에서 합의 비용이 낮다.
 
 ### 1-2. 직관적인 기술형 작성
 

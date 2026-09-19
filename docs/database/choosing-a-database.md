@@ -1,10 +1,13 @@
 ---
-date: 2025-05-23 11:37:19 +0900
 title: "데이터베이스 선택 가이드"
-category: database
-excerpt: "최적의 성능을 위한 용도와 비지니스 로직에 맞는 데이터베이스 선택 가이드"
+permalink: /docs/database/choosing-a-database/
+breadcrumb: "Docs / Database"
+description: "용도와 비즈니스 로직에 맞는 데이터베이스·데이터 웨어하우스·로그 저장소 선택 기준"
 updated: 2025-05-23
+redirect_from:
+  - /writing/database-choice/
 ---
+
 ## 데이터베이스 종류
 
 ### 1. 관계형 데이터베이스(RDBMS)
