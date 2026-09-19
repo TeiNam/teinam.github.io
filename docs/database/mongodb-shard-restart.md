@@ -12,90 +12,77 @@ redirect_from:
 >
 > 아래 JavaScript 명령은 `mongosh` 에서 실행한다. 레거시 `mongo` 셸은 **6.0 에서 제거**됐다.
 
-샤드 클러스터는 샤드 클러스터에 등록된 Replica Set과 Config 서버 등 다양한 리소스가 물려 있기 때문에 재구동 절차에도 신경을 써야 합니다.
+샤드 클러스터는 등록된 Replica Set 과 Config 서버 등 여러 리소스가 물려 있어, 재구동 절차의 순서를 지켜야 한다.
 
-## MongoDB Shard Cluster 종료
+## 종료 순서
 
-1. mongos 종료  
-   1.1 밸런서 비활성화  
-   밸런서를 비활성화하여 청크 마이그레이션을 중지합니다. 마이그레이션이 진행 중인 경우 밸런서는 중지하기 전에 진행 중인 마이그레이션을 완료해야 합니다. 마이그레이션 완료 전까지 메타데이터 쓰기 작업을 하면 안 됩니다.
+1. **mongos 종료**
 
-   
-```javascript
-sh.stopBalancer()
-```
+   1.1 밸런서를 비활성화해 청크 마이그레이션을 중지한다. 마이그레이션이 진행 중이면 밸런서는 중지되기 전에 그것을 마친다. 마이그레이션이 끝나기 전에는 메타데이터 쓰기 작업을 하지 않는다.
 
-   1.2 mongos 종료  
-   admin 데이터베이스에 접근하여 각각의 mongos 라우터를 종료합니다.
+   ```javascript
+   sh.stopBalancer()
+   ```
 
-   
-```javascript
-use admin
-db.shutdownServer()
-```
+   1.2 admin 데이터베이스에 접근해 각 mongos 라우터를 종료한다.
 
-2. Shard Replica Set 종료  
-   샤드에 포함되어 있는 레플리카 셋을 종료합니다.
+   ```javascript
+   use admin
+   db.shutdownServer()
+   ```
 
-   
-```javascript
-db.shutdownServer()
-```
+2. **Shard Replica Set 종료** — 샤드에 포함된 레플리카 셋을 종료한다.
 
-3. Config 서버 종료  
-   샤드에 포함된 Config 서버를 종료합니다.
+   ```javascript
+   db.shutdownServer()
+   ```
 
-   
-```javascript
-db.shutdownServer()
-```
+3. **Config 서버 종료** — 샤드에 포함된 Config 서버를 종료한다.
 
-## MongoDB Shard Cluster 구동
+   ```javascript
+   db.shutdownServer()
+   ```
 
-1. Config 서버 구동  
-   systemctl 또는 설정 파일을 사용하여 구동합니다.
+## 기동 순서
 
-   
-```bash
-$ systemctl start mongod
+종료의 역순이다.
 
-or 
+1. **Config 서버 기동** — systemctl 또는 설정 파일로 기동한다.
 
-$ mongod --config <path-to-config-file>
-```
+   ```bash
+   $ systemctl start mongod
 
-2. Replica Set 구동  
-   샤드에 포함된 Replica Set을 구동합니다.
+   # 또는
+   $ mongod --config <path-to-config-file>
+   ```
 
-   
-```bash
-$ systemctl start mongod
+2. **Replica Set 기동** — 샤드에 포함된 Replica Set 을 기동한다.
 
-or 
+   ```bash
+   $ systemctl start mongod
 
-$ mongod --shardsvr --replSet <replSetname> --dbpath <path> --bind_ip localhost,<hostname(s)|ip address(es)>
+   # 또는
+   $ mongod --shardsvr --replSet <replSetname> --dbpath <path> --bind_ip localhost,<hostname(s)|ip address(es)>
 
-or 
+   # 또는
+   $ mongod --config <path-to-config-file>
+   ```
 
-$ mongod --config <path-to-config-file>
-```
+3. **mongos 라우터 기동**
 
-3. mongos 라우터 구동  
-   3.1 mongos 구동  
-   mongos 라우터를 구동합니다.
+   3.1 mongos 라우터를 기동한다.
 
-   
-```bash
-$ mongos --config <path-to-config-file>
-```
+   ```bash
+   $ mongos --config <path-to-config-file>
+   ```
 
-   3.2 밸런서 시작
+   3.2 밸런서를 다시 시작한다.
 
-   
-```javascript
-mongos> sh.startBalancer()
-```
+   ```javascript
+   sh.startBalancer()
+   ```
 
-이러한 절차로 MongoDB의 샤드 클러스터를 재구동합니다. 항상 순서를 주의해야 합니다.
-
-> **주의:** IP 변경 작업이나 서버 단의 변경 작업이 있다면, 설정 파일이나 레플리카 셋의 구성 설정을 변경해야 하니 주의하시기 바랍니다.
+> **IMPORTANT** — 순서를 바꾸지 않는다
+>
+> 밸런서 → mongos → 샤드 → Config 서버 순으로 내리고, 기동은 그 역순이다. IP 를 바꾸거나 서버 구성을 변경했다면
+> 설정 파일과 레플리카 셋 구성도 함께 고쳐야 한다.
