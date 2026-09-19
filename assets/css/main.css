@@ -197,27 +197,32 @@ p { text-wrap: pretty; }
 .table-scroll table { min-width: 100%; }
 /* 이름 · 한 일 · 스택 3칼럼 표. 마크다운 표에 `{: .col-table}` 을 붙여 쓴다.
 
-   폭을 내용 길이에 맡기면 긴 산문 칼럼이 폭을 다 먹고 나머지가 짓눌려
-   `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 그래서 고정한다.
+   아무 제약 없이 두면 긴 산문 칼럼이 폭을 다 먹고 나머지가 짓눌려
+   `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 그래서 세 칼럼의 폭을
+   명시한다 — 다만 이름 칼럼만은 숫자로 못 박지 않는다(아래 참조).
 
    전체 폭은 문서 영역의 80% (1184px → 947px). `.prose table` 의 width:100% 와
    `.table-scroll table` 의 min-width:100% 를 둘 다 눌러야 한다 — CSS 에서 min-width 가
    max-width 보다 우선하므로 max-width 만 주면 안 먹는다. 그래서 선택자를
    `.prose .col-table` 로 한 단계 올린다.
 
-   칼럼 퍼센트는 947px 기준으로 역산한 값이다.
-     이름  16% = 151px — 라틴 소문자 약 6.9px/자, 우측 패딩 16px → 한 줄 20자
-     한 일 66% = 625px — 한글 약 14.5px/자, 우측 패딩 16px → 한 줄 42자
-     스택  18% = 170px — mono 12px 약 7.2px/자, last-child 라 패딩 0 → 한 줄 23자
-   이름 칼럼보다 긴 저장소 이름은 하이픈에서 줄이 나뉜다(UAX #14). 하이픈이 없어
-   그조차 안 되면 `overflow-wrap: break-word` 가 받아 넘치지 않게 한다.
+   이름 칼럼은 퍼센트로 어림하지 않는다. `white-space: nowrap` 을 주면 줄바꿈 기회가
+   사라져 브라우저가 가장 긴 이름의 실측 폭을 그대로 배정한다 — 글꼴이 바뀌어도 한 줄이
+   유지된다. 퍼센트나 `ch` 로 재려 하면 안 된다: `ch` 는 셀 자기 글꼴로 계산되는데
+   th(mono 10.5px)와 td(sans 14.5px)의 글꼴이 달라 값이 어긋난다.
 
-   퍼센트로 두는 이유 — `ch` 는 셀 자기 글꼴로 계산되는데 table-layout: fixed 는 첫 행(th)
-   에서 폭을 정하고 th 와 td 의 글꼴이 달라서(10.5px 대 12px mono) 값이 어긋난다. */
-.prose .col-table { table-layout: fixed; width: 80%; min-width: 0; }
-.col-table td:nth-child(1) { width: 16%; overflow-wrap: break-word; }
-.col-table td:nth-child(2) { width: 66%; }
-.col-table td:nth-child(3) { width: 18%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+   그래서 table-layout 을 auto 로 둔다. 표 폭이 80% 로 확정돼 있으므로, 양 끝 칼럼의
+   요구 폭을 먼저 채우고 남는 폭은 auto 인 산문 칼럼이 전부 받는다.
+     이름  nowrap + width:1% → 가장 긴 `oracle-migration-analyzer` 의 실측 폭
+     한 일 auto → 남는 폭 전부
+     스택  11rem(176px) → mono 12px 로 약 24자. 긴 값은 ` / ` 공백에서 두 줄로 갈린다
+   퍼센트를 섞지 않는다 — 합이 100% 를 넘으면 브라우저가 비율대로 눌러 버려서
+   어느 칼럼이 얼마를 받는지 예측이 안 된다. */
+.prose .col-table { table-layout: auto; width: 80%; min-width: 0; }
+.col-table th:nth-child(1), .col-table td:nth-child(1) { white-space: nowrap; width: 1%; }
+.col-table th:nth-child(2), .col-table td:nth-child(2) { width: auto; }
+.col-table th:nth-child(3), .col-table td:nth-child(3) { width: 11rem; }
+.col-table td:nth-child(3) { font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
 /* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
@@ -309,11 +314,11 @@ p { text-wrap: pretty; }
   .post-row { grid-template-columns: 1fr; gap: 6px; }
   .post-row .mono:last-child { text-align: left; }
   .ad--leaderboard { padding: 0 24px 32px; }
-  /* 좁은 화면에서 3칼럼을 폭 고정으로 밀어 넣으면 칼럼마다 두세 글자만 남는다.
-     고정 폭을 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로 스크롤을 내준다.
-     선택자는 위의 `.prose .col-table` 과 같은 단계여야 min-width 가 덮인다. */
-  .prose .col-table { table-layout: auto; width: auto; min-width: 560px; }
-  .col-table td:nth-child(1), .col-table td:nth-child(2), .col-table td:nth-child(3) { width: auto; }
+  /* 좁은 화면에서는 80% 를 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로
+     스크롤을 내준다. 안 그러면 칼럼마다 두세 글자만 남는다.
+     선택자는 위의 `.prose .col-table` 과 같은 단계여야 min-width 가 덮인다.
+     이름 칼럼의 nowrap 은 그대로 둔다 — 스크롤되므로 한 줄을 유지하는 편이 낫다. */
+  .prose .col-table { width: auto; min-width: 560px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
