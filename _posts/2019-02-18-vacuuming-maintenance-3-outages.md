@@ -144,20 +144,18 @@ This command would create a multixact with %u members, but the remaining space i
 
 배큠이 늦어지는 것 자체보다, 그것이 다른 자원과 결합해 만드는 2차 효과가 실제 장애를 만듭니다. 아래는 모두 공개 사례에 근거한 유형입니다.
 
-| 유형 | 사례와 수치 | 출처 |
-|---|---|---|
-| 락 대기 누적 → 전면 쓰기 불가 | Duffel: anti-wraparound vacuum → 파티션 생성 DDL 대기 → 모든 INSERT 대기. **2h17m** 완전 중단 | duffel.com |
-| 재시도 폭주 → 부하 증폭 | Mandrill: 쓰기 실패 재시도가 부하를 급등시킴 | mailchimp.com |
-| 디스크 소진 | Mandrill: 큐에 쌓인 잡과 에러 로그가 앱 서버 디스크를 채워 스토리지 볼륨 교체 | mailchimp.com |
-| 복제 지연 · 동기 복제 커밋 정지 | ardentperf: WAL 폭증으로 수백 커넥션이 `IPC:SyncRep` 대기 / Joyent Manta: 배큠이 쓰기 부하를 증폭해 replay·checkpoint lag 확대, 최악 **18시간 이상** 누적 replay lag | ardentperf.com · davepacheco.net(2차 회고) |
-| replay 비용 예측 불가 | Joyent: "a vacuum may generate WAL records that cause **many more random reads than usual**" → WAL 위치 차이가 takeover 시간의 대략적 프록시밖에 못 됨 | davepacheco.net(2차 회고) |
-| 리소스 완전 포화 + 백로그 | BattleMetrics: 단일 서버 CPU·디스크·네트워크 전부 포화. P50 약 2.5분, P90/P99 는 5분 상한, 최악 서버 2시간. 첫 레플리카 복구 **3h44m**, 백로그 **660,000 업데이트**, 인덱스 재구축 약 2시간 | learn.battlemetrics.com |
-| autovacuum 워커 풀 고갈 | Metronome: emergency vacuum 이 "exceeded our available autovacuum worker threads" | metronome.com |
-| 스로틀로 영원히 못 따라감 | Coroot 실험: 테이블에 `autovacuum_vacuum_cost_delay = 100` 을 걸면 워커가 `VacuumDelay` 대기에 시간의 약 **99%** 체류. 워커를 늘려도 해결되지 않음 | coroot.com |
-| 메모리 상한으로 인덱스 다중 패스 | Sentry 후속: `maintenance_work_mem` 이 관련 코드 경로에서 **하드 1GB 제한**이라 배정한 100GB 가 "wasn't even being used" → PG 17 에서 해소 | blog.sentry.io · postgresql.org |
-| 배큠이 현실적으로 끝나지 않음 | Sentry: 구형 테스트 머신이 single-user mode 에서 "going on **24 hours**" 째 배큠 중 / Mandrill: "would take many days", 튜닝 후에도 "days or even weeks", 최악 추정 **40일** | blog.sentry.io · mailchimp.com |
+- **락 대기 누적 → 전면 쓰기 불가** — Duffel: anti-wraparound vacuum 뒤에 파티션 생성 DDL 이 대기하고, 그 뒤로 모든 INSERT 가 줄을 섰습니다. **2h17m** 완전 중단.
+- **재시도 폭주 → 부하 증폭** — Mandrill: 쓰기 실패 재시도가 부하를 급등시켰습니다.
+- **디스크 소진** — Mandrill: 큐에 쌓인 잡과 에러 로그가 앱 서버 디스크를 채워 스토리지 볼륨을 교체했습니다.
+- **복제 지연 · 동기 복제 커밋 정지** — ardentperf: WAL 폭증으로 수백 커넥션이 `IPC:SyncRep` 에서 대기했습니다. Joyent Manta(2차 회고): 배큠이 쓰기 부하를 증폭해 replay·checkpoint lag 이 커졌고 최악 **18시간 이상** 누적 replay lag 이 났습니다.
+- **replay 비용 예측 불가** — Joyent(2차 회고): "a vacuum may generate WAL records that cause **many more random reads than usual**" 이라, WAL 위치 차이가 takeover 시간의 대략적 프록시밖에 되지 못했습니다.
+- **리소스 완전 포화 + 백로그** — BattleMetrics: 단일 서버의 CPU·디스크·네트워크가 전부 포화됐습니다. 지연 P50 약 2.5분, P90/P99 는 5분 상한, 최악 서버 2시간. 첫 레플리카 복구 **3h44m**, 백로그 **660,000 업데이트**, 인덱스 재구축 약 2시간.
+- **autovacuum 워커 풀 고갈** — Metronome: emergency vacuum 이 "exceeded our available autovacuum worker threads" 상태가 됐습니다.
+- **스로틀로 영원히 못 따라감** — Coroot 실험: 테이블에 `autovacuum_vacuum_cost_delay = 100` 을 걸면 워커가 `VacuumDelay` 대기에 시간의 약 **99%** 를 씁니다. 워커를 늘려도 해결되지 않습니다.
+- **메모리 상한으로 인덱스 다중 패스** — Sentry 후속: `maintenance_work_mem` 이 관련 코드 경로에서 **하드 1GB 제한**이라 배정한 100GB 가 "wasn't even being used" 였습니다. PG 17 에서 해소됐습니다.
+- **배큠이 현실적으로 끝나지 않음** — Sentry: 구형 테스트 머신이 single-user mode 에서 "going on **24 hours**" 째 배큠 중이었습니다. Mandrill: "would take many days", 튜닝 후에도 "days or even weeks", 최악 추정 **40일**.
 
-마지막 두 줄이 특히 중요합니다. **장애 중에 "배큠을 끝까지 돌린다"는 선택지는 자주 성립하지 않습니다.** 그래서 공개 사례들의 실제 탈출 수단은 대부분 배큠 완주가 아니라 데이터나 작업량을 제거하는 쪽이었습니다.
+마지막 두 항목이 특히 중요합니다. **장애 중에 "배큠을 끝까지 돌린다"는 선택지는 자주 성립하지 않습니다.** 그래서 공개 사례들의 실제 탈출 수단은 대부분 배큠 완주가 아니라 데이터나 작업량을 제거하는 쪽이었습니다.
 ## 공개된 장애 사례에서 배울 것
 
 | 사례 | 시점 | 유형 | 진짜 원인 | 탈출 수단 | 공개 다운타임 |

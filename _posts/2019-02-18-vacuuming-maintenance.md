@@ -57,11 +57,9 @@ multixact ID 는 여러 트랜잭션이 한 행을 동시에 잠글 때 쓰입�
 
 이 절에는 잘못 알려진 서술이 세 가지 돌아다닙니다.
 
-| 흔한 서술 | 정확한 사실 |
-|---|---|
-| `relminmxid` 가 `vacuum_multixact_freeze_min_age` 보다 오래되면 강제된다 | 비교 대상은 **`vacuum_multixact_freeze_table_age`**(기본 1억5천만)입니다. `vacuum_multixact_freeze_min_age`(기본 5백만)는 스캔 중인 페이지에서 *어떤* multixact ID 를 교체할지 정하는 컷오프이고 스캔 범위와 무관합니다 |
-| 전체 테이블 스캔이 강제된다 | 강제되는 것은 **aggressive vacuum** 입니다. *"only those pages which are known to be all-frozen will be skipped"* — all-frozen 스킵은 9.6 도입이므로, 그 이전 자료에 근거한 "전체 페이지 방문" 서술은 지금 맞지 않습니다 |
-| 멤버 저장소가 할당량의 50% 를 넘으면 | PG 18 문서는 절대값으로 *"exceeds about 10GB"*, 상한은 *"about 20GB before reaching wraparound"* 로 씁니다. "50%" 는 PG 13 문서의 표기입니다 |
+- **"`relminmxid` 가 `vacuum_multixact_freeze_min_age` 보다 오래되면 강제된다"** — 비교 대상은 `vacuum_multixact_freeze_table_age`(기본 1억5천만)입니다. `vacuum_multixact_freeze_min_age`(기본 5백만)는 스캔 중인 페이지에서 *어떤* multixact ID 를 교체할지 정하는 컷오프이고, 스캔 범위와는 무관합니다.
+- **"전체 테이블 스캔이 강제된다"** — 강제되는 것은 aggressive vacuum 입니다. *"only those pages which are known to be all-frozen will be skipped"* 이고, all-frozen 스킵은 9.6 도입이므로 그 이전 자료에 근거한 "전체 페이지 방문" 서술은 지금 맞지 않습니다.
+- **"멤버 저장소가 할당량의 50% 를 넘으면"** — PG 18 문서는 절대값으로 *"exceeds about 10GB"* 라고 쓰고, 상한은 *"about 20GB before reaching wraparound"* 입니다. "50%" 는 PG 13 문서의 표기입니다.
 
 동작은 이렇습니다. 배큠이 테이블의 일부라도 스캔하면 `vacuum_multixact_freeze_min_age` 보다 오래된 multixact ID 를 다른 값(0, 단일 트랜잭션 ID, 또는 더 새로운 multixact ID)으로 교체합니다. `pg_class.relminmxid` 는 그 테이블에 남아 있을 수 있는 가장 오래된 multixact ID 를 담고, 이 값이 `vacuum_multixact_freeze_table_age` 보다 오래되면 aggressive vacuum 이 강제됩니다. 멤버 저장소가 약 10GB 를 넘으면 연령이 오래된 테이블부터 aggressive vacuum 이 더 자주 일어나며, **autovacuum 이 명목상 꺼져 있어도** 발동합니다.
 
@@ -175,23 +173,33 @@ VACUUM [ ( option [, ...] ) ] [ [ ONLY ] table_name [ * ] [ ( column_name [, ...
 
 PostgreSQL 18 이 받는 옵션 전수입니다.
 
-| 옵션 | 도입 버전 | 기본값 | 효과 |
+| 옵션 | 도입 | 기본값 | 효과 |
 |---|---|---|---|
-| `FULL` | 9.0 이전 (괄호형 문법 자체는 9.0) | off | 전면 재작성, 공간을 OS 로 반환, `ACCESS EXCLUSIVE` 락 |
-| `FREEZE` | 9.0 이전 | off | `vacuum_freeze_min_age` 와 `vacuum_freeze_table_age` 를 0 으로 둔 것과 동등 |
-| `VERBOSE` | 9.0 이전 | off | 테이블별 상세 리포트를 `INFO` 레벨로 출력 |
+| `FULL` | 9.0 이전 | off | 전면 재작성. 공간을 OS 로 반환하고 `ACCESS EXCLUSIVE` 락을 잡습니다 |
+| `FREEZE` | 9.0 이전 | off | `vacuum_freeze_min_age`·`vacuum_freeze_table_age` 를 0 으로 둔 것과 동등 |
+| `VERBOSE` | 9.0 이전 | off | 테이블별 리포트를 `INFO` 레벨로 출력 |
 | `ANALYZE` | 9.0 이전 | off | 플래너 통계 갱신 |
-| `DISABLE_PAGE_SKIPPING` | 9.6 | off | 페이지 스킵을 전부 끕니다. 손상으로 visibility map 이 의심스러울 때 한정 |
-| `SKIP_LOCKED` | 12 | off | 충돌 락을 기다리지 않고 스킵. 파티션 부모가 잠겨 있으면 모든 파티션 스킵 |
-| `INDEX_CLEANUP` | 12, `AUTO` 값·기본값화는 14 | `AUTO` | `AUTO` 는 제거 대상이 아주 적으면 인덱스 배큠 스킵, `OFF` 는 항상 스킵. `FULL` 과 함께면 무시, failsafe 발동 시엔 `ON` 이어도 스킵 |
+| `DISABLE_PAGE_SKIPPING` | 9.6 | off | 페이지 스킵을 전부 끕니다 |
+| `SKIP_LOCKED` | 12 | off | 충돌 락을 기다리지 않고 스킵 |
+| `INDEX_CLEANUP` | 12 (`AUTO` 는 14) | `AUTO` | `AUTO` 는 제거 대상이 적을 때만, `OFF` 는 항상 인덱스 배큠을 생략 |
 | `PROCESS_MAIN` | 16 | on | off 면 메인 릴레이션을 건너뛰고 TOAST 만 처리 |
-| `PROCESS_TOAST` | 14 | on | off 면 TOAST 를 건너뜀. `FULL` 사용 시 필수 |
-| `TRUNCATE` | 12 | on (`vacuum_truncate` 가 false 면 off) | 말단 빈 페이지 절단 시도. `FULL` 과 함께면 무시 |
-| `PARALLEL integer` | 13 | 미지정 시 `max_parallel_maintenance_workers` 범위에서 자동 (0 은 비활성) | 인덱스 배큠·정리 페이즈를 워커로 병렬화. `min_parallel_index_scan_size` 보다 큰 인덱스만 참여하고 **인덱스당 워커 1개**입니다. `FULL` 과 병용 불가 |
+| `PROCESS_TOAST` | 14 | on | off 면 TOAST 를 건너뜀 |
+| `TRUNCATE` | 12 | on | 말단 빈 페이지를 잘라 OS 에 반환 시도 |
+| `PARALLEL n` | 13 | 자동 | 인덱스 배큠·정리 페이즈를 워커 `n` 개로 병렬화 |
 | `SKIP_DATABASE_STATS` | 16 | off | 명령 끝의 DB 전역 통계 갱신 생략 |
-| `ONLY_DATABASE_STATS` | 16 | off | 전역 통계 갱신만 수행. `VERBOSE` 외 병용 불가 |
-| `BUFFER_USAGE_LIMIT size` | 16 | 미지정 시 `vacuum_buffer_usage_limit`(기본 `2MB`) | 링 버퍼 크기. `0` 은 전략 비활성, 범위 `128 kB`–`16 GB`. `FULL` 과 병용 불가(`ANALYZE` 동반 시 가능) |
-| `ONLY` | 18 | 미지정 시 자식까지 처리 | `ONLY table_name` 은 그 테이블만. 18 에서 기본 동작이 상속 자식·파티션까지로 바뀐 **비호환 변경** |
+| `ONLY_DATABASE_STATS` | 16 | off | DB 전역 통계 갱신만 수행 |
+| `BUFFER_USAGE_LIMIT` | 16 | `2MB` | 링 버퍼 크기. `0` 은 버퍼 전략 비활성 |
+| `ONLY` | 18 | — | 상속 자식·파티션을 빼고 그 테이블만 처리 |
+
+표에 담기 어려운 단서들은 이렇습니다.
+
+- `DISABLE_PAGE_SKIPPING` 은 손상으로 visibility map 이 의심스러울 때만 씁니다.
+- `SKIP_LOCKED` 는 파티션 부모에 충돌 락이 있으면 **모든 파티션을 스킵**합니다.
+- `INDEX_CLEANUP` 은 failsafe 가 발동하면 `ON` 이어도 무력화됩니다.
+- `TRUNCATE` 의 기본값은 GUC·테이블 파라미터 `vacuum_truncate` 가 `false` 면 off 로 뒤집힙니다.
+- `PARALLEL` 은 `min_parallel_index_scan_size` 보다 큰 인덱스만 참여시키고 **인덱스당 워커 1개**입니다.
+- `BUFFER_USAGE_LIMIT` 의 유효 범위는 `128 kB` 부터 `16 GB` 입니다.
+- `FULL` 과 병용할 수 없거나 무시되는 옵션은 앞의 「VACUUM FULL 을 써야 할 때와 쓰면 안 될 때」에 정리해 두었습니다.
 
 `ONLY` 가 18 에 들어온 배경은 릴리스노트에 있습니다. *"This is useful since autovacuum does not process partitioned tables, just its children."* 17 이하에서는 파티션 부모를 지정하면 리프 파티션이 항상 처리되고 회피 수단이 없었습니다.
 

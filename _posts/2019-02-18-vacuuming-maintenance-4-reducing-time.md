@@ -382,13 +382,36 @@ read-ahead 계열 기본값은 18 에서 올라갔습니다: `effective_io_concu
 
 13 은 이미 EOL(2025-11-13)이므로 지원 중인 14 부터 정리합니다. 각 항목은 릴리스 노트 기준입니다.
 
-| 버전 | 추가된 것 | 제거·변경된 것 |
-|---|---|---|
-| **14** (2021-09-30) | `INDEX_CLEANUP` 기본값 `auto` / vacuum failsafe(`vacuum_failsafe_age`·`vacuum_multixact_failsafe_age`) / bottom-up index deletion / `PROCESS_TOAST` / 인덱스별 autovacuum 로깅 / `COPY FREEZE` 가 page visibility bit 정상 갱신 / `vacuumdb --no-index-cleanup`·`--no-truncate` | `vacuum_cost_page_miss` 기본값 10 → 2 / 랩어라운드 경고·하드리밋 여유 확대 / `CREATE INDEX CONCURRENTLY`·`REINDEX CONCURRENTLY` 가 다른 릴레이션 dead row 제거를 막지 않음 / **제거**: `vacuum_cleanup_index_scale_factor` |
-| **15** (2022-10-13) | `VACUUM VERBOSE`·autovacuum 로그 정보 추가 / 중복 제거가 시스템·TOAST 인덱스에도 적용 / `CLUSTER` 가 파티션 테이블 지원 | `log_autovacuum_min_duration` 기본값 `-1` → `10min`(`log_checkpoints` 도 `on`) / `relfrozenxid`·`relminmxid` 를 더 적극적으로 전진 / **신규 `VACUUM` 옵션 없음** |
-| **16** (2023-09-14) | `BUFFER_USAGE_LIMIT` + `vacuum_buffer_usage_limit` / `PROCESS_MAIN` / `SKIP_DATABASE_STATS`·`ONLY_DATABASE_STATS` / `pg_stat_io` 뷰 / `n_tup_newpage_upd` 컬럼 | 평시 배큠 중 기회적 페이지 freeze("makes full-table freeze vacuums less necessary") / delay 설정 변경을 **블록 단위**로 반영 / BRIN 전용 컬럼 갱신 시 HOT 허용 / **제거**: `vacuum_defer_cleanup_age` |
-| **17** (2024-09-26) | dead tuple 저장 구조 개편 — **`maintenance_work_mem` 1GB 상한 제거** / `indexes_total`·`indexes_processed` 진행률 / `MAINTAIN` 권한·`pg_maintain` 롤 / 인덱스 없는 릴레이션 배큠 최적화 | `vacuum_buffer_usage_limit` 기본값 `2MB` / 배큠 WAL 이 더 압축적 / **비호환**: `pg_stat_progress_vacuum` 컬럼 개편(`max_dead_tuple_bytes`·`num_dead_item_ids`·`dead_tuple_bytes`) / **제거**: `old_snapshot_threshold` |
-| **18** (2025-09-25, 현재 GA) | eager freezing·eager scanning + `vacuum_max_eager_freeze_failure_rate` / `autovacuum_worker_slots` / `autovacuum_vacuum_max_threshold`(1억) / `vacuum_truncate` GUC / `total_vacuum_time` 등 4개 컬럼 / delay time 보고(`track_cost_delay_timing`) / AIO(`io_method`·`pg_aios`) / `pg_class.relallfrozen` / `pg_signal_autovacuum_worker` 롤 | autovacuum 발동 공식 2곳 변경 / `autovacuum_max_workers` 를 reload 로 변경 가능 / `effective_io_concurrency`·`maintenance_io_concurrency` 기본값 16 / **비호환**: `VACUUM`·`ANALYZE` 가 상속 자식까지 처리(이전 동작은 새 `ONLY` 옵션) |
+**14** (2021-09-30)
+
+- *추가* — `INDEX_CLEANUP` 기본값 `auto` · vacuum failsafe(`vacuum_failsafe_age`·`vacuum_multixact_failsafe_age`) · bottom-up index deletion · `PROCESS_TOAST` · 인덱스별 autovacuum 로깅 · `COPY FREEZE` 가 page visibility bit 를 정상 갱신 · `vacuumdb --no-index-cleanup`·`--no-truncate`
+- *변경* — `vacuum_cost_page_miss` 기본값 10 → 2 · 랩어라운드 경고·하드리밋 여유 확대 · `CREATE INDEX CONCURRENTLY`·`REINDEX CONCURRENTLY` 가 다른 릴레이션의 dead row 제거를 막지 않음
+- *제거* — `vacuum_cleanup_index_scale_factor`
+
+**15** (2022-10-13)
+
+- *추가* — `VACUUM VERBOSE`·autovacuum 로그 정보 · 중복 제거가 시스템·TOAST 인덱스에도 적용 · `CLUSTER` 의 파티션 테이블 지원
+- *변경* — `log_autovacuum_min_duration` 기본값 `-1` → `10min`(`log_checkpoints` 도 `on`) · `relfrozenxid`·`relminmxid` 를 더 적극적으로 전진
+- 신규 `VACUUM` 옵션은 없습니다.
+
+**16** (2023-09-14)
+
+- *추가* — `BUFFER_USAGE_LIMIT` 과 `vacuum_buffer_usage_limit` · `PROCESS_MAIN` · `SKIP_DATABASE_STATS`·`ONLY_DATABASE_STATS` · `pg_stat_io` 뷰 · `n_tup_newpage_upd` 컬럼
+- *변경* — 평시 배큠 중 기회적 페이지 freeze("makes full-table freeze vacuums less necessary") · delay 설정 변경을 **블록 단위**로 반영 · BRIN 전용 컬럼 갱신 시 HOT 허용
+- *제거* — `vacuum_defer_cleanup_age`
+
+**17** (2024-09-26)
+
+- *추가* — dead tuple 저장 구조 개편으로 **`maintenance_work_mem` 1GB 상한 제거** · `indexes_total`·`indexes_processed` 진행률 · `MAINTAIN` 권한과 `pg_maintain` 롤 · 인덱스 없는 릴레이션 배큠 최적화
+- *변경* — `vacuum_buffer_usage_limit` 기본값 `2MB` · 배큠 WAL 이 더 압축적
+- *비호환* — `pg_stat_progress_vacuum` 컬럼 개편(`max_dead_tuple_bytes`·`num_dead_item_ids`·`dead_tuple_bytes`)
+- *제거* — `old_snapshot_threshold`
+
+**18** (2025-09-25, 현재 GA)
+
+- *추가* — eager freezing·eager scanning 과 `vacuum_max_eager_freeze_failure_rate` · `autovacuum_worker_slots` · `autovacuum_vacuum_max_threshold`(1억) · `vacuum_truncate` GUC · `total_vacuum_time` 등 4개 컬럼 · delay time 보고(`track_cost_delay_timing`) · AIO(`io_method`·`pg_aios`) · `pg_class.relallfrozen` · `pg_signal_autovacuum_worker` 롤
+- *변경* — autovacuum 발동 공식 2곳 · `autovacuum_max_workers` 를 reload 로 변경 가능 · `effective_io_concurrency`·`maintenance_io_concurrency` 기본값 16
+- *비호환* — `VACUUM`·`ANALYZE` 가 상속 자식까지 처리(이전 동작은 새 `ONLY` 옵션)
 ## PostgreSQL 19 에서 바뀌는 것 (GA 전)
 
 **PostgreSQL 19 는 아직 GA 전입니다.** 2026년 9월 현재 Beta 3(2026-08-13)이고 GA 날짜는 공개되지 않았습니다. 아래는 개발 문서 릴리스 노트 기준이며 GA 시점에 달라질 수 있습니다.
