@@ -13,5 +13,9 @@ description: 한 편짜리 글로 흩어지면 찾기 어려운 기준 문서들
 - [데이터베이스 네이밍 규칙]({{ '/docs/database/naming/' | relative_url }}) — MySQL·PostgreSQL 공통 식별자·타입 명명 규칙
 - [데이터 3법]({{ '/docs/database/data-3-law/' | relative_url }}) — 데이터 3법에 기반한 개인정보 처리 방침
 - [데이터 암호화]({{ '/docs/database/encryption/' | relative_url }}) — 개인정보 암호화 처리 방안
+- [데이터베이스 선택 가이드]({{ '/docs/database/choosing-a-database/' | relative_url }}) — 용도에 맞는 DB·웨어하우스·로그 저장소 선택 기준
+- [MySQL for Developers]({{ '/docs/database/mysql-for-developers/' | relative_url }}) — 개발자가 지킬 원칙과 안티패턴, 드라이버 선택
+- [MySQL 초기 설치 체크리스트]({{ '/docs/database/mysql-install-checklist/' | relative_url }}) — 처음 설치할 때 기본값으로 두면 안 되는 파라미터
+- [MongoDB 샤드 재구동 순서]({{ '/docs/database/mongodb-shard-restart/' | relative_url }}) — 밸런서·mongos·샤드·config 종료와 기동 순서
 
 <!-- 문서를 추가하면 _data/docs_nav.yml 에도 넣어야 사이드바에 뜬다. -->
