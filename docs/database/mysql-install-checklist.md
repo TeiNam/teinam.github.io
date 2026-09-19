@@ -17,16 +17,17 @@ redirect_from:
 > - LTS 계열은 Premier 5년과 Extended 3년을 지원하고, Innovation 계열은 다음 Innovation 릴리스가 나올 때까지만 지원된다.
 > - LTS 업그레이드는 한 단계씩만 지원된다. 8.4 에서 9.7 로는 갈 수 있지만, LTS 계열을 건너뛰는 경로는 지원되지 않는다.
 > - 9.7 은 순차 버전 번호를 쓰는 마지막 LTS 계열이고, 이후 릴리스는 `YY.M.P` 형식의 캘린더 버저닝을 쓴다. 첫 캘린더 버전은 2026년 7월 릴리스인 26.7.0 이다. 캘린더 버전 번호만으로는 그 릴리스가 Innovation 인지 LTS 인지 구분되지 않는다.
+> - 용량 단위 표기(`MB`·`MiB`)는 MySQL 매뉴얼 원문을 따른다.
 
 처음 MySQL 을 구성하는 개발자나 스타트업은 대부분 기본값을 그대로 두고 시작한다. 그런데 기본값은 "어디서나 기동되는 값"이지 "우리 서비스에 맞는 값"이 아니다. 서비스가 커진 뒤에 데이터 정합성이나 무결성 문제가 드러나면 이미 쌓인 데이터를 안은 채로 되돌려야 하므로 비용이 몇 배로 든다. 초기화 시점에만 정할 수 있어서 아예 되돌릴 수 없는 값도 있다.
 
-그래서 이 문서는 MySQL 을 새로 세울 때마다 위에서부터 짚어 가는 순서로 배치했다. 되돌릴 수 없는 항목이 맨 앞이고, 운영 중에 바꿀 수 있는 항목이 뒤쪽이다. DB 가 맡는 역할에 따라 답이 갈리는 항목은 판단 기준을 함께 적었다.
+그래서 이 문서는 MySQL 을 새로 세울 때마다 위에서부터 짚어 가는 순서로 배치했다. 되돌릴 수 없는 항목이 맨 앞이고, 운영 중에 바꿀 수 있는 항목이 뒤쪽이다. DB 가 맡는 역할에 따라 답이 갈리는 항목은 판단 기준을 함께 적었다. 예외는 보안 하드닝이다. 설치 직후에 해야 하는 작업이지만 계정·인증 항목과 함께 봐야 하므로 「계정과 인증」 절에 모아 두었다.
 
 ## 초기화할 때만 정할 수 있는 값
 
 이 절을 맨 앞에 두는 이유는 단순하다. 나중에 바꿀 수 없으니 순서상 가장 먼저 결정해야 한다.
 
-InnoDB 설정에서 먼저 결정할 것은 데이터 파일, 로그 파일, 페이지 크기, 메모리 버퍼이며, 문서는 이들을 **InnoDB 초기화 전에 구성해야 하고 초기화 이후의 변경은 간단하지 않은 절차를 수반한다**고 못 박는다. 한편 데이터 디렉터리를 초기화하는 순간에는 `--basedir`·`--datadir` 처럼 디렉터리 위치를 정하는 옵션과 필요한 경우의 `--user` 외에는 지정하지 않는 것이 문서 권고다. 서버가 평소 사용할 옵션은 초기화 후 재기동할 때 적용한다. 다만 디렉터리와 테이블스페이스 관련 옵션은 `mysqld` 를 처음 실행하기 전에 옵션 파일에 들어가 있어야 한다.
+InnoDB 설정에서 먼저 결정할 것은 데이터 파일, 로그 파일, 페이지 크기, 메모리 버퍼다. 문서는 이들을 **InnoDB 초기화 전에 구성해야 하고 초기화 이후의 변경은 간단하지 않은 절차를 수반한다**고 명시한다. 데이터 디렉터리를 초기화하는 순간에는 `--basedir`·`--datadir` 처럼 디렉터리 위치를 정하는 옵션과 필요한 경우의 `--user` 외에는 지정하지 않는 것이 문서 권고다. 서버가 평소 사용할 옵션은 초기화 후 재기동할 때 적용한다. 다만 디렉터리와 테이블스페이스 관련 옵션은 `mysqld` 를 처음 실행하기 전에 옵션 파일에 들어가 있어야 한다.
 
 | 파라미터 | 초기화 이후 | 기본값 |
 |---|---|---|
@@ -42,7 +43,7 @@ InnoDB 설정에서 먼저 결정할 것은 데이터 파일, 로그 파일, 페
 - `0` — 생성 시 대소문자를 그대로 디스크에 저장하고 비교도 대소문자를 구분한다. Windows·macOS 처럼 파일명 대소문자를 구분하지 않는 시스템에서는 이 값을 쓰지 않는다. 강제하면 인덱스 손상이 발생할 수 있다.
 - `1` — 소문자로 저장하고 비교 시 대소문자를 무시한다. 데이터베이스명과 테이블 별칭에도 적용된다.
 - `2` — 저장은 원래 대소문자로 하고 조회할 때 소문자로 변환한다. 대소문자를 구분하지 **않는** 파일시스템에서만 동작한다. InnoDB 테이블명과 뷰 이름은 `1` 과 같이 소문자로 저장된다.
-- 문서가 제시하는 선택지는 두 가지다. 모든 시스템에서 `1` 을 쓰거나(대신 `SHOW TABLES` 가 원래 대소문자를 보여주지 못한다), Unix 는 `0` Windows 는 `2` 로 두는 것이다(대신 문장마다 대소문자를 정확히 써야 한다).
+- 문서가 제시하는 선택지는 두 가지다. 모든 시스템에서 `1` 을 쓰면 `SHOW TABLES` 가 원래 대소문자를 보여주지 못한다. Unix 는 `0`, Windows 는 `2` 로 두면 문장마다 대소문자를 정확히 써야 한다.
 - **InnoDB 테이블을 쓰면서 플랫폼 간 이관 문제를 피하려면 모든 플랫폼에서 `1` 을 쓰라는 것이 문서의 예외 권고다.** Unix 에서는 `my_table` 과 `MY_TABLE` 이 공존할 수 있지만 Windows 에서는 같은 테이블로 취급되므로, 이관 시점에 충돌이 드러난다.
 - 트리거 식별자는 이 변수의 영향을 받지 않는다.
 
@@ -56,10 +57,10 @@ InnoDB 설정에서 먼저 결정할 것은 데이터 파일, 로그 파일, 페
 ### 데이터 파일과 리두 로그 경로
 
 - `mysqld` 가 InnoDB 시스템 테이블스페이스를 구성한 뒤에는 **테이블스페이스 특성 중 일부를 바꾸려면 완전히 새 인스턴스를 세워야 한다.** 문서가 든 예는 시스템 테이블스페이스 첫 파일의 파일명과 언두 로그 개수다.
-- 따라서 기본값을 쓰지 않을 생각이라면 `mysqld` 를 실행하기 **전에** `innodb_data_file_path` 와 `innodb_log_file_size` 설정이 옵션 파일에 있어야 하고, `innodb_data_home_dir`·`innodb_log_group_home_dir` 처럼 InnoDB 파일의 생성·위치에 영향을 주는 파라미터도 함께 지정해야 한다.
+- 기본값을 쓰지 않을 생각이라면 `mysqld` 를 실행하기 **전에** `innodb_data_file_path` 와 `innodb_log_file_size` 설정이 옵션 파일에 있어야 한다. `innodb_data_home_dir`·`innodb_log_group_home_dir` 처럼 InnoDB 파일의 생성·위치에 영향을 주는 파라미터도 함께 지정한다.
 - `innodb_data_file_path` 의 기본 동작은 `ibdata1` 이라는 자동 확장 데이터 파일 하나를 12MB보다 약간 크게 만드는 것이다. 문법은 `file_name:file_size[:autoextend[:max:max_file_size]]` 이고, `autoextend` 와 `max` 는 마지막 파일에만 붙일 수 있다. 자동 확장 증가분은 64MB 이며 `innodb_autoextend_increment` 로 조절한다.
 - 초기화 시점에 언두 테이블스페이스 2개가 함께 생성된다. 전역 임시 테이블스페이스 `ibtmp1` 은 약 12MB 로 시작해 자동 확장되고, 세션 임시 테이블스페이스는 `#innodb_temp` 에 놓인다. `innodb_undo_directory` 는 동적 변경이 불가해서 설정을 바꾸려면 재시작이 필요하다.
-- 리두 로그 파일 개수와 개별 크기를 기본값과 다르게 두려면 **인스턴스를 초기화할 때** `innodb_log_files_in_group` 과 `innodb_log_file_size` 를 설정해야 한다. 두 변수는 8.0.30 에서 deprecated 됐으므로, 새로 세우는 서버는 뒤에 나오는 `innodb_redo_log_capacity` 를 쓴다.
+- 리두 로그 파일 개수와 개별 크기를 기본값과 다르게 두려면 **인스턴스를 초기화할 때** `innodb_log_files_in_group` 과 `innodb_log_file_size` 를 설정해야 한다. 두 변수는 8.0.30 에서 deprecated 됐으므로, 새로 세우는 서버는 「내구성과 복제 안전성」 절의 `innodb_redo_log_capacity` 를 쓴다.
 
 ```ini
 [mysqld]
@@ -86,7 +87,6 @@ innodb_log_group_home_dir = /var/lib/mysql
 | `innodb_doublewrite` | `ON` 과 `OFF` 사이의 동적 전환 불가 |
 
 - `innodb_doublewrite` 는 `ON`·`DETECT_AND_RECOVER`·`DETECT_ONLY` 사이에서는 동적으로 바꿀 수 있지만, 활성 상태와 `OFF` 사이의 전환은 지원되지 않는다.
-- 데이터 디렉터리 초기화는 `mysql` 스키마에 시간대 테이블을 **만들지만 채우지는 않는다.** `--initialize` 또는 `--initialize-insecure` 로 직접 초기화한 경우에는 바이너리 로깅이 기본 비활성이다.
 
 ## SQL_MODE
 
@@ -148,10 +148,12 @@ sql_mode = ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_D
 
 ## 문자셋 · 콜레이션 · 시간대
 
+문자 데이터를 어떤 인코딩으로 저장하고 어떤 기준으로 같다고 판정할지, 시각을 어느 시간대로 해석할지 정하는 절이다. 세 항목 모두 초기 구축 때 결정한다. 서버 기본 문자셋을 나중에 바꾸면 기존 객체와 새로 만드는 객체의 설정이 갈린다.
+
 ### 문자셋
 
 - 서버 기본 문자셋은 `character_set_server`, 서버 기본 콜레이션은 `collation_server` 로 정한다. 8.0 이상의 기본값은 각각 **`utf8mb4`** 와 **`utf8mb4_0900_ai_ci`** 다. 8.0 에서 `latin1` 과 `latin1_swedish_ci` 로부터 바뀐 값이다.
-- 즉 8.0 이상을 새로 세운다면 문자셋은 이미 원하는 값이다. 손댈 것은 오래된 설정 파일이나 문서에서 복사해 온 `utf8`·`utf8mb3` 지정을 걷어내는 쪽이다.
+- 즉 8.0 이상을 새로 세운다면 문자셋은 이미 원하는 값이다. 오래된 설정 파일이나 문서에서 복사해 온 `utf8`·`utf8mb3` 지정만 제거한다.
 - `utf8mb3` 는 deprecated 다. 8.0.x 와 8.4.x LTS 계열 수명 동안은 지원되지만 장래 메이저 릴리스에서 제거될 것으로 문서가 예고한다. `CHARACTER SET` 절 밖의 용법(`--character-set-server=utf8mb3`, `SET NAMES 'utf8mb3'`, `_utf8mb3 'a'`)도 함께 deprecated 다.
 - `utf8` 은 `utf8mb3` 의 deprecated 별칭이다. 출력에서는 `utf8` 과 `utf8_` 접두어가 `utf8mb3` 와 `utf8mb3_` 로 표기된다.
 - 사용 중에 서버 기본 문자셋을 바꾸면 이미 만들어진 객체와 새로 만드는 객체의 문자셋이 갈리므로, 처음 구축할 때 정해 둔다.
@@ -164,7 +166,7 @@ collation_server     = utf8mb4_0900_ai_ci
 
 ### 콜레이션과 한국어
 
-기본 콜레이션 `utf8mb4_0900_ai_ci` 는 UCA 9.0.0 가중치 키와 CLDR v30 을 기반으로 하며, 악센트와 대소문자를 구분하지 않는다(이름의 `_0900`·`_ai`·`_ci` 가 그 뜻이다). 특정 언어에 맞춘 콜레이션이 아니라 보조 문자까지 포함해 기본 순서로 정렬한다. pad 속성은 `NO PAD` 여서 `'a'` 와 `'a '` 가 서로 다른 문자열로 비교된다.
+기본 콜레이션 `utf8mb4_0900_ai_ci` 는 UCA 9.0.0 가중치 키와 CLDR v30 을 기반으로 한다. 악센트와 대소문자를 구분하지 않으며, 이름의 `_0900`·`_ai`·`_ci` 가 그 뜻이다. 특정 언어에 맞춘 콜레이션이 아니라 보조 문자까지 포함해 기본 순서로 정렬한다. pad 속성은 `NO PAD` 여서 `'a'` 와 `'a '` 가 서로 다른 문자열로 비교된다.
 
 한국어와 관련된 문제는 실재한다. MySQL Bug #111331 은 `'가나다'`, `'ㄱㅏ나다'`, `'ㄱㅏㄴㅏㄷㅏ'` 세 행을 넣고 `WHERE name = '가나다'` 를 실행하면 `utf8mb4_0900_ai_ci` 테이블이 **세 행 모두**를 반환한다고 보고한다. 같은 조건에서 `utf8mb4_general_ci` 테이블은 한 행만 반환한다.
 
@@ -197,7 +199,7 @@ CREATE TABLE members (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
 
-컬럼에 지정한 콜레이션이 의도대로 동작하는지는 위와 같은 비교 쿼리로 배포 전에 확인한다. 그리고 분해형 입력이 애초에 들어오지 않게 애플리케이션에서 입력을 NFC 로 정규화하는 것이 근본 대응이다. 이는 MySQL 문서의 권고가 아니라 유니코드 처리의 일반 원칙이다.
+컬럼에 지정한 콜레이션이 의도대로 동작하는지는 앞의 `COLLATE` 비교 쿼리로 배포 전에 확인한다. 그리고 분해형 입력이 애초에 들어오지 않게 애플리케이션에서 입력을 NFC 로 정규화하는 것이 근본 대응이다. 이는 MySQL 문서의 권고가 아니라 유니코드 처리의 일반 원칙이다.
 
 ### 시간대
 
@@ -209,13 +211,15 @@ CREATE TABLE members (
 SELECT COUNT(*) FROM mysql.time_zone_name;
 ```
 
+적재 명령은 `mysql` 스키마의 기존 시간대 테이블을 덮어쓴다.
+
 ```bash
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
 ```
 
 - 적재 후에는 서버를 재시작해야 한다. `mysqld` 가 조회한 시간대 정보를 캐싱하기 때문이다. `zoneinfo` 가 있는 시스템에서는 다운로드용 시간대 패키지를 쓰지 말라는 경고가 문서에 있다.
 - 명시 설정은 옵션 파일의 `default-time-zone='timezone'` 또는 `SET GLOBAL time_zone` 으로 한다. 후자는 `SYSTEM_VARIABLES_ADMIN` 권한이 필요하고, 오프셋으로 지정할 때 범위는 `'-13:59'` 부터 `'+14:00'` 이다.
-- 국내 전용 서비스는 `Asia/Seoul`, 여러 지역을 상대하는 서비스는 `UTC` 로 두고 표시 시점에 변환하는 편이 다루기 쉽다.
+- 국내 전용 서비스는 `Asia/Seoul` 로 두고, 여러 지역을 상대하는 서비스는 `UTC` 로 두고 표시 시점에 변환한다.
 
 ```ini
 [mysqld]
@@ -224,9 +228,11 @@ default-time-zone = 'Asia/Seoul'
 
 ## 내구성과 복제 안전성
 
+장애 시점에 무엇까지 잃어도 되는지 정하는 절이다. 서비스가 감당할 유실 범위를 먼저 정하고 값을 고른다. `innodb_flush_method` 는 동적 변경이 불가하고 `gtid_mode` 는 한 번에 한 단계씩만 전환되므로, 이 두 항목은 초기 구축 때 결정한다.
+
 ### `innodb_flush_log_at_trx_commit` 과 `sync_binlog`
 
-`1`/`1` 조합이 기본값이면서 가장 안전하고 가장 느리다. 문서는 `sync_binlog` 에 대해 "가장 안전한 값은 기본값인 1 이지만 동시에 가장 느리다"고 적는다. 커밋 지연을 줄이려고 이 조합을 내리는 것은 내구성을 성능과 바꾸는 거래이므로, 서비스가 감당할 유실 범위를 먼저 정한 다음 결정한다.
+두 값 모두 기본값이 `1` 이고, 이 조합이 가장 안전하면서 가장 느리다. 문서는 `sync_binlog` 를 두고 "가장 안전한 값은 기본값인 1 이지만 동시에 가장 느리다"고 적는다. 커밋 지연을 줄이려고 이 조합을 내리는 것은 내구성을 성능과 바꾸는 거래이므로, 서비스가 감당할 유실 범위를 먼저 정한 다음 결정한다.
 
 | 파라미터 | 기본값 | 의미 |
 |---|---|---|
@@ -236,11 +242,12 @@ default-time-zone = 'Asia/Seoul'
 
 - `innodb_flush_log_at_trx_commit=1` 은 각 트랜잭션이 커밋되기 전에 InnoDB 로그를 디스크와 동기화한다. 이것이 기본값이다.
 - `0` 은 예기치 않은 종료가 났을 때 **가장 최근 커밋 일부의 유실을 감수**하는 선택이다. InnoDB 는 그래도 1초에 한 번 로그를 flush 하려 시도하지만, flush 가 보장되지는 않는다.
-- 기본값 `1` 에서 내리려면 각 값의 정의를 변수 표에서 직접 확인한 뒤 결정한다. 이 파라미터는 값에 따라 보장 범위가 달라지고, 그 차이가 장애 시점에만 드러난다.
+- 허용값은 `0`·`1`·`2` 세 가지다. `2` 의 동작은 매뉴얼의 시스템 변수 레퍼런스에서 확인한다.
+- 기본값 `1` 에서 내리려면 각 값의 정의를 매뉴얼의 시스템 변수 레퍼런스에서 확인한 뒤 결정한다. 이 파라미터는 값에 따라 보장 범위가 달라지고, 그 차이가 장애 시점에만 드러난다.
 - `sync_binlog` 를 `N`(1 초과)으로 두면 `N` 개의 커밋 그룹마다 동기화한다. 동기화를 활성화하지 않으면 OS 나 머신이 죽을 때 바이너리 로그의 마지막 문장들이 유실될 수 있다.
 - `1`/`1` 조합에서는 크래시 복구 시 바이너리 로그를 마지막 유효 위치까지 절단하고 prepared 트랜잭션을 완료한다. 그런데도 `The binary log file_name is shorter than its expected size` 에러가 나면 해당 바이너리 로그는 올바르지 않으며, 새 스냅샷에서 복제를 다시 시작해야 한다.
-- `innodb_doublewrite` 는 기본 `ON` 이다. OS·스토리지 서브시스템 장애나 `mysqld` 프로세스의 예기치 않은 종료가 페이지 쓰기 중간에 발생해도 크래시 복구 때 doublewrite 버퍼에서 온전한 사본을 찾을 수 있다. I/O 가 두 배로 늘지는 않는다. 큰 순차 청크로 한 번의 `fsync()` 호출로 기록된다. 문서가 끄기를 언급하는 경우는 "데이터 정합성보다 성능이 더 중요한" 상황뿐이다.
-- `innodb_flush_method` 는 8.4 리눅스 기본값이 "지원되면 `O_DIRECT`, 아니면 `fsync`" 로 바뀌었다(8.0 은 `fsync`). 동적 변경은 불가하다. 공식 문서에서 확인되는 값은 `fsync`, `O_DSYNC`, `O_DIRECT`, `O_DIRECT_NO_FSYNC` 이며, 플랫폼별로 더 있는 값은 변수 표에서 확인한다. 8.4 에서는 `--innodb-dedicated-server` 가 이 값을 더 이상 자동 설정하지 않는다. `innodb_use_fdatasync` 는 8.4 기본값이 `ON` 이다(8.0 은 `OFF`).
+- `innodb_doublewrite` 는 기본 `ON` 이다. 페이지 쓰기 중간에 OS·스토리지 서브시스템 장애가 나거나 `mysqld` 프로세스가 예기치 않게 종료되어도, 크래시 복구 때 doublewrite 버퍼에서 온전한 사본을 찾을 수 있다. I/O 가 두 배로 늘지는 않는다. 큰 순차 청크로 한 번의 `fsync()` 호출로 기록된다. 문서가 끄기를 언급하는 경우는 "데이터 정합성보다 성능이 더 중요한" 상황뿐이다.
+- `innodb_flush_method` 는 8.4 리눅스 기본값이 "지원되면 `O_DIRECT`, 아니면 `fsync`" 로 바뀌었다(8.0 은 `fsync`). 동적 변경은 불가하다. 공식 문서에서 확인되는 값은 `fsync`, `O_DSYNC`, `O_DIRECT`, `O_DIRECT_NO_FSYNC` 이며, 플랫폼별로 더 있는 값은 매뉴얼의 시스템 변수 레퍼런스에서 확인한다. 8.4 에서는 `--innodb-dedicated-server` 가 이 값을 더 이상 자동 설정하지 않는다. `innodb_use_fdatasync` 는 8.4 기본값이 `ON` 이다(8.0 은 `OFF`).
 
 ### 리두 로그
 
@@ -261,7 +268,7 @@ default-time-zone = 'Asia/Seoul'
 
 - GTID 기반 복제를 켜기 전에 `enforce_gtid_consistency` 를 `ON` 으로 두어야 한다. 이 값이 `ON` 이어야 `gtid_mode=ON` 설정이 가능하다.
 - 예기치 않은 정지에 강한 복제 구성으로 문서가 드는 조합은 `gtid_mode=ON`, `SOURCE_AUTO_POSITION=1`, `GTID_ONLY=1` 이다. GTID 기반 복제가 그런 구성을 가장 쉽게 만들어 준다고 적혀 있다.
-- `gtid_purged` 는 `gtid_executed` 의 부분집합이며 초기화는 `RESET BINARY LOGS AND GTIDS` 로 한다. `gtid_executed_compression_period` 는 기본값 0 이고 문서 권고도 0 이다.
+- `gtid_purged` 는 `gtid_executed` 의 부분집합이며 초기화는 `RESET BINARY LOGS AND GTIDS` 로 한다. 이 문장은 GTID 상태와 바이너리 로그를 모두 버린다. `gtid_executed_compression_period` 는 기본값 0 이고 문서 권고도 0 이다.
 - 8.4 에서는 `gtid_mode=ON` 일 때 `IGNORE_SERVER_IDS` 가 거부된다.
 
 ```ini
@@ -276,9 +283,10 @@ gtid_mode                = ON
 
 ### `binlog_format`
 
-- **기본값은 이미 `ROW`** 다. 허용값은 `ROW`, `STATEMENT`, `MIXED` 세 가지다. 바이너리 로그를 끄는 것은 이 변수의 값이 아니라 `--skip-log-bin` 이다.
-- `binlog_format` 자체가 8.0.34 부터 deprecated 이고 장래 제거 대상이다. 문서는 행 기반 외의 로깅 형식 지원도 제거 대상이므로 **신규 복제 구성에는 행 기반 로깅만 사용하라**고 못 박는다. 새로 세우는 서버에서는 이 값을 손댈 이유가 없다.
+- **기본값은 이미 `ROW`** 다. 허용값은 `ROW`, `STATEMENT`, `MIXED` 세 가지다.
+- `binlog_format` 자체가 8.0.34 부터 deprecated 이고 장래 제거 대상이다. 문서는 행 기반 외의 로깅 형식 지원도 제거 대상이므로 **신규 복제 구성에는 행 기반 로깅만 사용하라**고 명시한다. 새로 세우는 서버에서는 이 값을 손댈 이유가 없다.
 - 변경 데이터 캡처(CDC)로 바이너리 로그를 읽는 구성도 행 기반을 전제로 한다.
+- `binlog_rows_query_log_events` 를 켜면 행 기반 로그에 원본 SQL 문이 함께 기록되어 사후 추적이 쉬워진다. 로그 크기는 늘어난다.
 - NDB Cluster 는 예외로 기본값이 `MIXED` 이며 문장 기반 복제를 지원하지 않는다.
 - 8.4 에서는 writeset 기반 의존성 추적이 `binlog_format=ROW` 를 요구한다. `MIXED` 는 더 이상 지원되지 않는다.
 - 런타임 변경에는 제약이 있다. 스토어드 함수나 트리거 안에서는 바꿀 수 없고, 세션에 임시 테이블이 열려 있으면 세션 값을, 복제 채널에 임시 테이블이 열려 있거나 applier 스레드가 도는 중이면 전역 값을 바꿀 수 없다. `PERSIST_ONLY` 는 항상 허용된다.
@@ -286,7 +294,7 @@ gtid_mode                = ON
 ### `binlog_row_image`
 
 - 기본값은 `full` 이고 값은 `full`, `minimal`, `noblob` 이다. `minimal` 은 before image 에서 변경할 행을 식별하는 데 필요한 컬럼만, after image 에서는 SQL 문이 값을 지정했거나 auto-increment 로 생성된 컬럼만 기록한다.
-- **`minimal` 과 `noblob` 에는 조건이 붙는다.** 소스와 대상 테이블 양쪽에서 모든 컬럼이 같은 순서로 존재하고 각 컬럼의 데이터 타입이 같아야 하며, 기본 키 정의가 동일해야 삭제와 갱신이 올바르게 동작한다. 이 조건이 깨지면 **경고나 에러 없이 소스와 레플리카가 조용히 갈라진다.**
+- **`minimal` 과 `noblob` 에는 조건이 붙는다.** 소스와 대상 테이블 양쪽에서 모든 컬럼이 같은 순서로 존재하고 각 컬럼의 데이터 타입이 같아야 하며, 기본 키 정의가 동일해야 삭제와 갱신이 올바르게 동작한다. 이 조건이 깨지면 **경고도 에러도 없이 소스와 레플리카의 데이터가 어긋난다.**
 - `STATEMENT` 포맷에서는 효과가 없고 NDB 에도 효과가 없다. 소스가 `full` 이고 레플리카가 `minimal` 이면 레플리카가 받는 이벤트에는 full after image 가 들어 있다.
 - 문서가 `minimal` 을 고려하라고 적는 조건은 바이너리 로그가 비회전 스토리지에 있고 모든 테이블에 기본 키가 있는 경우다. 로깅량이 줄어든다.
 - 반대로 CDC 나 감사 용도로 변경 전후 값을 온전히 남겨야 한다면 기본값 `full` 을 유지한다.
@@ -297,17 +305,16 @@ gtid_mode                = ON
 |---|---|---|
 | `binlog_expire_logs_seconds` | `2592000`(30일) | 동적, 0 은 자동 삭제 중단 |
 | `binlog_expire_logs_auto_purge` | `ON` | 보존 기간 설정보다 우선 |
-| `binlog_row_metadata` | `MINIMAL` | 8.0.1 도입 |
 
 - `binlog_expire_logs_seconds` 는 8.0.1 에 도입되고 8.0.11 에 기본값이 확정됐다. 최소 0, 최대 4294967295 다.
-- `binlog_expire_logs_auto_purge` 가 자동 삭제 여부를 결정하며 보존 기간 설정보다 우선한다. 보존 기간을 `0` 으로 두면 자동 삭제가 멈춘다. 둘 중 하나만 보고 용량을 계산하면 디스크가 찬다.
+- `binlog_expire_logs_auto_purge` 가 자동 삭제 여부를 결정하며 보존 기간 설정보다 우선한다. 보존 기간을 `0` 으로 두면 자동 삭제가 멈춘다. 둘 중 하나만 보고 용량을 계산하면 디스크 공간이 부족해진다.
 - `expire_logs_days` 는 8.0.3 에서 deprecated 됐고 **8.4 에서 제거**됐다. 런타임에 이 변수를 읽거나 쓰려 해도, `--expire-logs-days` 로 `mysqld` 를 기동해도 에러가 난다. 대신 `binlog_expire_logs_seconds` 를 쓴다.
-- `binlog_row_metadata` 의 기본값 `MINIMAL` 은 `SIGNED` 플래그, 컬럼 문자셋, geometry 타입에 관한 메타데이터만 기록한다.
+- `binlog_row_metadata` 의 기본값 `MINIMAL`(8.0.1 도입)은 `SIGNED` 플래그, 컬럼 문자셋, geometry 타입에 관한 메타데이터만 기록한다.
 
 ### `binlog_cache_size`
 
 - 기본값은 `32768`(32KB)이다.
-- 큰 트랜잭션을 자주 쓰는 환경에서는 이 값을 늘려야 할 수 있다. 캐시가 차면 디스크의 임시 파일로 스왑되어 성능이 떨어진다.
+- 한 트랜잭션이 만드는 바이너리 로그가 이 값(기본 `32768` 바이트)을 넘는 일이 잦으면 더 올려야 할 수 있다. 캐시가 차면 디스크의 임시 파일로 스왑되어 성능이 떨어진다.
 
 ```sql
 SHOW GLOBAL STATUS LIKE 'Binlog_cache_use';
@@ -315,21 +322,27 @@ SHOW GLOBAL STATUS LIKE 'Binlog_cache_disk_use';
 ```
 
 - `Binlog_cache_disk_use` 가 꾸준히 늘어난다면 캐시가 부족하다는 신호다.
-- `binlog_rows_query_log_events` 를 켜면 행 기반 로그에 원본 SQL 문이 함께 기록되어 사후 추적이 쉬워진다. 로그 크기는 늘어난다.
 
 ## 계정과 인증
+
+설치 직후에 남아 있는 기본 계정과 권한을 정리하고, 어떤 인증 플러그인으로 커넥션을 받을지 정하는 절이다. 계정 정리는 설치 직후에 끝내고, 인증 플러그인은 클라이언트 드라이버 버전과 함께 결정한다.
 
 ### 설치 직후 해야 할 일
 
 - MySQL 설치는 슈퍼유저 계정 `'root'@'localhost'` **하나만** 만든다. 함께 `mysql.proxies_priv` 에 `''@''` 를 대상으로 PROXY 권한을 부여하는 행이 존재한다.
 - `mysqld --initialize` 는 임의의 초기 비밀번호를 생성해 **만료 상태로 표시**하고 서버 에러 로그에 기록한다. RPM 설치는 에러 로그, macOS 설치기는 다이얼로그로 알려 준다. `--initialize-insecure` 는 비밀번호 없이 만들고 경고를 로그에 남긴다.
-- `mysql_secure_installation` 이 하는 일은 네 가지다. `root` 계정에 비밀번호를 설정하고, 로컬 호스트 밖에서 접근 가능한 `root` 계정을 제거하고, 익명 사용자 계정을 제거하고, `test` 데이터베이스와 `test_` 로 시작하는 이름의 DB 에 누구나 접근하게 하는 권한을 제거한다. `validate_password` 가 설치되지 않았으면 설치 여부를 묻는다. `--use-default` 로 비대화식 실행도 된다.
+- `mysql_secure_installation` 이 하는 일은 네 가지다.
+  - `root` 계정에 비밀번호를 설정한다.
+  - 로컬 호스트 밖에서 접근 가능한 `root` 계정을 제거한다.
+  - 익명 사용자 계정을 제거한다.
+  - `test` 데이터베이스와 `test_` 로 시작하는 이름의 DB 에 누구나 접근하게 하는 권한을 제거한다.
+- `validate_password` 가 설치되지 않았으면 설치 여부를 묻는다. `--use-default` 로 비대화식 실행도 된다.
 
 ```bash
 mysql_secure_installation
 ```
 
-- 애플리케이션 계정에는 `CONNECTION_ADMIN` 이나 `SUPER` 를 주지 않는다. 문서도 이 권한은 관리자에게만 주고 일반 사용자에게는 주지 말라는 취지로 적는다.
+- 애플리케이션 계정에는 `CONNECTION_ADMIN` 이나 `SUPER` 를 주지 않는다. 문서도 이 권한을 관리자에게만 부여하고 일반 사용자에게는 부여하지 말라고 적는다.
 - 8.2.0 부터 DB 권한 부여에서 `%` 와 `_` 와일드카드가 deprecated 다. 스키마 이름을 그대로 적는다.
 
 ### 비밀번호 정책
@@ -340,7 +353,12 @@ mysql_secure_installation
 INSTALL COMPONENT 'file://component_validate_password';
 ```
 
-전환 순서는 컴포넌트 설치 → 변수명을 점 표기(`validate_password.length` 등)로 교체 → `UNINSTALL PLUGIN validate_password` → 재시작이다.
+전환 순서는 네 단계다.
+
+1. 컴포넌트를 설치한다.
+2. 변수명을 점 표기(`validate_password.length` 등)로 교체한다.
+3. `UNINSTALL PLUGIN validate_password` 를 실행한다.
+4. 서버를 재시작한다.
 
 | 변수 | 기본값 |
 |---|---|
@@ -365,7 +383,7 @@ INSTALL COMPONENT 'file://component_validate_password';
 - `caching_sha2_password` 계정으로 접속하려면 **보안 연결이거나, RSA 키 페어로 비밀번호를 교환할 수 있는 비암호화 연결**이어야 한다. 서버는 기본적으로 공개키를 클라이언트에 보내지 않으므로 평문 TCP 클라이언트는 `ERROR 2061 (HY000): Authentication plugin 'caching_sha2_password' reported error: Authentication requires secure connection.` 을 만난다. `--get-server-public-key` 또는 `--server-public-key-path` 가 필요하다.
 - 캐시는 재시작하면 남지 않는다. 계정 생성, 비밀번호 변경, `RENAME USER`, `FLUSH PRIVILEGES` 이후 첫 접속에서 다시 요구된다.
 - 8.4.0 이상은 TLSv1.2·TLSv1.3 을 지키지 않거나, 순방향 비밀성을 제공하지 않거나, SHA2·AEAD 를 쓰지 않는 암호군을 허용하지 않는다.
-- 결론은 드라이버를 먼저 올리는 것이다. `mysql_native_password` 를 켜서 버티는 임시 대응은 9.0.0 에서 끝난다.
+- 드라이버를 먼저 올린다. `mysql_native_password` 를 켜서 버티는 임시 대응은 9.0.0 에서 끝난다.
 
 ### `local_infile`
 
@@ -376,7 +394,7 @@ INSTALL COMPONENT 'file://component_validate_password';
 
 ## 메모리
 
-메모리는 초기 설정에서 가장 급한 영역이 아니다. 부하가 드러난 뒤 조정해도 늦지 않다. 다만 버퍼풀과 임시 테이블 계열은 기본값이 실서비스 규모와 거리가 있다.
+버퍼풀 크기는 운영 중에 조정할 수 있지만, `innodb_buffer_pool_chunk_size` 와 `innodb_buffer_pool_instances` 는 기동 시점에 고정된다. 크기를 나중에 올릴 계획이라면 이 두 값을 첫 구성에서 함께 정한다. 버퍼풀과 임시 테이블 계열은 기본값이 실서비스 규모와 거리가 있다.
 
 ### `innodb_buffer_pool_size`
 
@@ -411,7 +429,7 @@ innodb_buffer_pool_chunk_size = 128M
 - `tmp_table_size` 가 `temptable_max_ram` 보다 작으면 인메모리 임시 테이블은 `tmp_table_size` 를 넘을 수 없다. 반대로 크면 `temptable_max_ram` 과 `temptable_max_mmap` 의 합계가 상한이 된다.
 - 스레드-로컬 메모리 블록(요청이 1MB 미만이면 1MB)은 `temptable_max_ram` 한도에 포함되지 않고 스레드가 끝날 때까지 유지된다.
 - 임시 테이블이 디스크로 강제되는 조건은 세 가지다.
-  - 테이블에 `BLOB` 또는 `TEXT` 컬럼이 있는 경우. 단 TempTable 은 이 타입을 지원하므로 절대 규칙으로 읽지 않는다.
+  - 테이블에 `BLOB` 또는 `TEXT` 컬럼이 있는 경우. 단 TempTable 은 이 타입을 지원하므로 이 조건을 절대 규칙으로 보면 안 된다.
   - **`UNION` 또는 `UNION ALL` 을 쓸 때** `SELECT` 리스트에 최대 길이가 512 를 넘는 문자열 컬럼이 있는 경우(바이너리 문자열은 바이트, 그 외는 문자 단위).
   - `SHOW COLUMNS` 와 `DESCRIBE` 는 일부 컬럼 타입을 `BLOB` 으로 잡으므로 결과용 임시 테이블이 디스크 테이블이 된다.
 - 관측은 `Created_tmp_tables` 와 `Created_tmp_disk_tables` 로 한다. 후자는 메모리맵 파일에 만든 디스크 임시 테이블을 세지 않는다.
@@ -426,17 +444,19 @@ innodb_buffer_pool_chunk_size = 128M
 
 ## 커넥션과 격리 수준
 
+동시에 몇 개의 커넥션을 받고, 트랜잭션이 서로의 변경을 어디까지 보게 할지 정하는 절이다. 커넥션 한도는 OS 파일 디스크립터 한도와 함께 올려야 실제로 적용된다. 격리 수준은 기동 옵션 `--transaction-isolation` 이나 `SET TRANSACTION` 으로 정한다.
+
 ### 커넥션
 
-`max_connections` 의 기본값은 공식 문서 안에서도 표기가 엇갈린다. 숫자를 외워 두는 대신 운영할 서버에 직접 묻는다.
+`max_connections` 의 기본값은 공식 문서 안에서도 표기가 엇갈린다. 숫자를 외워 두는 대신 운영할 서버에서 직접 조회한다.
 
 ```sql
 SELECT @@GLOBAL.max_connections;
 ```
 
-- 서버는 실제로 `max_connections + 1` 개의 클라이언트 접속을 허용한다. 여분 한 자리는 `CONNECTION_ADMIN` 권한(또는 deprecated 된 `SUPER`)을 가진 계정 몫이다. 커넥션이 포화됐을 때 관리자가 들어갈 통로가 여기다.
+- 서버는 실제로 `max_connections + 1` 개의 클라이언트 커넥션을 허용한다. 여분 한 자리는 `CONNECTION_ADMIN` 권한(또는 deprecated 된 `SUPER`)을 가진 계정 몫이다. 커넥션이 포화된 상태에서 관리자가 접속할 때 이 자리를 쓴다.
 - `max_connections` 를 올리면 `mysqld` 가 필요한 파일 디스크립터 수도 늘어난다. **필요한 개수를 확보하지 못하면 서버가 `max_connections` 값을 낮춘다.** OS 한도와 `open_files_limit` 을 함께 올려야 설정한 값이 실제로 적용된다.
-- 한계를 정하는 요소는 스레드 라이브러리 품질, 전체 RAM, 커넥션당 RAM, 워크로드, 목표 응답시간, 파일 디스크립터 수다. 문서는 Linux 나 Solaris 가 통상 500~1000 개의 동시 접속을, RAM 이 넉넉하고 커넥션당 부하가 낮으면 10,000 개까지 감당한다고 적는다.
+- 한계를 정하는 요소는 스레드 라이브러리 품질, 전체 RAM, 커넥션당 RAM, 워크로드, 목표 응답시간, 파일 디스크립터 수다. 문서는 Linux 나 Solaris 가 통상 500~1000 개의 동시 접속을, RAM 이 넉넉하고(문서 표현은 "many gigabytes of RAM") 커넥션당 부하가 낮으면 10,000 개까지 감당한다고 적는다.
 - 한도를 넘기면 `Connection_errors_max_connections` 상태 변수가 늘고 `Too many connections` 에러가 난다.
 - `thread_cache_size` 는 기동 시 서버가 값을 자동 산정하며, 명시 설정으로 덮어쓸 수 있다. `0` 은 캐싱을 비활성화한다. 관측은 `Threads_cached` 와 `Threads_created` 로 한다.
 - `wait_timeout` 은 `28800`(8시간)이다. 아무 일도 없으면 서버가 8시간 후 커넥션을 닫고, 그 뒤 클라이언트는 `MySQL server has gone away` 를 본다. `interactive_timeout` 은 대화형 세션에 같은 역할을 한다. 두 값은 `SHOW VARIABLES LIKE '%timeout%';` 로 확인한다.
@@ -446,13 +466,15 @@ SELECT @@GLOBAL.max_connections;
 ### 격리 수준
 
 - **InnoDB 의 기본 격리 수준은 `REPEATABLE READ`** 다. 기동 옵션 `--transaction-isolation` 이나 `SET TRANSACTION` 으로 바꾼다. 현재 값은 `SELECT @@GLOBAL.transaction_isolation;` 으로 확인한다.
-- `REPEATABLE READ` — 같은 트랜잭션 안의 일관된 읽기는 첫 읽기가 만든 스냅샷을 본다. 락킹 읽기와 `UPDATE`·`DELETE` 는 유니크 인덱스에 유니크 검색 조건이면 찾은 인덱스 레코드만 잠그고 그 앞의 갭은 잠그지 않지만, 그 밖의 조건에서는 스캔한 인덱스 범위를 갭 락이나 넥스트키 락으로 잠근다.
+- `REPEATABLE READ` — 같은 트랜잭션 안의 일관된 읽기는 첫 읽기가 만든 스냅샷을 본다. 락킹 읽기와 `UPDATE`·`DELETE` 는 유니크 인덱스에 유니크 검색 조건일 때 찾은 인덱스 레코드만 잠그고 그 앞의 갭은 잠그지 않는다. 그 밖의 조건일 때는 스캔한 인덱스 범위를 갭 락이나 넥스트키 락으로 잠근다.
 - `READ COMMITTED` — 같은 트랜잭션 안에서도 각 일관된 읽기가 자기만의 새 스냅샷을 만든다. 인덱스 레코드만 잠그고 앞의 갭은 잠그지 않으며, 갭 락은 외래 키 제약 검사와 중복 키 검사에만 쓰인다. 갭 락이 없으므로 **팬텀 행 문제가 생길 수 있다.** 조건에 맞지 않는 행의 락을 바로 풀어 데드락 확률을 크게 낮추지만 없어지지는 않는다. `UPDATE` 는 semi-consistent read 를 쓴다.
 - 복제 제약이 있다. **`READ COMMITTED` 에서는 행 기반 바이너리 로깅만 지원된다.** `binlog_format=MIXED` 와 함께 쓰면 서버가 자동으로 행 기반 로깅을 쓴다.
 - 문서가 적는 선택 기준은 ACID 준수가 중요한 핵심 데이터 작업에는 기본값 `REPEATABLE READ` 로 높은 일관성을 강제하고, 대량 리포팅 같은 상황에서는 `READ COMMITTED` 로 일관성 규칙을 완화하는 것이다. "`READ COMMITTED` 를 권장한다"는 문장은 공식 문서에 없다.
 - 하나의 `REPEATABLE READ` 트랜잭션에서 락킹 문장과 비락킹 문장을 섞지 않는다. 그런 경우에는 보통 `SERIALIZABLE` 이 필요하다.
 
 ## 로깅
+
+장애가 난 뒤 원인을 재현할 근거를 남기는 절이다. 슬로우 쿼리 로그는 기본적으로 꺼져 있고 에러 로그 시각은 기본적으로 UTC 이므로, 이 두 기본값을 그대로 둘지 구축 시점에 정한다.
 
 ### 슬로우 쿼리 로그
 
@@ -482,18 +504,18 @@ log_queries_not_using_indexes = OFF
 - **복제를 쓴다면 `2` 이상이 문서 권고다.** 네트워크 장애나 재접속 정보를 얻기 위해서다.
 - `SYSTEM` 우선순위 메시지는 verbosity 필터를 받지 않는다. 시작·종료 메시지와 주요 설정 변경은 항상 기록된다.
 - `log_filter_internal` 은 내장이며 기본 활성이다. 이 필터를 끄면 `log_error_verbosity` 와 `log_error_suppression_list` 가 무효가 된다. `log_error_services` 의 기본값은 `log_filter_internal; log_sink_internal` 이다.
-- `log_timestamps` 의 기본값은 `UTC` 이고 허용값은 `UTC` 와 `SYSTEM` 이다. 에러 로그 전체와 일반·슬로우 쿼리 로그 **파일**에 적용되며 형식은 ISO 8601/RFC 3339(`2020-08-07T15:02:00.832521Z`)다. `time_zone` 을 `Asia/Seoul` 로 두어도 로그 시각은 기본적으로 UTC 이므로, 장애 시각을 맞출 때 혼동하지 않도록 둘 중 하나를 기준으로 통일한다.
+- `log_timestamps` 의 기본값은 `UTC` 이고 허용값은 `UTC` 와 `SYSTEM` 이다. 에러 로그 전체와 일반·슬로우 쿼리 로그 **파일**에 적용된다. 형식은 ISO 8601/RFC 3339(`2020-08-07T15:02:00.832521Z`)다. `time_zone` 을 `Asia/Seoul` 로 두어도 로그 시각은 기본적으로 UTC 다. 장애 시각을 맞출 때 혼동하지 않도록 둘 중 하나를 기준으로 통일한다.
 
 ## 처음엔 손대지 않아도 되는 파라미터
 
 건드려야 할 것처럼 보이지만, 근거 없이 올리면 오히려 손해가 나는 값들이다.
 
-- `sort_buffer_size` — `ORDER BY`·`GROUP BY` 정렬에 쓰는 세션 단위 버퍼다. 정렬 쿼리가 많고 `sort_merge_passes` 가 크면 늘리는 것을 고려할 수 있지만, 잘못 잡으면 성능이 떨어지고 메모리 소비가 늘어난다. 어떤 값을 써야 할지 확실하지 않으면 기본값을 바꾸지 않는다.
-- `join_buffer_size` — 기본값은 256KB 다. 인덱스가 없는 전체 테이블 조인에 커넥션당 할당되므로, 늘리기보다 조인에 인덱스를 추가하는 것이 먼저다. 인덱스를 추가할 수 없으면 해당 쿼리에서만 세션 값으로 올린다.
+- `sort_buffer_size` — `ORDER BY`·`GROUP BY` 정렬에 쓰는 세션 단위 버퍼다. 정렬 쿼리가 많고 `sort_merge_passes` 가 크면 늘려 볼 수 있지만, 잘못 잡으면 성능이 떨어지고 메모리 소비가 늘어난다. 적정값을 산정할 근거가 없으면 기본값을 바꾸지 않는다.
+- `join_buffer_size` — 기본값은 256KB 다. 인덱스가 없는 전체 테이블 조인에 커넥션당 할당되므로, 늘리기보다 조인에 인덱스를 먼저 추가한다. 인덱스를 추가할 수 없으면 해당 쿼리에서만 세션 값으로 올린다.
 - `read_buffer_size` — MyISAM 에만 적용되고 InnoDB 에는 영향이 없다.
 - `read_rnd_buffer_size` — 정렬 후 정렬된 순서로 행을 읽을 때 쓰이며 InnoDB 도 사용한다. 클라이언트마다 할당되므로 전역값을 올리기보다 큰 쿼리를 실행하는 세션에서만 올린다.
-- `cte_max_recursion_depth` — 기본값은 1000 이다(8.0.3 도입). 전역값을 낮추기보다 `max_execution_time`, `MAX_EXECUTION_TIME` 힌트, `SET_VAR` 힌트로 쿼리 단위로 제한하는 편이 부작용이 적다.
-- `innodb_file_per_table` — InnoDB 는 기본적으로 테이블별 테이블스페이스에 테이블을 만든다. 전역 범위에서 동적 변경이 가능하다. 테이블을 지우거나 비우면 공간이 OS 로 반환되고 테이블 단위 백업·이관이 가능해지는 대신, 테이블마다 파일 핸들과 파일 디스크립터를 유지하므로 테이블 수가 매우 많으면 부담이 된다. 기본값을 유지한다.
+- `cte_max_recursion_depth` — 기본값은 1000 이다(8.0.3 도입). 전역값을 낮추기보다 쿼리 단위 제한이 부작용이 적다. `max_execution_time`, `MAX_EXECUTION_TIME` 힌트, `SET_VAR` 힌트로 제한한다.
+- `innodb_file_per_table` — InnoDB 는 기본적으로 테이블별 테이블스페이스에 테이블을 만든다. 전역 범위에서 동적 변경이 가능하다. 테이블을 지우거나 비우면 공간이 OS 로 반환되고 테이블 단위 백업·이관도 가능하다. 대신 테이블마다 파일 핸들과 파일 디스크립터를 유지하므로, 테이블 수가 매우 많으면 부담이 된다. 기본값을 유지한다.
 - `innodb_autoinc_lock_mode` — 기본값은 `2`(interleaved)이고 동적 변경이 불가하다. 행 기반 복제와의 호환을 위해 정해진 기본값이므로, 문장 기반 복제를 쓰지 않는다면 바꿀 이유가 없다.
 
 ## MySQL 8.4 로 갈 때 깨지는 것
@@ -558,8 +580,22 @@ log_queries_not_using_indexes = OFF
 - `INFORMATION_SCHEMA.TABLESPACES` 가 제거됐고, `DROP`·`ALTER TABLESPACE` 의 `ENGINE` 절도 예외 두 건을 빼고 제거됐다.
 - `LOCK TABLES ... WRITE` 의 `LOW_PRIORITY` 는 문법 오류가 된다. 파티셔닝 키에 인덱스 프리픽스를 쓸 수 없다. 시스템 변수에 `NULL` 을 지정할 수 없다(예외 목록이 있다).
 - `WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS()` 는 `WAIT_FOR_EXECUTED_GTID_SET()` 으로 대체됐다.
-- 8.4 에서 새로 deprecated 된 것은 DB 권한 부여의 `%`·`_` 와일드카드, 비유니크·부분 키를 외래 키로 쓰는 것, `DISABLE ON SLAVE`, `INFORMATION_SCHEMA.PROCESSLIST`, `temptable_use_mmap`, `--master-retry-count`, `group_replication_view_change_uuid`, `group_replication_allow_local_lower_version_join` 이다.
-- 9.7 까지 더 갈 계획이라면 `mysql_native_password` 가 **9.0.0 에서 제거**된 점, `replica_parallel_type` 과 `group_replication_allow_local_lower_version_join` 이 제거된 점, `binlog_transaction_dependency_history_size` 기본값이 25000 에서 **1000000** 으로 바뀐 점(9.5.0, 최대 10000000), `innodb_log_writer_threads` 기본값이 `log_bin` 활성 여부와 논리 CPU 수에 따라 결정되는 점을 함께 본다.
+- 8.4 에서 새로 deprecated 된 것은 다음과 같다.
+
+  - DB 권한 부여의 `%`·`_` 와일드카드
+  - 비유니크·부분 키를 외래 키로 쓰기
+  - `DISABLE ON SLAVE`
+  - `INFORMATION_SCHEMA.PROCESSLIST`
+  - `temptable_use_mmap`
+  - `--master-retry-count`
+  - `group_replication_view_change_uuid`
+  - `group_replication_allow_local_lower_version_join`
+- 9.7 까지 더 갈 계획이라면 다음을 함께 본다.
+
+  - `mysql_native_password` 가 **9.0.0 에서 제거**됐다.
+  - `replica_parallel_type` 과 `group_replication_allow_local_lower_version_join` 이 제거됐다.
+  - `binlog_transaction_dependency_history_size` 기본값이 25000 에서 **1000000** 으로 바뀌었다(9.5.0, 최대 10000000).
+  - `innodb_log_writer_threads` 기본값이 `log_bin` 활성 여부와 논리 CPU 수에 따라 결정된다.
 
 ## AWS RDS · Aurora 를 쓸 때
 
@@ -571,15 +607,27 @@ log_queries_not_using_indexes = OFF
 - 연산자는 나눗셈과 곱셈 둘뿐이고 **몫의 소수점은 반올림하지 않고 잘라낸다.** 함수는 `GREATEST`, `LEAST`, `SUM` 을 쓸 수 있고 함수명은 대소문자를 구분하지 않는다. 로그 수식의 `log` 는 밑이 2 다.
 - `DBInstanceClassMemory` 는 OS 와 RDS 프로세스용으로 예약된 메모리를 뺀 값이라 인스턴스 클래스 표의 메모리 수치보다 항상 다소 작다.
 - 파라미터 값이 `engine default` 로 표시되어 있으면 실제 기본값은 해당 버전의 MySQL 문서에서 확인한다.
-- Aurora MySQL 에서 **아예 적용되지 않는 MySQL 파라미터**가 많다. 문서가 드는 목록에는 `innodb_data_file_path`, `innodb_doublewrite`, `innodb_flush_method`, `innodb_page_size`, `innodb_redo_log_capacity`, `innodb_log_file_size`, `innodb_log_files_in_group`, `innodb_log_buffer_size`, `innodb_buffer_pool_chunk_size`, `innodb_buffer_pool_instances`, `innodb_io_capacity`, `innodb_change_buffering`, `innodb_numa_interleave`, `innodb_undo_tablespaces` 등이 있고, 문서 스스로 이 목록이 전부가 아니라고 밝힌다. **이 문서의 내구성·리두 항목 다수가 Aurora 에서는 없는 손잡이다.**
-- 수정할 수 없는 파라미터에는 `default_storage_engine`, `innodb_page_size`, `innodb_data_home_dir`, `innodb_undo_directory`, `partial_revokes`, `server_id`, `skip_name_resolve`, `sync_binlog`, `default_authentication_plugin`, `default_time_zone`, `relay_log_recovery`, `thread_handling`, `tmpdir` 이 있다. `basedir`·`datadir`·`plugin_dir`·`secure_file_priv`·`general_log_file`·`slow_query_log_file` 는 파일시스템에 직접 접근하지 않는 관리형 인스턴스라서 수정 대상이 아니다.
+- AWS 문서는 두 목록을 따로 제시한다. 하나는 **Aurora MySQL 에 적용되지 않는** MySQL 파라미터이고, 다른 하나는 **파라미터 그룹에서 수정할 수 없는** 파라미터다.
+- Aurora MySQL 에서 **아예 적용되지 않는 MySQL 파라미터**가 많다. AWS 문서가 드는 목록은 다음과 같고, 문서 스스로 이것이 전부가 아니라고 밝힌다.
+  - 데이터·리두 파일 — `innodb_data_file_path` · `innodb_redo_log_capacity` · `innodb_log_file_size` · `innodb_log_files_in_group` · `innodb_log_buffer_size`
+  - 페이지·버퍼풀 — `innodb_page_size` · `innodb_buffer_pool_chunk_size` · `innodb_buffer_pool_instances` · `innodb_change_buffering`
+  - I/O·플러시 — `innodb_doublewrite` · `innodb_flush_method` · `innodb_io_capacity` · `innodb_numa_interleave`
+  - undo — `innodb_undo_tablespaces`
+
+  **이 문서의 내구성·리두 항목 다수가 Aurora 에서는 효과가 없다.**
+- 수정할 수 없는 파라미터도 있다.
+  - 스토리지·엔진 — `default_storage_engine` · `innodb_page_size` · `innodb_data_home_dir` · `innodb_undo_directory`
+  - 복제·식별 — `server_id` · `sync_binlog` · `relay_log_recovery`
+  - 인증·권한 — `default_authentication_plugin` · `partial_revokes`
+  - 그 밖에 — `default_time_zone` · `skip_name_resolve` · `thread_handling` · `tmpdir`
+- 파일 경로 계열은 사유가 다르다. `basedir` · `datadir` · `plugin_dir` · `secure_file_priv` · `general_log_file` · `slow_query_log_file` 는 파일시스템에 직접 접근하지 않는 관리형 인스턴스라서 설정 대상 자체가 아니다.
 - `gtid-mode` 와 `enforce_gtid_consistency` 는 Aurora MySQL 버전 2 이상에서 수정할 수 있다. `event_scheduler` 는 버전 3 에서 클러스터 레벨로만 설정한다.
 - **`lower_case_table_names` 는 Aurora MySQL 버전 3 에서 클러스터를 만드는 시점에 영구히 고정된다.** 버전 2 에서는 수정할 수 있다. 글로벌 데이터베이스에서 이 값이 켜져 있으면 버전 2 에서 3 으로의 in-place 업그레이드가 불가능하다.
 - `innodb_flush_log_at_trx_commit` 은 수정할 수 있지만 AWS 는 기본값 `1` 을 쓰라고 강력히 권고한다. 버전 3 에서 `1` 이 아닌 값으로 바꾸려면 먼저 `innodb_trx_commit_allow_data_loss` 를 `1` 로 설정해야 하고(기본값 `0`), 그것은 데이터 유실 위험을 인정한다는 뜻이다.
-- Aurora 의 임시 테이블 기본값은 커뮤니티 MySQL 과 다르다. `temptable_max_ram` 은 메모리 16GiB 이상 인스턴스에서 1GiB, 그보다 작은 인스턴스에서 16MB 다. `temptable_max_mmap` 은 writer·reader 모두 1GiB 이며 인스턴스 메모리와 무관하고 reader 에서는 `0` 으로 설정할 수 없다. Aurora MySQL 8.4.7 이상은 이 기본값이 `LEAST(4294967296, {AllocatedStorage*3/100})` 로 바뀌었다. reader 는 항상 TempTable 엔진을 쓴다.
-- `aurora_tmptable_enable_per_table_limit` 은 인스턴스 레벨 파라미터로, **Aurora MySQL 버전 3.04 이상에서 `tmp_table_size` 가 TempTable 엔진이 만든 인메모리 임시 테이블의 최대 크기를 제어할지** 결정한다. 기본값은 `OFF` 이며 3.03 이하와 같은 동작이다. `OFF` 일 때 `tmp_table_size` 는 TempTable 이 만든 내부 인메모리 임시 테이블에 고려되지 않고, 전역 TempTable 한도에 닿으면 writer 는 InnoDB 디스크 임시 테이블로 전환하지만 **reader 는 쿼리가 실패한다**(`ERROR 1114 (HY000): The table '/rdsdbdata/tmp/#sql...' is full`). `internal_tmp_mem_storage_engine=MEMORY` 이면 이 파라미터는 무효다.
+- Aurora 의 임시 테이블 기본값은 커뮤니티 MySQL 과 다르다. `temptable_max_ram` 은 메모리 16GiB 이상 인스턴스에서 1GiB, 그보다 작은 인스턴스에서 16MB 다. `temptable_max_mmap` 은 writer·reader 모두 1GiB 이며 인스턴스 메모리와 무관하다. reader 에서는 `0` 으로 설정할 수 없다. Aurora MySQL 8.4.7 이상은 이 기본값이 `LEAST(4294967296, {AllocatedStorage*3/100})` 로 바뀌었다. reader 는 항상 TempTable 엔진을 쓴다.
+- `aurora_tmptable_enable_per_table_limit` 은 인스턴스 레벨 파라미터로, **Aurora MySQL 버전 3.04 이상에서 `tmp_table_size` 가 TempTable 엔진이 만든 인메모리 임시 테이블의 최대 크기를 제어할지** 결정한다. 기본값은 `OFF` 이며 3.03 이하와 같은 동작이다. `OFF` 일 때 `tmp_table_size` 는 TempTable 이 만든 내부 인메모리 임시 테이블에 고려되지 않는다. 전역 TempTable 한도에 닿으면 writer 는 InnoDB 디스크 임시 테이블로 전환한다. 그러나 **reader 는 쿼리가 실패한다**(`ERROR 1114 (HY000): The table '/rdsdbdata/tmp/#sql...' is full`). `internal_tmp_mem_storage_engine=MEMORY` 이면 이 파라미터는 무효다.
 - 그 밖의 Aurora 기본값으로 `time_zone` 은 UTC, `character_set_database` 는 `utf8mb4`, `read_only` 는 버전 2 가 `{TrueIfReplica}` 이고 버전 3 이 `0` 이다. Aurora 는 `interactive_timeout` 과 `wait_timeout` 중 **최솟값**으로 모든 유휴 세션을 끊는다.
 - 비밀번호 정책은 Aurora MySQL 8.4.7 이상에서 `aurora_enable_validate_password_component`(기본 `0`)로 관리하며 `INSTALL COMPONENT` 를 쓰지 않는다. 같은 버전대에서 `authentication_policy` 기본값은 `*:caching_sha2_password` 이고, `validate_password.policy` 는 LOW 와 MEDIUM 만 지원한다.
 - RDS for MySQL 은 Aurora 와 파라미터 지원 범위가 다르다. 위 Aurora 항목을 그대로 적용하지 말고 해당 엔진과 버전의 파라미터 그룹 문서를 확인한다.
 
-여기까지 세팅해 두면 시스템 규모가 커진 뒤에도 DB 에서 일어나는 일에 대처하기가 수월하다. 나중에 감사나 이관, DBA 합류 같은 단계가 와도 호환성과 데이터 무결성을 근거 있게 설명할 수 있다.
+여기까지 세팅해 두면 시스템 규모가 커진 뒤에도 DB 에서 일어나는 일의 원인을 추적할 수 있다. 나중에 감사나 이관, DBA 합류 같은 단계가 와도 호환성과 데이터 무결성을 근거 있게 설명할 수 있다.
