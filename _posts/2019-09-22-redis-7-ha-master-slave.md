@@ -2,31 +2,27 @@
 date: 2019-09-22 23:12:44 +0900
 title: "Redis #.7 HA구성하기 (Master-Slave)"
 category: redis
-excerpt: "Redis는 단일 인스턴스로 운영할 경우, 그 인스턴스가 죽으면 서비스 전체가 멈춥니다. 장애 대응을 위해서는 데이터를 복사해둔 복제본(replica)이 필요합니다. 복제본은 읽기 부하를 분산하거나, 마스터 장애 시 수동 또는 자동으로 승격시켜 가용성을 확보하는 데 쓰입니다. 이 글에…"
-updated: 2026-09-17
+excerpt: "Redis를 단일 인스턴스로 운영하면 그 인스턴스가 죽는 순간 서비스 전체가 멈춥니다. Redis 8.10 기준으로 복제를 설정하고 Sentinel로 자동 페일오버까지 구성하는 방법을 정리합니다."
+updated: 2026-09-20
 ---
-
-> **다시 씀 (2026-09)** — 2019년에 쓴 글을 2026년 9월 기준으로 새로 썼습니다. 버전·명령·기본값을 현재 Redis 문서에 맞췄습니다.
 
 ## 복제가 필요한 이유
 
-Redis는 단일 인스턴스로 운영할 경우, 그 인스턴스가 죽으면 서비스 전체가 멈춥니다. 장애 대응을 위해서는 데이터를 복사해둔 복제본(replica)이 필요합니다. 복제본은 읽기 부하를 분산하거나, 마스터 장애 시 수동 또는 자동으로 승격시켜 가용성을 확보하는 데 쓰입니다.
+Redis를 단일 인스턴스로 운영하면 그 인스턴스가 죽는 순간 서비스 전체가 멈춥니다. 장애에 대비하려면 데이터를 복사해 둔 복제본(replica)이 필요합니다. 복제본은 읽기 부하를 분산하거나, primary 장애 시 수동 또는 자동으로 승격시켜 가용성을 확보하는 데 씁니다.
 
 이 글에서는 Redis 8.10 기준으로 복제를 설정하고, Sentinel을 이용한 자동 페일오버까지 구성하는 방법을 다룹니다.
 
-## 용어 변경 안내
+## SLAVEOF 대신 REPLICAOF
 
-Redis 5.0.0부터 `SLAVEOF` 명령은 deprecated되었고, `REPLICAOF`가 정식 명령이 되었습니다. 구 명령은 하위 호환을 위해 alias로 남아 있지만, 공식 문서와 설정 파일은 모두 `replicaof`를 기준으로 작성되어 있습니다.
+Redis 5.0.0부터 `SLAVEOF` 명령은 deprecated되었고 `REPLICAOF`가 정식 명령입니다. 공식 문서는 `SLAVEOF`가 하위 호환을 위해 계속 동작한다고 적습니다. 새로 쓰는 코드와 설정에는 `REPLICAOF`를 씁니다.
 
-Redis 8.10.1 `redis.conf`에는 `replicaof`, `replica-read-only`, `replica-serve-stale-data` 표기만 남아 있고, `slaveof`나 `slave-*` 표기는 더 이상 파일에 없습니다.
+설정 파일도 마찬가지입니다. 현행 `redis.conf` 예제는 `replicaof`, `replica-read-only`, `replica-serve-stale-data` 표기를 씁니다.
 
-다만 문서 산문과 일부 옵션명(`--cluster-slave` 등)에는 master/slave 표기가 여전히 남아 있습니다. 명령과 설정은 replica로 통일되었지만, Redis 프로젝트 전체가 primary/replica로 완전히 전환된 것은 아닙니다.
-
-이 글 제목에 "Master-Slave"가 남아 있는 것은 2019년 시리즈 제목을 유지하기 위함입니다. 본문에서는 primary/replica 표기를 원칙으로 하되, 명령 예시와 설정 지시어는 `replicaof`로 씁니다.
+다만 `INFO replication` 출력 필드는 여전히 `role:master`, `connected_slaves`, `slave0` 같은 예전 이름을 그대로 내보냅니다. 명령과 설정 지시어는 replica 표기로 정리되었지만 출력 필드 이름까지 바뀐 것은 아니므로, 모니터링 스크립트에서 응답을 파싱할 때는 예전 필드 이름을 써야 합니다.
 
 ## 복제 설정하기
 
-복제 설정은 매우 간단합니다. replica가 될 인스턴스의 `redis.conf` 파일에 다음 한 줄을 추가하면 됩니다.
+복제 설정은 한 줄로 끝납니다. replica가 될 인스턴스의 `redis.conf` 파일에 다음 한 줄을 추가하면 됩니다.
 
 ```conf
 replicaof <primary-ip> <primary-port>
@@ -131,7 +127,29 @@ redis-cli -p 6380 SET anotherkey "world"
 (error) READONLY You can't write against a read only replica.
 ```
 
-`replica-read-only no`로 바꿀 수는 있지만, Redis 7.0 기준으로 쓰기 가능 replica는 공식적으로 비권장입니다. 예전에 그 용도로 쓰였던 유스케이스는 `SUNION`, `ZINTER`, `SORT_RO`, `EVAL_RO`, `EVALSHA_RO` 같은 읽기 전용 명령으로 대체되었습니다.
+`replica-read-only no`로 바꿀 수는 있지만 공식 문서는 쓰기 가능 replica를 권장하지 않습니다. primary와 replica의 데이터가 어긋날 수 있기 때문입니다. 예전에 쓰기 가능 replica가 필요했던 용도는 Redis 7.0부터 읽기 전용 명령으로 대체되었습니다. `SUNIONSTORE`·`ZINTERSTORE` 대신 `SUNION`·`ZINTER`를, `SORT` 대신 `SORT_RO`를, `EVAL`·`EVALSHA` 대신 `EVAL_RO`·`EVALSHA_RO`를 쓰면 읽기 전용 replica에서도 같은 결과를 얻습니다.
+
+## 재연결과 부분 재동기화
+
+primary는 데이터 이력을 구분하는 replication ID를 가지고, 복제 스트림으로 내보낸 바이트 수만큼 오프셋을 올립니다. replication ID와 오프셋 한 쌍이 그 시점의 데이터셋을 가리킵니다.
+
+복제 링크가 끊긴 replica는 재접속할 때 `PSYNC`로 이전 primary의 replication ID와 자신이 처리한 오프셋을 보냅니다. primary의 백로그에 그 구간이 남아 있으면 밀린 명령만 받아 따라잡습니다. 백로그가 모자라거나 replica가 보낸 replication ID를 primary가 더 이상 알지 못하면 전체 재동기화로 떨어져 RDB 스냅숏을 처음부터 다시 받습니다. 백로그가 클수록 더 긴 단절도 부분 재동기화로 복구할 수 있습니다.
+
+Redis 4.0부터는 페일오버로 승격된 replica가 이전 primary의 replication ID와 오프셋을 기억합니다. 그래서 옛 primary를 따르던 다른 replica들도 새 primary에 부분 재동기화로 붙을 수 있습니다.
+
+복제 동작을 조정하는 설정은 다음과 같습니다. 기본값은 배포본에 함께 오는 `redis.conf` 기준입니다.
+
+| 설정 | 기본값 | 의미 |
+| --- | --- | --- |
+| `replica-read-only` | `yes` | replica의 쓰기 명령을 거부합니다 |
+| `replica-serve-stale-data` | `yes` | 복제가 끊겨도 가진 데이터로 읽기에 응답합니다 |
+| `repl-diskless-sync` | `yes` | RDB를 디스크에 쓰지 않고 소켓으로 바로 보냅니다 |
+| `repl-diskless-load` | `disabled` | 받은 RDB를 디스크에 쓴 뒤 적재합니다 |
+| `repl-backlog-size` | `1mb` | 부분 재동기화에 쓰는 백로그 버퍼 크기입니다 |
+| `min-replicas-to-write` | `0` | 쓰기를 받기 위한 최소 replica 수이고, 0이면 비활성입니다 |
+| `min-replicas-max-lag` | `10` | 위 조건에서 replica로 세는 최대 지연 시간(초)입니다 |
+
+`min-replicas-to-write`와 `min-replicas-max-lag`를 함께 걸면, 조건을 만족하는 replica가 없을 때 primary가 쓰기를 에러로 거부합니다. 다만 복제가 비동기이므로 이 설정도 유실 가능성을 없애지는 못하고, 유실 구간을 지정한 초 안으로 제한하는 수준입니다.
 
 ## Sentinel을 이용한 자동 페일오버
 
@@ -139,7 +157,7 @@ redis-cli -p 6380 SET anotherkey "world"
 
 Sentinel은 Redis 2.8부터 안정 버전(Sentinel 2)으로 제공되는 HA 솔루션입니다. Sentinel 인스턴스들이 primary와 replica를 모니터링하다가, primary가 일정 시간 이상 응답하지 않으면 과반 투표로 리더를 선출해 자동으로 replica를 승격시킵니다.
 
-> **주의:** 견고한 배포에는 최소 3개의 Sentinel 인스턴스가 필요합니다. 2개로는 부족합니다. 3개는 서로 독립적으로 실패하는 머신이나 가용영역에 배치해야 합니다.
+> **IMPORTANT** — 견고한 배포에는 최소 3개의 Sentinel 인스턴스가 필요합니다. 2개로는 부족합니다. 3개는 서로 독립적으로 실패하는 머신이나 가용영역에 배치해야 합니다.
 
 Sentinel의 기본 포트는 **26379**입니다. Sentinel 인스턴스들끼리 통신하므로 이 포트가 방화벽에서 열려 있어야 합니다.
 
@@ -180,9 +198,9 @@ quorum은 장애 감지 전용입니다. 실제 failover를 수행하려면 Sent
 
 replica는 자동으로 발견되므로 설정 파일에 명시할 필요가 없습니다. Sentinel은 failover가 일어나거나 새 Sentinel을 발견하면 설정 파일을 자동으로 갱신합니다.
 
-3개의 Sentinel을 띄운다면 각각 다음과 같이 설정합니다.
+3개의 Sentinel을 띄운다면 포트만 다르게 해서 같은 내용으로 설정합니다.
 
-**sentinel-26379.conf (첫 번째 Sentinel)**
+**sentinel-26379.conf**
 
 ```conf
 port 26379
@@ -192,25 +210,7 @@ sentinel failover-timeout mymaster 60000
 sentinel parallel-syncs mymaster 1
 ```
 
-**sentinel-26380.conf (두 번째 Sentinel)**
-
-```conf
-port 26380
-sentinel monitor mymaster 127.0.0.1 6379 2
-sentinel down-after-milliseconds mymaster 5000
-sentinel failover-timeout mymaster 60000
-sentinel parallel-syncs mymaster 1
-```
-
-**sentinel-26381.conf (세 번째 Sentinel)**
-
-```conf
-port 26381
-sentinel monitor mymaster 127.0.0.1 6379 2
-sentinel down-after-milliseconds mymaster 5000
-sentinel failover-timeout mymaster 60000
-sentinel parallel-syncs mymaster 1
-```
+나머지 두 파일은 `port`만 26380, 26381로 바꿉니다. `down-after-milliseconds`가 5000이면 핑 응답이 5초 동안 없을 때 Sentinel이 장애를 의심하기 시작합니다.
 
 설정 파일을 준비한 뒤 3개를 모두 실행합니다.
 
@@ -239,14 +239,14 @@ redis-cli -p 6379 DEBUG sleep 30
 
 `SHUTDOWN` 명령으로도 테스트할 수 있지만, primary를 다시 시작할 때 영속성을 끈 상태에서 자동 재시작되면 빈 데이터로 올라와 replica 데이터까지 지워지는 위험이 있습니다. `DEBUG sleep`이 더 안전한 테스트 방법입니다.
 
-> **주의:** Redis는 비동기 복제를 쓰므로, ack된 쓰기라도 페일오버 시 유실될 수 있습니다. Sentinel은 가용성을 높여주지만 강일관성을 보장하지는 않습니다.
+> **WARNING** — Redis는 비동기 복제를 쓰므로 ack된 쓰기라도 페일오버에서 유실될 수 있습니다. Sentinel은 가용성을 높여 주지만 강일관성을 보장하지는 않습니다.
 
 클라이언트 라이브러리는 Sentinel을 지원하는 것과 그렇지 않은 것이 있으므로, 사용하는 언어의 Redis 라이브러리가 Sentinel을 지원하는지 확인해야 합니다.
 
 ## 정리
 
-Redis 복제는 `replicaof` 한 줄로 간단히 설정할 수 있습니다. `INFO replication`과 `ROLE` 명령으로 복제 상태를 진단하고, Sentinel 3개 이상을 띄우면 자동 페일오버까지 구성할 수 있습니다.
+Redis 복제는 `replicaof` 한 줄로 설정할 수 있습니다. `INFO replication`과 `ROLE` 명령으로 상태를 확인하고, Sentinel 3개 이상을 띄우면 자동 페일오버까지 구성할 수 있습니다. 재접속한 replica는 `PSYNC`로 밀린 구간만 받아 따라잡고, 백로그가 모자라면 전체 재동기화로 떨어집니다.
 
-Redis 8.10 기준으로 명령과 설정 지시어는 `REPLICAOF`, `replica-read-only`, `replica-serve-stale-data`로 통일되었으며, `redis.conf`에는 `replica-*` 표기만 남아 있습니다. **명령 `SLAVEOF`는 하위 호환을 위해 alias로 남아 있지만, 설정 지시어(`slaveof`, `slave-*`)의 서버 수용 여부는 현재 공식 문서로 확인되지 않습니다.** 새 구성에서는 `replicaof`를 쓰는 것이 권장됩니다.
+명령과 설정 지시어는 `REPLICAOF`, `replica-read-only`, `replica-serve-stale-data`로 정리되었고, `SLAVEOF`는 하위 호환을 위해 계속 동작합니다. 새 구성에서는 `replicaof`를 씁니다.
 
-비클러스터 Redis의 HA 구성에는 Sentinel이 필수이며, 최소 3개 이상을 서로 독립적인 노드에 배치해야 안정적인 장애 감지와 페일오버가 가능합니다. 주기적으로 실제 failover 테스트를 하지 않으면 HA 구성은 안전하지 않으므로, 운영 환경에 투입하기 전에 반드시 장애 시나리오를 테스트해야 합니다.
+비클러스터 Redis의 HA 구성에는 Sentinel이 필요하며, 최소 3개를 서로 독립적으로 실패하는 노드에 배치해야 장애 감지와 페일오버가 제대로 동작합니다. Sentinel은 가용성을 높여 주지만 비동기 복제 특성상 ack된 쓰기가 페일오버에서 유실될 수 있습니다. 운영 환경에 투입하기 전에 실제 장애 시나리오로 페일오버를 테스트해야 합니다.
