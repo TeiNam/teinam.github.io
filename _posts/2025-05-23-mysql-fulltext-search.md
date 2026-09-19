@@ -1,7 +1,7 @@
 ---
 date: 2025-05-23 11:08:25 +0900
 title: "MySQL 전문 검색"
-category: database
+category: mysql
 excerpt: "MySQL Like 검색 사용을 통한 성능저하를 방지 하기 위한 Fulltext 검색 사용법"
 updated: 2025-05-23
 ---

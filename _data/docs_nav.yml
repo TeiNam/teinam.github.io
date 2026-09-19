@@ -7,3 +7,7 @@
     - { name: "네이밍 규칙", url: /docs/database/naming/ }
     - { name: "데이터 3법", url: /docs/database/data-3-law/ }
     - { name: "데이터 암호화", url: /docs/database/encryption/ }
+    - { name: "데이터베이스 선택 가이드", url: /docs/database/choosing-a-database/ }
+    - { name: "MySQL for Developers", url: /docs/database/mysql-for-developers/ }
+    - { name: "MySQL 초기 설치 체크리스트", url: /docs/database/mysql-install-checklist/ }
+    - { name: "MongoDB 샤드 재구동 순서", url: /docs/database/mongodb-shard-restart/ }

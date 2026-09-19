@@ -38,6 +38,15 @@
     bar.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
   }, { passive: true });
 
+  // 표는 본문보다 넓게 쓰므로, 좁은 화면에서 넘칠 때 가로 스크롤 컨테이너로 감싼다
+  document.querySelectorAll('.prose table').forEach(function (t) {
+    if (t.parentElement.classList.contains('table-scroll')) return;
+    var w = document.createElement('div');
+    w.className = 'table-scroll';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+
   // 코드 복사
   document.querySelectorAll('.prose div.highlight, .prose pre').forEach(function (block) {
     if (block.querySelector('.copy-code')) return;
