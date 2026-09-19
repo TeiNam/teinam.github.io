@@ -1,7 +1,7 @@
 ---
 date: 2019-02-23 01:35:54 +0900
 title: "리눅스에서 2TB 이상 대용량 디스크 파티션 사용"
-category: database
+category: etc
 excerpt: "리눅스에서는 일반 파티션의 사이즈는 2TB로 제한 되어 있습니다. 이 것을 GPT 타입으로 변경해야 2TB보다 큰 파티션을 사용할 수 있습니다. 일반적으로 파티셔닝을 하면 아래처럼 됩니다. [root@backup-test ~]# fdisk -l /dev/sdc Disk /dev/s…"
 updated: 2026-09-17
 ---

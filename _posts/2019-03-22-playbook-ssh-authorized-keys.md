@@ -1,7 +1,7 @@
 ---
 date: 2019-03-22 21:03:51 +0900
 title: "[Playbook] SSH authorized_keys 등록"
-category: database
+category: etc
 excerpt: "Ansible 마스터 노드에서 각각의 호스트에 ssh rsa key 전파 authorized_key 모듈을 이용합니다. root 유저로 할 경우 아래와 같이 진행합니다. — – name: Create authority between server and nodes hosts: cep…"
 updated: 2026-09-17
 ---

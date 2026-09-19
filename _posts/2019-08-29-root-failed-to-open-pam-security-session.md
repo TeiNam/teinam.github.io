@@ -1,7 +1,7 @@
 ---
 date: 2019-08-29 11:21:38 +0900
 title: "(root) FAILED to open PAM security session (Permission denied)"
-category: database
+category: etc
 excerpt: "(root) FAILED to open PAM security session (Permission denied) /var/log/cron 로그에 위와 같은 에러메세지가 뜨면서 crond 실행 자체가 안되는 경우 cron은 pam.d/password-auth 쪽 인증을 가져옵니다.…"
 updated: 2026-09-17
 ---

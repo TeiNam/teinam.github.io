@@ -1,7 +1,7 @@
 ---
 date: 2019-05-22 13:46:24 +0900
 title: "Docker 란?"
-category: database
+category: etc
 excerpt: "도커란? Namespace, cgroups, SELinux, AppArmor 프로파일을 비롯한 다양한 리눅스 커널 기능을 AUFS와 BTRFS등의 Union 파일시스템과 깔끔하게 엮어서 이미지를 모듈방식으로 구성합니다. WORA(Write-Once-Run-Anywhere) 원칙을…"
 updated: 2026-09-17
 ---

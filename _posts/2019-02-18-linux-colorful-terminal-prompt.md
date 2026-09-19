@@ -1,7 +1,7 @@
 ---
 date: 2019-02-18 19:35:38 +0900
 title: "리눅스 터미널에서 프롬프트를 컬러풀하게 사용하는 법"
-category: database
+category: etc
 excerpt: "흑백 화면인 리눅스 터미널 화면을 컬러로 바꾸고, 서버마다 색상을 다르게 세팅하면 작업 할 때에도 서버가 헷갈려서 실수 할 일이 조금 더 줄어듭니다. # yum -y install vim # vi .bash_profile export PS1=”\\[\\e[36;1m\\]\\u@\\[\\e[3…"
 updated: 2026-09-17
 ---

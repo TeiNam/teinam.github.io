@@ -1,7 +1,7 @@
 ---
 date: 2019-09-27 11:21:17 +0900
 title: "Process 별로 CPU, MEM 사용량 모니터링"
-category: database
+category: etc
 excerpt: "Process 별로 CPU, MEM 사용량 모니터링 특별히 모니터링 툴이라던가 다른 방법이 없을때 OS에서 ps 명령을 가지고 모니터링하는 방법입니다. #!/bin/bash LOG_FILE=test.log while true do date >> $LOG_FILE ps -U post…"
 updated: 2026-09-17
 ---
