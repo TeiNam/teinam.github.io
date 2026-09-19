@@ -2,280 +2,292 @@
 date: 2021-03-04 02:18:09 +0900
 title: "MongoDB의 읽기 연산"
 category: mongodb
-excerpt: "MongoDB의 읽기 연산 읽기 작업이란 쿼리를 통해 테이터를 반환하는 핵심 연산 기능으로 쿼리는 단일 컬렉션에 도큐먼트를 선택합니다. MongoDB가 클라언트에게 반환하는 도큐먼트를 식별하는 기준(criteria) 또는 조건(conditions)들을 쿼리에서 설정할 수 있습니다.…"
-updated: 2026-09-17
+excerpt: "읽기 연산은 쿼리로 도큐먼트를 돌려주는 핵심 기능입니다. find() 의 조건과 프로젝션, 커서 옵션, readConcern 과 readPreference 를 MongoDB 8.0 문서 기준으로 정리합니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — find() 의 쿼리·프로젝션 규칙과 연산자 분류는 현재 문서와 동일합니다. 예제 프롬프트가 6.0 에서 제거된 레거시 `mongo` 셸 기준이라는 점만 감안하면 됩니다.
+읽기 연산은 쿼리로 데이터를 돌려주는 핵심 기능이고, 하나의 쿼리는 하나의 컬렉션에서 도큐먼트를 고릅니다. 어떤 도큐먼트를 돌려줄지 가리는 기준(criteria) 또는 조건(conditions)을 쿼리에 지정할 수 있고, 돌려받을 필드를 고르는 프로젝션(projection)도 함께 쓸 수 있습니다. 프로젝션으로 필요한 필드만 남기면 서버가 네트워크로 내보내는 데이터가 줄어듭니다.
 
-## MongoDB의 읽기 연산
+읽기 연산을 이해할 때 함께 보아야 하는 주제는 세 가지입니다.
 
-읽기 작업이란 쿼리를 통해 데이터를 반환하는 핵심 연산 기능으로 쿼리는 단일 컬렉션에 도큐먼트를 선택합니다. MongoDB가 클라이언트에게 반환하는 도큐먼트를 식별하는 기준(criteria) 또는 조건(conditions)을 쿼리에서 설정할 수 있습니다. 또한 쿼리는 반환된 도큐먼트로부터 필드를 설정하는 프로젝션(projection) 기능을 포함할 수 있습니다. 프로젝션을 통해 몽고 DB가 네트워크 상에서 클라이언트에 반환하는 데이터의 양을 제한합니다.
+- 커서(cursor): 쿼리는 결과 집합을 한 배치씩 넘겨주는 커서를 돌려줍니다.
+- 쿼리 최적화: 실행 계획을 확인하고 인덱스를 맞춥니다.
+- 분산 쿼리: 레플리카 셋과 샤드 클러스터에서 읽기가 어디로 가는지 달라집니다.
 
-- 커서(Cursor): 쿼리는 전체 결과 셋을 소유하는 커서라고 부르는 반복적인 객체를 반환합니다.
-- 쿼리 최적화: 쿼리 성능을 분석하고 개선합니다.
-- 분산 쿼리: 샤드된 클러스터와 레플리카 셋이 읽기 연산 성능에 어떤 영향을 미치는지를 설명합니다.
+> **NOTE** — 이 글의 예제는 `mongosh` 기준입니다. 레거시 `mongo` 셸은 MongoDB 6.0 에서 제거됐습니다. 버전에 따라 달라지는 내용은 MongoDB 8.0 문서를 기준으로 적었습니다.
 
 ### 쿼리 특성
 
-MongoDB에서 모든 쿼리는 다음과 같이 동작합니다.
+MongoDB의 쿼리는 다음 성질을 공통으로 가집니다.
 
-- MongoDB에서 모든 쿼리는 단일 컬렉션에서 사용합니다.
-- 사용자는 Limit, skips 및 sort order를 사용하여 쿼리를 수정할 수 있습니다.
-- sort()가 설정되지 않으면 쿼리에서 반환되는 도큐먼트 순서는 정의되지 않습니다.
-- 기존의 도큐먼트를 갱신(update)하는 동작은 쿼리가 갱신하려는 도큐먼트를 선택하는 것과 동일한 쿼리 문법을 사용합니다.
-- $match 파이프라인 작업은 집계 파이프라인에서 MongoDB 쿼리에 접근합니다.
+- 하나의 쿼리는 하나의 컬렉션만 대상으로 합니다.
+- `limit`, `skip`, 정렬 순서로 쿼리 결과를 조정할 수 있습니다.
+- `sort()` 를 지정하지 않으면 반환되는 도큐먼트 순서는 정해져 있지 않습니다.
+- 기존 도큐먼트를 갱신하는 명령은 대상을 고를 때 읽기와 같은 쿼리 문법을 씁니다.
+- 집계 파이프라인의 `$match` 단계도 같은 쿼리 문법을 씁니다.
 
 ### FIND
 
-`find()`는 MongoDB에서 데이터를 조회하는 명령으로 MongoDB에서 사용되는 명령 중에서도 가장 다양한 조건이나 옵션을 많이 사용할 수 있는 명령입니다.
+`find()` 는 MongoDB에서 데이터를 조회하는 명령이고, 조건과 옵션을 가장 다양하게 붙일 수 있는 명령입니다.
 
-`find()` 명령은 2개의 인자를 사용하는데, 첫 번째 인자에는 도큐먼트를 검색할 때 사용할 조건을 명시하며, 두 번째 인자에는 클라이언트로 반환할 필드를 명시합니다. 이 두 개의 인자는 모두 선택 옵션이므로 아무런 인자 없이 `find()`만을 사용할 수도 있습니다.
+`find()` 는 인자를 두 개 받습니다. 첫 번째 인자에는 도큐먼트를 걸러낼 조건을, 두 번째 인자에는 클라이언트로 돌려받을 필드를 적습니다. 두 인자 모두 선택이므로 아무 인자 없이 `find()` 만 쓸 수도 있습니다.
 
 ```javascript
 db.users.find()
-db.users.find({})
+db.users.find( {} )
 ```
 
-위 명령은 users 컬렉션의 모든 도큐먼트를 반환하는 명령입니다. 특별한 필드를 설정하지 않았기 때문에 기본값으로 모든 도큐먼트를 반환합니다.
+위 명령은 users 컬렉션의 모든 도큐먼트를 돌려줍니다. 프로젝션을 지정하지 않았으므로 모든 필드를 그대로 돌려줍니다.
+
+`find()` 는 커서를 돌려주지만 `findOne()` 은 조건에 맞는 도큐먼트 하나를 바로 돌려줍니다. `aggregate()` 역시 커서를 돌려주므로 배치 단위로 결과를 읽습니다.
 
 ```javascript
-db.users.find({},{_id:0, name:1, score:1})
+db.users.find( {}, { _id: 0, name: 1, score: 1 } )
 ```
 
-두번째 인자의 필드값에 1과 0을 반환할 필드와 반환하지 않을 필드를 결정할 수 있습니다. 위의 쿼리는 \_id 필드는 반환하지 않으며, name, score 필드는 반환하겠다는 의미입니다. 이렇게 쿼리가 반환한 목록을 선택할 수 있는데, BSON(Binary JSON, MongoDB의 바이너리 데이터 포맷) 쿼리에서는 프로젝션이라고 합니다.
+두 번째 인자의 필드 값에 1과 0을 줘서 돌려받을 필드와 제외할 필드를 정합니다. 위 쿼리는 \_id 는 제외하고 name, score 만 돌려받겠다는 뜻입니다. 이렇게 반환 필드를 고르는 것을 BSON(Binary JSON, MongoDB의 바이너리 데이터 포맷) 쿼리에서 프로젝션이라고 합니다.
 
-프로젝션에서는 1과 0를 함께 사용할 수 없습니다.
+프로젝션에서는 1과 0을 섞어 쓸 수 없습니다.
 
 ```javascript
-db.users.find({}, {name:0, score:1})
+db.users.find( {}, { name: 0, score: 1 } )
 ```
 
-위와 같은 쿼리는 사용할 수 없습니다.
+위와 같은 쿼리는 쓸 수 없습니다.
 
-일부 필드에 대해 프로젝션 옵션을 적용하면, 나머지 필드에 대해서는 자동으로 설정값이 적용되어 프로젝션할 필드가 결정됩니다.
+일부 필드에만 프로젝션을 지정하면 나머지 필드는 반대값이 자동으로 적용됩니다.
 
 ```javascript
-db.users.find({},{username:1}).pretty()
-{ "_id" : ObjectId("602db73fb44cb815df1453e4"), "username" : "Alice" }
-{ "_id" : ObjectId("602db814b44cb815df1453e6"), "username" : "rabbit" }
-{ "_id" : ObjectId("602db888b44cb815df1453e8"), "username" : "Elsa" }
-{ "_id" : ObjectId("602db907b44cb815df1453ea"), "username" : "Queen_Anna" }
-{ "_id" : ObjectId("602dbb23b44cb815df1453ec"), "username" : "Harry" }
-{ "_id" : ObjectId("602dc053b44cb815df1453f8"), "username" : "hermione" }
-{ "_id" : ObjectId("602dcb49b44cb815df1453fa"), "username" : "ronweasley" }
+db.users.find( {}, { username: 1 } )
 ```
-
-username을 1로 줬을때는 위와 같이 \_id 필드와 username 만을 반환합니다. 반대로 username을 0으로 주면 아래와 같은 결과값을 반환합니다.
 
 ```javascript
-> db.users.find({},{username:0})
-{ "_id" : ObjectId("602db73fb44cb815df1453e4"), "email" : "alice@naxer.com"}
-...
-..
-.
+[
+  { _id: ObjectId('602db73fb44cb815df1453e4'), username: 'Alice' },
+  { _id: ObjectId('602db814b44cb815df1453e6'), username: 'rabbit' },
+  { _id: ObjectId('602db888b44cb815df1453e8'), username: 'Elsa' },
+  { _id: ObjectId('602db907b44cb815df1453ea'), username: 'Queen_Anna' },
+  { _id: ObjectId('602dbb23b44cb815df1453ec'), username: 'Harry' },
+  { _id: ObjectId('602dc053b44cb815df1453f8'), username: 'hermione' },
+  { _id: ObjectId('602dcb49b44cb815df1453fa'), username: 'ronweasley' }
+]
 ```
 
-username 만 빼고 모든 필드값을 반환합니다. 위 결과 값들을 보면 1과 0을 같이 쓰게되는 경우 논리적이 오류로 인하여 같이 사용이 불가능함을 알 수 있습니다. \_id 필드는 예외로 적용되는데 모든 쿼리에 \_id 필드를 반환하는 것이 기본 값이기 때문에 \_id 필드를 빼고 가져오려면 \_id 필드에 0을 줘야하는데, 이 경우에만 \_id 필드를 제외한 다른 필드에 1을 지정해서 \_id:0, 다른 필드는 1, 이렇게 혼합하여 사용이 가능합니다.
+username 에 1을 주면 위처럼 \_id 와 username 만 돌려받습니다. 반대로 0을 주면 username 만 빠진 나머지 필드를 돌려받습니다.
 
 ```javascript
-db.users.find({}, {_id:0, name:1})
+db.users.find( {}, { username: 0 } )
 ```
+
+```javascript
+[
+  { _id: ObjectId('602db73fb44cb815df1453e4'), email: 'alice@naxer.com' },
+  { _id: ObjectId('602db814b44cb815df1453e6'), email: 'rabbit@naxer.com' }
+]
+```
+
+1과 0을 함께 쓰지 못하는 이유가 여기서 보입니다. 포함 목록과 제외 목록이 동시에 성립할 수 없기 때문입니다. \_id 만 예외인데, \_id 는 모든 쿼리에서 기본으로 따라오는 필드라서 \_id 를 빼고 다른 필드를 골라 받는 조합은 허용됩니다.
+
+```javascript
+db.users.find( {}, { _id: 0, name: 1 } )
+```
+
+> **NOTE** — 레거시 셸에서 쓰던 `pretty()` 는 `mongosh` 에서 출력 형식을 바꾸지 않습니다. 공식 문서도 `pretty()` 가 레거시 `mongo` 셸에서만 형식을 바꾼다고 적습니다.
 
 ### FIND 연산자
 
-MongoDB의 `find()` 명령의 검색조건에 사용할 수 있는 오퍼레이터(연산자)를 메뉴얼에서는 크게 7가지로 나눠서 분류합니다.
+MongoDB 매뉴얼은 쿼리 조건에 쓰는 연산자(쿼리 술어, query predicate)를 일곱 갈래로 묶습니다.
 
-- 비교 오퍼레이터
-- 논리 결합 오퍼레이터
-- 필드 메타 오퍼레이터
-- 평가 오퍼레이터
-- 공간 오퍼레이터
-- 배열 오퍼레이터
-- 비트 오퍼레이터
+- 비교 연산자
+- 논리 연산자
+- 데이터 타입 연산자
+- 기타 연산자
+- 공간 연산자
+- 배열 연산자
+- 비트 연산자
 
-MongoDB의 `find()` 쿼리가 사용하는 검색 조건은 모두 JSON 포맷으로 표시해야 하므로 RDBMS의 SQL 문법에서 사용되는 기본 집합 및 비교 연산자 (=, >, <, IN, NOT IN, …)는 사용할 수 없으며, "$"로 시작하는 오퍼레이터를 JSON 문법에서 사용하도록 제공하고 있습니다. 그리고 오퍼레이터들은 대소문자를 구분해서 사용해야 합니다. 표기법이 다르기 때문에 익숙하지 않을 수 있으나 기존의 RDBMS의 연산자와 내용은 동일합니다.
+MongoDB의 쿼리 조건은 모두 JSON 포맷으로 적어야 하므로 SQL의 `=`, `>`, `<`, `IN`, `NOT IN` 같은 기호를 그대로 쓸 수 없습니다. 대신 `$` 로 시작하는 연산자를 JSON 문법 안에서 씁니다. 연산자는 대소문자를 구분합니다. 표기법만 다르고 의미는 RDBMS의 연산자와 같습니다.
 
-#### 비교 오퍼레이터
+#### 비교 연산자
 
-|  |  |
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $eq | SQL =  "Equal"의 약자로 값이 일치한지 비교하는 것인데 일반적으로 $eq연산자는 생략하는 경우가 많습니다. |
-| $gt | SQL >  "Greater Than"의 약자로 좌항의 값이 더 큰지 비교합니다. |
-| $gte | SQL >=  "Greater Than or Equal"의 약자로 좌항의 값이 더 크거나 같은지 비교합니다. |
-| $lt | SQL <  "Less Than"의 약자로 좌항의 값이 더 작은지 비교합니다. |
-| $lte | SQL <=  "Less Than or Equal"의 약자로 좌항의 값이 더 작거나 같은지 비교합니다. |
-| $ne | SQL <> 또는 !=  "Not Equal"의 약자로 좌항과 우항의 값이 같지 않은지 비교합니다. |
-| $in | SQL IN  좌항이 우열의 배열 값 중 하나와 일치하는지 비교합니다. |
-| $nin | SQL NOT IN  "NOT IN"의 약자로 좌항이 우항의 배열 값 중 어떤 값과도 일치하지 않는지 비교합니다. |
+| `$eq` | SQL `=`. 값이 같은지 비교합니다. 보통 생략하고 씁니다. |
+| `$gt` | SQL `>`. 지정한 값보다 큰지 비교합니다. |
+| `$gte` | SQL `>=`. 지정한 값보다 크거나 같은지 비교합니다. |
+| `$lt` | SQL `<`. 지정한 값보다 작은지 비교합니다. |
+| `$lte` | SQL `<=`. 지정한 값보다 작거나 같은지 비교합니다. |
+| `$ne` | SQL `<>`. 값이 같지 않은지 비교합니다. |
+| `$in` | SQL `IN`. 배열에 주어진 값 중 하나와 일치하는지 비교합니다. |
+| `$nin` | SQL `NOT IN`. 배열에 주어진 어떤 값과도 일치하지 않는지 비교합니다. |
 
-#### 논리 결합 오퍼레이터
+#### 논리 연산자
 
-|  |  |
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $or | 두 개의 표현식을 OR로 연결합니다.  다음 예제는 name이 "matt" 이거나 score 필드값이 90보다 큰 사용자를 반환합니다. 
+| `$or` | 배열로 주어진 표현식 중 하나라도 일치하면 반환합니다. |
+| `$and` | 배열로 주어진 표현식을 모두 만족해야 반환합니다. |
+| `$not` | 표현식의 부정 연산을 수행합니다. |
+| `$nor` | 배열로 주어진 표현식 어디에도 일치하지 않아야 반환합니다. |
+
 ```javascript
-db.users.find( { $or: [ { name: "matt"}, { score: { $gt: 90 } } } )
-```
- |
-| $and | 두 개의 표현식을 AND로 연결합니다.  다음 예제는 name이 "matt" 이고,  score 필드값이 90보다 큰 사용자를 반환합니다. 
-```javascript
-db.users.find( { $and: [ { name: "matt"}, { score: { $gt: 90 } } } )
-```
- |
-| $not | 표현식의 부정 연산을 수행합니다.  다음 예제는 score 필드가 90점 이하인 도큐먼트를 반환합니다. 
-```javascript
+// name 이 matt 이거나 score 가 90 보다 큰 도큐먼트
+db.users.find( { $or: [ { name: "matt" }, { score: { $gt: 90 } } ] } )
+
+// name 이 matt 이고 score 가 90 보다 큰 도큐먼트
+db.users.find( { $and: [ { name: "matt" }, { score: { $gt: 90 } } ] } )
+
+// score 가 90 보다 크지 않은 도큐먼트
 db.users.find( { score: { $not: { $gt: 90 } } } )
+
+// name 이 matt 도 아니고 score 도 90 이 아닌 도큐먼트
+db.users.find( { $nor: [ { name: "matt" }, { score: 90 } ] } )
 ```
- |
-| $nor | 배열로 주어진 모든 표현식에 일치하지 않는지 비교합니다.  다음 예제는 name이 "matt"도 아니고 score 필드의 값도 90이 아닌 도큐먼트를 반환합니다. 이때 name 필드나 score 필드가 존재하지 않는 경우에도 TRUE로 연산됩니다. 
-```javascript
-db.users.find( { $nor: [ { name: "matt"}, { score: 90 } } )
+
+`$nor` 는 해당 필드가 아예 없는 도큐먼트도 조건을 만족한 것으로 봅니다.
+
+`find()` 에 나열한 조건은 기본적으로 AND 로 해석됩니다. 여러 조건을 OR 로 묶으려면 `$or` 를 명시해야 하고, `$and` 와 `$or` 를 섞어 복잡한 조건도 만들 수 있습니다.
+
+```sql
+SELECT * FROM inventory WHERE status = 'A' AND (qty < 30 OR item LIKE 'p%');
 ```
- |
-
-FIND에 사용되는 검색 조건은 기본적으로 AND 연산으로 해석됩니다. 만약 여러 검색 조건을 OR로 결합하려면 아래처럼 $or 오퍼레이터를 명시적으로 사용해야 합니다. 그리고 $and 와 $or 연산자를 이용해서 AND와 OR로 여러 조건을 결합해서 필요한 조건으로 만들 수 있습니다.
 
 ```javascript
-SELECT * FROM inventory WHERE status = 'A' AND (qty<30 OR item LIKE 'p%');
-
 db.inventory.find( {
     status: "A",
     $or: [ { qty: { $lt: 30 } }, { item: /^p/ } ]
 } )
 ```
 
-#### 필드 메타 오퍼레이터
+#### 데이터 타입 연산자
 
-|  |  |
+필드가 있는지, 어떤 타입인지 비교하는 연산자입니다.
+
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $exists | 도큐먼트가 필드를 가지고 있는지 확인합니다. 
+| `$exists` | 도큐먼트가 해당 필드를 가지고 있는지 확인합니다. |
+| `$type` | 필드의 데이터 타입을 비교합니다. |
+
 ```javascript
 db.users.find( { name: { $exists: true } } )
+db.users.find( { name: { $type: "string" } } )
 ```
- |
-| $type | 필드의 데이터 타입을 비교합니다. 
-```javascript
-db.users.find( { "name": { $type: "string" } } )
-```
- |
 
-필드의 타입별로 숫자 코드값과 이름은 MongoDB 메뉴얼([https://docs.mongodb.com/manual/reference/operator/query/type](https://docs.mongodb.com/manual/reference/operator/query/type "https://docs.mongodb.com/manual/reference/operator/query/type"))에서 확인 가능합니다.
+타입별 숫자 코드와 이름은 [$type 문서](https://www.mongodb.com/docs/manual/reference/operator/query/type/)에서 확인할 수 있습니다.
 
-#### 평가 오퍼레이터
+#### 기타 연산자
 
-|  |  |
+값을 계산하거나 표현식으로 평가하는 연산자가 이 갈래에 모여 있습니다.
+
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $mod | 모듈러(%)연산의 수행 결과값을 비교합니다. 다음 예제는 score 필드값을 10으로 나눈 나머지가 0인 도큐먼트를 반환합니다. 
+| `$expr` | 집계 표현식을 쿼리 조건에서 사용합니다. |
+| `$jsonSchema` | 주어진 JSON 스키마로 도큐먼트를 검증합니다. |
+| `$mod` | 모듈러(%) 연산 결과를 비교합니다. |
+| `$regex` | 정규 표현식 비교를 수행합니다. |
+| `$where` | 자바스크립트 표현식에 일치하는 도큐먼트를 돌려줍니다. |
+
 ```javascript
-db.users.find( { score: { $mod: [ 10, 0 ] } } } )
-```
- |
-| $regex | 정규 표현식 비교를 수행합니다. 
-```javascript
-db.users.find( { name: { $regex; '^matt' } } )
+// score 를 10 으로 나눈 나머지가 0 인 도큐먼트
+db.users.find( { score: { $mod: [ 10, 0 ] } } )
+
+// 정규 표현식 — 두 표기는 같은 결과입니다
+db.users.find( { name: { $regex: "^matt" } } )
 db.users.find( { name: /^matt/ } )
-```
- |
-| $text | MongoDB의 전문 검색 비교를 수행합니다. 이는 Full Text Search 인덱스를 가진 컬렉션에 대해서만 실행할 수 있습니다. 
-```javascript
-db.users.find( { $text: { $search: "matt" } } )
-```
- |
-| $where | 주어진 자바 스크립트 표현식에 일치하는 도큐먼트만 필터링해서 클라이언트로 반환합니다.  $where 절에 주어진 조건은 인덱스를 사용하지 못하고 full scan을 하기 때문에 처리 속도가 느립니다. 하지만 자바스크립트를 이용해서 표현식을 작성할 수 있기 때문에 유연한 패턴의 비교가 가능합니다. 
-```javascript
-db.users.find( { $where: "obj.low_score > obj.high_score" } )
-```
- |
 
-#### 배열 오퍼레이터
+// 같은 도큐먼트의 두 필드를 비교합니다
+db.users.find( { $expr: { $gt: [ "$low_score", "$high_score" ] } } )
+```
 
-|  |  |
+> **WARNING** — MongoDB 8.0 부터 서버 사이드 자바스크립트 함수(`$accumulator`, `$function`, `$where`)는 deprecated 이고, 실행하면 서버가 경고를 로그에 남깁니다. `$where` 는 자바스크립트를 평가하므로 인덱스를 쓸 수 없어 컬렉션 스캔이 필요합니다. 공식 문서는 자바스크립트를 실행하지 않는 `$expr` 을 먼저 쓰고, 사용자 정의 표현식이 꼭 필요하면 `$function` 을 쓰라고 권합니다.
+
+전문 검색은 텍스트 인덱스를 만든 컬렉션에서 `$text` 로 수행합니다.
+
+```javascript
+db.movies.createIndex( { title: "text", fullplot: "text" } )
+db.movies.find( { $text: { $search: "baseball" } } )
+```
+
+한 쿼리에 `$text` 는 한 번만 쓸 수 있고, `$nor` 나 `$elemMatch` 안에서는 쓸 수 없습니다. 뷰(view)도 `$text` 를 지원하지 않고, `$text` 가 있는 쿼리에는 `hint()` 로 인덱스를 지정할 수 없습니다. 기본적으로 점수 순으로 정렬하지 않으므로 정렬이 필요하면 `$meta: "textScore"` 를 씁니다. Atlas 에서는 공식 문서가 Atlas Search 를 권합니다.
+
+#### 배열 연산자
+
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $all | 배열 타입의 필드가 파라미터로 주어진 배열의 모든 엘리먼트(요소)를 가졌는지 비교합니다. 지정된 요소 이외의 요소를 가지고 있어도 지정한 요소가 포함되어 있으면 반환합니다. 
-```javascript
-db.users.find( { tags: { $all: [ 'book', 'music' ] } } )
-```
- |
-| $elemMatch | $elemMatch의 모든 조건에 일치하는 엘리먼트를 검색합니다. |
-| $size | 배열의 엘리먼트 개수를 비교합니다. |
-
-배열 필드에서 원하는 결과 값을 얻으려면 $elemMatch 오퍼레이터를 이용해야 합니다. $elemMatch 연산자는 배열 필드가 가진 엘리먼트 하나가 $elemMatch의 모든 조건을 만족할 때 결과로 반환합니다.
+| `$all` | 배열 필드가 지정한 요소를 모두 가지고 있는지 비교합니다. 다른 요소가 더 있어도 반환합니다. |
+| `$elemMatch` | 배열 요소 하나가 지정한 조건을 모두 만족하는지 비교합니다. |
+| `$size` | 배열의 요소 개수를 비교합니다. |
 
 ```javascript
-db.users.find( { score: { $elemMatch: { $gt: 80, $lt: 90 } } } )
+db.users.find( { tags: { $all: [ "book", "music" ] } } )
 ```
 
-위의 쿼리는 배열 필드가 가진 엘리먼트 중에 80보다 크고 90보다 작은 값이 있는 도큐먼트만 반환을 합니다. 범위 검색을 사용할 때 $elemMatch는 매우 중요한 의미를 가지지만, 단순 일치 비교를 할때는 $elemMatch가 그다지 중요하지 않습니다. 쿼리의 가독성을 위해 단순화 해도 결과 값이 같다면 최대한 단순화 해서 사용하는 것이 좋습니다.
+배열 필드에 범위 조건을 걸 때는 `$elemMatch` 가 필요합니다. `$elemMatch` 는 배열 요소 하나가 조건을 모두 만족할 때만 도큐먼트를 돌려줍니다.
 
-#### 비트 오퍼레이터
+```javascript
+db.users.find( { scores: { $elemMatch: { $gt: 80, $lt: 90 } } } )
+```
 
-|  |  |
+위 쿼리는 80 보다 크고 90 보다 작은 값을 가진 요소가 있는 도큐먼트만 돌려줍니다. `$elemMatch` 없이 `{ scores: { $gt: 80, $lt: 90 } }` 로 적으면 한 요소는 80 보다 크고 다른 요소는 90 보다 작기만 해도 조건이 성립합니다. 단순 일치 비교라면 `$elemMatch` 없이 써도 결과가 같으므로, 결과가 같다면 읽기 쉬운 쪽으로 적는 편이 낫습니다.
+
+#### 비트 연산자
+
+| 연산자 | 설명 |
 | --- | --- |
-| **연산자** | **설명** |
-| $bitAllSet | 필드 값의 각 비트가 파라미터로 주어진 값의 각 비트처럼 1로 Set 되어 있는지 비교합니다. |
-| $bitAnySet | 필드 값의 각 비트중 하나라도 파라미터로 주어진 값의 비트처럼 1로 Set 되어 있는지 비교합니다. |
-| $bitAllClear | 필드 값의 각 비트가 파라미터로 주어진 값의 각 비트처럼 0으로 Clear 되어 있는지 비교합니다. ($bitAllSet의 반대) |
-| $bitAnyClear | 필드 값의 각 비트중 하나라도 파라미터로 주어진 값의 비트처럼 0으로 Clear 되어 있는지 비교합니다. ($bitAnySet의 반대) |
+| `$bitsAllSet` | 지정한 비트 위치가 모두 1 인지 비교합니다. |
+| `$bitsAnySet` | 지정한 비트 위치 중 하나라도 1 인지 비교합니다. |
+| `$bitsAllClear` | 지정한 비트 위치가 모두 0 인지 비교합니다. |
+| `$bitsAnyClear` | 지정한 비트 위치 중 하나라도 0 인지 비교합니다. |
 
 ### FIND 조건
 
-`find()` 쿼리로 데이터를 검색할 때 가장 중요한 것은 검색 대상을 걸러내는 조건을 정하는 것입니다. MongoDB의 도큐먼트의 가장 큰 특징은 RDBMS 처럼 정형화 되어 있지 않고, 다양한 형태를 가지고 있기 때문에 배열이나 서브 도큐먼트 조건을 활용할 수 있게 되어 있습니다.
+`find()` 로 데이터를 찾을 때 가장 중요한 일은 대상을 걸러낼 조건을 정하는 것입니다. MongoDB의 도큐먼트는 RDBMS의 행처럼 고정된 형태가 아니라서 배열이나 서브 도큐먼트를 조건으로 쓸 수 있습니다.
 
-반면 다양한 포맷을 지원하기 때문에 도큐먼트가 복잡해 지기 쉬우며, 도큐먼트가 복잡해지면 쿼리도 복잡해지고, 쿼리가 어떤 인덱스를 사용할지 명확히 보이지 않는 경우도 발생합니다. 이 것은 사용자 뿐만아니라 옵티마이저에게도 마찬가지이기 때문에 데이터 모델을 단순화하고 도큐먼트의 데이터 포맷을 단순화하는 것이 좋습니다.
+그만큼 도큐먼트가 복잡해지기 쉽고, 도큐먼트가 복잡해지면 쿼리도 복잡해져서 어떤 인덱스를 쓸지 눈으로 가늠하기 어려워집니다. 사람에게만 어려운 것이 아니라 옵티마이저에게도 마찬가지이므로 데이터 모델과 도큐먼트 포맷은 단순하게 유지하는 편이 좋습니다.
 
-MongoDB의 쿼리를 작성할 때 가장 중요한 것은 하나의 필드에 대한 조건을 걸 때 반드시 하나의 서브 도큐먼트로 작성해야 한다는 것입니다.
+한 필드에 여러 조건을 걸 때는 조건을 하나의 서브 도큐먼트로 묶어야 합니다.
 
 ```javascript
-db.users.find( { name: { $gte: "m"}, name: { $lte: "u" } } )
-{ "name" : "matt", "scores" : [ 79, 85, 93 ] }
-{ "name" : "lara", "scores" : [91, 63] }
+db.users.find( { name: { $gte: "m" }, name: { $lte: "u" } } )
 ```
 
-위 쿼리는 name 필드의 값이 m 보다 크거나 같고, u 보다 작거나 같은 도큐먼트를 검색하는 쿼리인데 출력된 결과는 원하는 결과값이 나오지 않습니다. MongoDB의 쿼리는 두 개의 조건이 있는 경우 첫번째 조건을 버리고, 두번째 조건만 취합니다. 그렇기 때문에 원하는 결과 값을 받기 위해서는 연산자를 같이 묶어야 합니다.
+위 쿼리는 name 이 m 이상이고 u 이하인 도큐먼트를 찾으려는 의도지만 그대로 동작하지 않습니다. 같은 필드 이름을 두 번 적으면 앞의 조건이 버려지고 뒤의 조건만 남기 때문입니다. 원하는 결과를 얻으려면 연산자를 하나의 서브 도큐먼트로 묶습니다.
 
 ```javascript
 db.users.find( { name: { $gte: "m", $lte: "u" } } )
 ```
 
-이렇게 하나의 필드에 대한 조건은 하나의 서브 도큐먼트로 묶어서 처리해야 합니다. 하나의 필드에 대한 조건을 분리해서 나열하고자 한다면 $and 연산자를 이용하면 됩니다.
+조건을 따로 나열하고 싶다면 `$and` 로 각각을 별개의 도큐먼트로 만듭니다.
 
 ```javascript
-db.users.find( { $and: [ { name: { $gte: "m" }, name: { $lte: "u" } } ] } )
+db.users.find( { $and: [ { name: { $gte: "m" } }, { name: { $lte: "u" } } ] } )
 ```
 
-MongoDB의 BSON 쿼리는 논리 연산을 포함하지 않으면 모두 AND 연산으로 수행합니다.
+논리 연산자를 쓰지 않은 조건은 모두 AND 로 해석되므로 아래 두 쿼리는 같습니다.
 
 ```javascript
-db.users.find( { name: "Alice", scores: 90 } )
-
+db.users.find( { name: "Alice", score: 90 } )
 db.users.find( { $and: [ { name: "Alice" }, { score: 90 } ] } )
 ```
 
-$and 연산자를 넣게되면 쿼리의 가독성이 떨어지고, 복잡해 지기 때문에 AND 연산자로 연결되는 조건에서는 생략하고 나열하는 형태로 사용합니다.
+`$and` 를 넣으면 쿼리가 길어지고 읽기 어려워지므로, AND 로 이어지는 조건은 나열하는 형태로 씁니다.
 
 #### 서브 도큐먼트 필드 검색 쿼리
 
 ```javascript
 db.users.find( { contact: { type: "office", phone: "02-0000-0000" } } )
-
-db.users.find( { "contact.type": "office", "contact.phone": "02-0000-0000 } } )
+db.users.find( { "contact.type": "office", "contact.phone": "02-0000-0000" } )
 ```
 
-두 쿼리는 서브 도큐먼트 안에 다른 필드가 없다는 가정하에 같은 결과 값을 보여줍니다. 그렇기 때문에 같은 쿼리라고 생각할 수 있지만, 서브도큐먼트 안에 다른 필드값이 추가되면 첫번째 쿼리는 동일한 필드를 가진 도큐먼트가 없다고 인식하여 결과 값을 반환하지 못합니다. 두 쿼리의 차이점은 첫번째 쿼리는 서브 도큐먼트 자체가 조건으로 걸려 완벽히 같은 서브 도큐먼트가 존재해야지만 결과 값을 반환하며, 두번째 쿼리는 서브 도큐먼트 안의 개별 필드를 비교하기 때문에 서브 도큐먼트 안에 다른 필드가 추가되어도 결과값에 영향이 없습니다. MongoDB에서의 서브 도큐먼트는 BSON으로 변환하여 비교하기 때문에 이러한 차이가 발생하게 됩니다.
+서브 도큐먼트에 다른 필드가 없다면 두 쿼리는 같은 결과를 돌려주므로 같은 쿼리처럼 보입니다. 하지만 서브 도큐먼트에 필드가 하나 추가되면 첫 번째 쿼리는 아무것도 돌려주지 못합니다. 첫 번째 쿼리는 서브 도큐먼트 전체가 조건과 완전히 같아야 하고, 두 번째 쿼리는 서브 도큐먼트 안의 개별 필드를 비교하기 때문에 다른 필드가 늘어도 영향을 받지 않습니다.
 
-이러한 결과는 인덱스를 생성할 때에도 동일하게 적용하기 때문에 서브 도큐먼트안의 필드 값에 인덱스를 적용하기 위해서는 contact 자체에 인덱스를 생성하는 것이 아닌, "contact.type", "contact.phone"에 인덱스를 생성해 줘야합니다.
+인덱스도 같은 규칙을 따릅니다. 서브 도큐먼트 안의 필드로 조회하려면 contact 자체가 아니라 `"contact.type"`, `"contact.phone"` 에 인덱스를 만들어야 합니다.
 
 #### 배열 필드 검색 쿼리
 
-배열 필드에는 단순 엘리먼트 배열(Array of Element)가 있고, 배열의 엘리먼트가 서브 도큐먼트인 도큐먼트 배열(Array Of Sub-Document)이 있습니다.
+배열 필드에는 값이 나열된 단순 배열(Array of Element)과 요소가 서브 도큐먼트인 도큐먼트 배열(Array of Sub-Document)이 있습니다.
 
-엘리먼트 배열
+단순 배열입니다.
 
 ```javascript
 {
@@ -283,133 +295,176 @@ db.users.find( { "contact.type": "office", "contact.phone": "02-0000-0000 } } )
 }
 ```
 
-도큐먼트 배열
+도큐먼트 배열입니다.
 
 ```javascript
 {
   name: "Alice",
   contact: [
-    {type: "office", phone: "02-0000-0000"},
-    {type: "home", phone: "031-000-0000"}
+    { type: "office", phone: "02-0000-0000" },
+    { type: "home", phone: "031-000-0000" }
   ]
 }
 ```
 
-이렇게 엘리먼트가 서브 도큐먼트 타입의 도큐먼트 배열의 경우, 번위 검색을 하기 위해서는 $elemMatch 오퍼레이터를 사용해야 합니다.
+도큐먼트 배열에 범위 조건을 걸 때도 `$elemMatch` 를 써야 합니다.
 
 ```javascript
-db.users.find( { contact: { $elemMatch: { type: "office", phone: { $gt: "02" } } } )
+db.users.find( { contact: { $elemMatch: { type: "office", phone: { $gt: "02" } } } } )
 ```
 
-explain() 연산자를 이용해 쿼리를 실행하면 어떤 연산자가 어떻게 적용되는지 알 수 있습니다. 도큐먼트 배열의 조회에서 $elemMatch를 이용하지 않는 경우, 각각의 $eq 조건이 자동으로 추가되지만, $elemMatch의 경우 $and 조건이 추가되는 것을 볼 수 있습니다. 즉 일치하는 검색을 찾을때는 $elemMatch를 사용하지 않아도 괜찮지만, 범위 검색이 필요한 경우에는 $elemMatch를 이용해 배열의 범위를 지정해 줘야합니다.
+`explain()` 으로 실행 계획을 보면 조건이 어떻게 풀리는지 확인할 수 있습니다. `$elemMatch` 없이 도큐먼트 배열을 조회하면 각 필드에 `$eq` 조건이 개별로 붙고, `$elemMatch` 를 쓰면 요소 하나에 대한 `$and` 조건이 붙습니다. 단순 일치 검색이라면 `$elemMatch` 가 없어도 되지만 범위 검색에는 필요합니다.
 
-### 읽기 연산의 동작순서
+### 인덱스 필드 순서 — ESR 지침
 
-find() 명령을 사용할 시에 인자에 여러가지 값이 있는 경우 다음과 같이 동작합니다.
+여러 조건과 정렬이 섞인 쿼리에 복합 인덱스를 만들 때, MongoDB 매뉴얼은 ESR(Equality, Sort, Range) 지침을 제시합니다.
 
 ```javascript
 db.songs.find( { seconds: { $lt: 400 }, genre: "rock" } ).sort( { rating: 1 } )
 ```
 
-{ "genre": 1, "rating": 1, "seconds": 1}
+이 쿼리에서 genre 는 동등 비교, rating 은 정렬, seconds 는 범위 조건입니다. 지침에 따르면 인덱스 키는 다음 순서가 됩니다.
 
-E -> S -> R (Equal ->  Sort -> Range ) 순으로 동작을 합니다.
+```javascript
+{ genre: 1, rating: 1, seconds: 1 }
+```
+
+동등 비교 필드는 항상 앞에 둡니다. 동등 조건이 앞에 오면 뒤따르는 인덱스 필드가 정렬된 상태로 남기 때문입니다. 그 뒤는 상황에 따라 갈립니다. 메모리 정렬을 피하는 것이 중요하면 정렬 필드를 범위 필드 앞에 두고(ESR), 쿼리의 범위 조건이 매우 선택적이면 범위 필드를 정렬 필드 앞에 둡니다(ERS).
+
+연산자 분류에 주의할 점이 있습니다. `$ne`, `$nin`, `$regex` 는 동등이 아니라 범위 연산자로 취급됩니다. `$in` 은 단독으로 쓰이면 동등 비교처럼 동작하지만, `sort()` 와 함께 쓸 때 배열 요소가 200개 미만이면 동등 조건처럼, 200개 이상이면 범위 조건처럼 동작합니다. 공식 문서는 이 200 이라는 경계가 버전에 따라 달라질 수 있다고 밝히고 있습니다.
 
 ### 커서(Cursor)
 
-MongoDB의 FIND는 항상 커서를 반환하는데, 커서를 통해서 쿼리 결과 도큐먼트를 하나씩 읽을 수 있습니다. 커서는 단순히 결과 도큐먼트를 읽는 용도로만 사용되는 것이 아니며, 검색 결과를 정렬하거나 지정된 건수의 도큐먼트를 건너뛰거나 제한하는 등의 기능도 제공합니다. MongoDB의 매뉴얼([https://docs.mongodb.com/manual/reference/method/js-cursor/](https://docs.mongodb.com/manual/reference/method/js-cursor/ "https://docs.mongodb.com/manual/reference/method/js-cursor/"))에서 많은 커서 기능을 확인할 수 있으며, 자주 사용되는 커서만 짚고 넘어가겠습니다.
+`find()` 는 항상 커서를 돌려주고, 커서로 결과 도큐먼트를 하나씩 읽습니다. 커서는 결과를 읽는 통로일 뿐 아니라 정렬, 건너뛰기, 개수 제한 같은 기능도 제공합니다. [커서 메서드 문서](https://www.mongodb.com/docs/manual/reference/method/js-cursor/)에 전체 목록이 있고, 여기서는 자주 쓰는 것만 짚습니다.
+
+커서는 결과를 배치 단위로 돌려줍니다. `find()` 와 `aggregate()` 의 첫 배치는 기본 101건이고, 이후 `getMore` 로 받아오는 배치에는 건수 기본값이 없어 16 MiB 메시지 크기 제한만 걸립니다. `mongosh` 는 한 번에 20건씩 화면에 출력하고, 이 값은 `config.set("displayBatchSize")` 로 바꿉니다.
 
 #### 데이터 정렬 cursor.sort()
 
-쿼리의 결과 데이터를 정렬하려면 sort() 커서 옵션을 사용해야 합니다. 정렬 옵션에 따라 실행 계획이 바뀌기도 하니 반드시 쿼리를 실행하는 시점에 sort()를 사용해야 합니다.
+결과를 정렬하려면 `sort()` 를 씁니다. 정렬 조건에 따라 실행 계획이 달라지므로 쿼리를 실행하는 시점에 함께 지정해야 합니다.
 
-sort() 옵션은 하나의 인자를 사용하는데, 정렬할 필드의 목록을 나열하면 됩니다. 역순으로 정렬하고자 하는 필드는 -1, 정순으로 정렬하고자 하는 필드는 1로 설정하면 됩니다.
-
-```javascript
-db.users.find().sort( { name:1, scores: -1 } )
-```
-
-커서의 sort() 옵션이 인덱스를 이용해 정렬을 수행할 수 있을때에는 데이터 크기나 정렬을 위한 메모리 크기에 관계없이 정렬된 결과를 가져올 수 있습니다. 하지만 sort() 옵션이 인덱스를 사용할 수 없을 때에는 MongoDB 서버가 쿼리를 실행하는 도중에 정렬 알고리즘 (Quicksort 알고리즘)을 실행해서 FIND 명령의 결과 도큐먼트를 정렬한 다음 클라이언트로 값을 반환하는데 이 경우 많은 메모리가 필요 됩니다. MongoDB에서는 정렬을 수행해야 할 때 사용할 수 있는 최대 메모리 크기가 인터널 파라미터(기본값 32MB)로 설정되어 있습니다.
-
-> **주의:** 쿼리의 정렬을 수행하는 데 필요한 메모리가 32MB를 넘어가게 되면, 에러를 발생시키고 쿼리는 실패를 하게 됩니다.
-
-이런 경우 3가지 우회 방법을 사용할 수 있습니다.
-
-첫번째, 정렬 작업이 인덱스를 활용 할 수 있게 합니다.
-
-두번째, 정렬을 위한 메모리 공간을 더 크게 설정합니다.
-
-세번째, `find()` 명령 대신 Aggregate() 명령을 사용하고, allowDiskUse 옵션을 true로 줍니다.
-
-정렬을 위해 할당된 메모리는 쿼리가 완료되기 전까지 운영체제로 반납되지 않습니다. 만약 클라이언트가 초반 일부분의 데이터만 받고 나머지 결과가 필요하지 않아 커서가 도큐먼트에 남은채로 방치 된다면, 커서가 자동으로 닫힐때까지 메모리가 운영체제에 반환되지 않습니다. 그래서 전달 받은 커서는 반드시 모든 도큐먼트를 클라이언트로 가져가거나, 결과 값이 도중에 필요없게 되어 Fetch를 중간에 멈추는 경우 커서를 반드시 닫아주는게 좋습니다.
-
-#### 콜레이션 변경 cursor.collation()
-
-쿼리의 검색 조건을 이용해서 검색할 때 , 사용할 문자열 콜레이션을 지정합니다. 인덱스의 콜레이션과 컬렉션의 콜레이션이 다르다면 인덱스를 사용할 수 없고, 쿼리에 콜레이션을 명시하는 방식은 추천할 만한 방식은 아닙니다.
-
-컬렉션과 인덱스의 콜레이션은 동일하게 적용하는게 좋습니다.
-
-#### Read Concern cursor.readConcern()
-
-MongoDB의 서버는 분산 처리구조로 되어 있기 때문에 여러 레플리카 멤버중에서 어떤 멤버를 선택하느냐에 따라 FIND 결과가 달라질 수도 있습니다. MongoDB의 복제는 비동기 모드이며, 최종 일관성(Eventual Consistency) 모델을 채택하고 있기 때문입니다. 하지만 데이터를 읽어가는 쿼리 입장에서는 "Eventual Consistency"가 수많은 문제점을 유발할 가능성이 있습니다. 이런 동기화 과정중에 데이터 읽기를 일관성 있게 유지할 수 있도록 ReadConcern 옵션을 제공합니다. ReadConcern 옵션은 WriteConcern 옵션과 달리 레플리카 셋 간의 동기화 이슈만 제어합니다.
-
-ReadConcern 옵션은 4.4 버전에서 5개로 선택지가 늘었습니다.
-
-- **local:** MongoDB의 기본 ReadConcern옵션인데, local 모드에서는 다른 멤버가 가진 데이터의 상태를 확인하지 않기 때문에 최신의 데이터를 프라이머리 멤버만 가진 상태에서 프라이머리 멤버가 비정상적으로 종료되거나 연결이 끊어지면 그 데이터는 롤백 되서 Phantom Read와 비슷한 상황이 발생할 수도 있습니다. causally consistent session 또는 트랜잭션에서 사용할 수 있습니다.
-- **available:** 과반수에 기록되었음을 확인하지 않고 데이터를 반환합니다. 읽어온 데이터가 롤백될수 있습니다.  causally consistent session 또는 트랜잭션에서 사용할 수 없습니다.
-- **majority:** 레플리카 셋에서 다수의 멤버들이 최신의 데이터를 가졌을 때에만 읽기 결과가 반환됩니다.  이를 충족하기 위해 각 레플리카 셋 멤버가 메모리의 majority-commit point를 반환해야 합니다. 따라서 위 두 설정에 비해 성능이 떨어집니다. causally consistent session 또는 트랜잭션에서 사용할 수 있습니다. PSA 아키텍처를 사용할 때 이 설정을 쓰지 않게 설정할 수 있습니다. 하지만 이것은 Change Streams, 트랜잭션, 샤디드 클러스터에 영향을 줄 수 있습니다. 자세한 내용은 [Disable Read Concern Majority](https://docs.mongodb.com/manual/reference/read-concern-majority/#disable-read-concern-majority)에서 확인하시길 바랍니다.
-- **linearizable:** 모든 레플리카 셋의 멤버들이 데이터를 반영하고 있을때 결과를 반환합니다. 프라이머리 스위칭이 일어나도 데이터가 롤백 될 일이 없으며, Phantom Read가 전혀 발생하지 않습니다. causally consistent session 또는 트랜잭션에서 사용할 수 없습니다.  
-  프라이머리 노드에만 설정할 수 있습니다. 어그리게이션의 $out, $merge 스테이지에서 사용할 수 없습니다. 유니크하게 식별가능한 단일 도큐먼트에 읽기 작업에서만 보장됩니다.
-- **snapshot:** 트랜잭션이 causally consistent session 이 아니고 Write concern 이 majority 인 경우, 트랜잭션은 과반이 커밋된 데이터의 스냅샷에서 읽습니다. 트랜잭션이 causally consistent session 이고 Write concern 이 majority 인 경우, 트랜잭션 시작 직전에 과반이 커밋된 데이터의 스냅샷에서 읽습니다. 멀티 도큐먼트 트랜잭션에서만 사용가능합니다. 샤딩된 클러스터 중 하나라도 [Disable Read Concern Majority](https://docs.mongodb.com/manual/reference/read-concern-majority/#disable-read-concern-majority) 설정을 할 경우 사용할 수 없습니다.
-
-majority 모드의 ReadConcern을 사용하려면 반드시 MongoDB 설정에 enableMajorityReadConcern 옵션이 활성화 되어 있어야 합니다.
+`sort()` 는 정렬할 필드 목록을 인자로 받습니다. 오름차순은 1, 내림차순은 -1 입니다.
 
 ```javascript
-$ mongod -- enableMajorityReadConcern
-
-or
-
-setParameter:
-   enableMajorityReadConcern: true
+db.users.find().sort( { name: 1, scores: -1 } )
 ```
 
-ReadConcern 옵션은 클라이언트와 데이터베이스, 그리고 컬렉션 레벨의 3가지 방법으로 설정할 수 있습니다. 하지만 이번 포스팅에서는 커서에서도 ReadConcern을 사용할 수 있다 정도만 알면된다고 생각하기에 ReadConcern에 대한 더 자세한 내용은 따로 포스팅 하겠습니다.
+인덱스로 정렬 순서를 얻을 수 있으면 데이터 크기나 정렬용 메모리와 무관하게 정렬된 결과를 받습니다. 인덱스를 쓸 수 없으면 서버가 결과를 메모리에 모아 정렬하는 블로킹 정렬을 수행합니다. `explain()` 결과에 `SORT` 단계가 있으면 이 경우입니다.
 
-#### Read Preference cursor.readPref()
+블로킹 정렬의 메모리 한계는 100 MB 입니다. 한계를 넘었을 때의 동작은 `allowDiskUseByDefault` 파라미터가 결정합니다. MongoDB 6.0 부터 이 파라미터의 기본값이 `true` 이므로, 100 MB 를 넘는 단계는 기본적으로 임시 파일을 디스크에 쓰면서 계속 진행합니다. 특정 명령에서 디스크 사용을 막고 싶으면 `allowDiskUse: false` 를 주는데, 이때는 한계를 넘는 순간 쿼리가 실패합니다.
 
-FIND 쿼리의 요건에 따라서 때로는 세컨더리 멤버에서 복제가 조금 지연됐다 하더라도 세컨더리 멤버에서 처리해도 무방한 경우가 자주 있습니다. 최신데이터가 아니어도 괜찮고, 많은 양의 도큐먼트를 처리를 위해 프라이머리에서 사용하기 부담스러운 경우 사용할 수 있는 옵션입니다.
+```javascript
+// 정렬 대상을 줄여 top-k 정렬을 유도합니다
+db.orders.find().sort( { amount: -1 } ).limit( 10 )
 
-Read Preference 에 대해서도 다른 포스트에서 더 다룰예정입니다.
+// 디스크로 넘기지 않고 실패시킵니다
+db.orders.find().sort( { amount: -1 } ).limit( 10 ).allowDiskUse( false )
+```
 
-#### 쿼리 코멘트 cursor.comment()
+정렬 비용을 줄이는 방법은 두 가지입니다. 정렬이 인덱스를 타게 만들거나, `limit()` 으로 정렬할 데이터 양을 줄이는 것입니다. `allowDiskUse()` 는 `find()` 에도 있으므로 디스크 사용만을 위해 집계 명령으로 바꿀 필요는 없습니다.
 
-MongoDB의 쿼리는 BSON 포맷을 사용하기 때문에 SQL 문법처럼 주석을 사용할 수 없습니다. FIND 쿼리의 옵션으로 코멘트를 추가해두면 슬로우 쿼리 로그에 기록된 쿼리가 프로그램의 어느 모듈에서 실행된 것인지 쿼리 코멘트로 추적할 수 있게 해줍니다.
+결과를 끝까지 읽지 않을 커서는 닫아 두는 편이 좋습니다. 커서를 방치하면 서버가 유휴 커서를 정리할 때까지 자원을 붙잡고 있습니다.
 
-#### 실행 계획 cursor.explain()
+`cursorTimeoutMillis` 는 유휴 커서의 제한 시간이고 기본값은 10분입니다. 세션에 속하지 않은 커서는 이 시간이 지나면 서버가 닫고, 배치를 한 번 돌려줄 때마다 시간이 다시 연장됩니다. 수동으로 닫을 때는 `killCursors` 를 씁니다.
 
-FIND 쿼리의 실행 계획을 확인하는 커서 명령입니다.
-
-#### 힌트 cursor.hint()
-
-FIND 쿼리가 적절한 인덱스를 선택하지 못할 경우에 옵티마이저가 특정 인덱스를 사용하도록 사용자가 직접 힌트를 제공할 수 있습니다.
-
-그 밖에도 많은 커서 옵션이 있으니 메뉴얼([https://docs.mongodb.com/manual/reference/method/js-cursor/](https://docs.mongodb.com/manual/reference/method/js-cursor/ "https://docs.mongodb.com/manual/reference/method/js-cursor/"))에서 한번 쯤 이런 기능이 있다고 봐두면 좋을것 같습니다.
-
-MongoDB에서 장시간 실행되는 find()와 aggregate() 명령의 경우 MongoCursorNotFound Exception이 발생하며 에러메세지를 발생합니다. 이 두 명령은 커서를 반환하는데, 일정 시간이 지나면 자동으로 타임아웃되어 자동으로 MongoDB에서 삭제됩니다. 커서의 생성이 완료된 시점이 아닌 처음 생성된 시점으로부터 지정된 시간이 지나면 자동으로 삭제됩니다. 디폴트 타임아웃(10분)이상 실행되는 경우 결과 도큐먼트를 읽기도 전에 MongoDB에서 커서가 제거되는 것 입니다. 이런 문제를 해결하기 위해 find() 명령을 실행할때 noCursorTimeout() 옵션을 설정하면 됩니다.
+세션 쪽 제한 시간은 따로 있습니다. 드라이버와 `mongosh` 는 모든 연산을 세션에 묶고, 세션이 30분 넘게 유휴 상태면 서버가 만료로 표시한 뒤 그 세션의 진행 중인 연산과 열린 커서를 함께 죽입니다. `noCursorTimeout()` 을 지정한 커서도 여기서는 예외가 아니므로, 한 배치를 처리하는 데 30분 이상 걸리면 다음 배치를 요청할 때 오류를 받습니다.
 
 ```javascript
 db.collection.find().noCursorTimeout()
 ```
 
+배치 처리가 길어질 수 있다면 `Mongo.startSession()` 으로 명시적 세션을 열고 `refreshSessions` 명령으로 주기적으로 세션을 갱신합니다. 세션 제한 시간의 기본값은 `localLogicalSessionTimeoutMinutes` 파라미터에 30분으로 잡혀 있습니다.
+
+#### 콜레이션 변경 cursor.collation()
+
+문자열을 비교할 때 사용할 콜레이션을 지정합니다. 인덱스의 콜레이션과 쿼리의 콜레이션이 다르면 그 인덱스를 쓸 수 없으므로, 쿼리마다 콜레이션을 명시하는 방식은 권할 만하지 않습니다. 컬렉션과 인덱스의 콜레이션을 같게 맞추는 편이 좋습니다.
+
+#### Read Concern cursor.readConcern()
+
+MongoDB의 복제는 비동기로 동작하므로 레플리카 셋의 어느 멤버에서 읽느냐에 따라 결과가 달라질 수 있습니다. readConcern 은 이 상황에서 어느 수준까지 확정된 데이터를 읽을지 정하는 옵션입니다. writeConcern 과 달리 쓰기 승인 조건이 아니라 읽기가 무엇을 볼 수 있는지를 제어합니다.
+
+레벨은 다섯 가지입니다.
+
+- **local:** 해당 노드가 가진 데이터를 그대로 돌려줍니다. 과반 기록을 확인하지 않으므로 읽은 데이터가 롤백될 수 있습니다. causally consistent 세션과 트랜잭션에서 쓸 수 있습니다.
+- **available:** 과반 기록을 확인하지 않고 돌려주며, 샤드 컬렉션에서는 청크 이동 후 남은 고아 도큐먼트(orphaned document)까지 돌려줄 수 있습니다. 지연이 가장 낮은 대신 일관성이 가장 약하고, causally consistent 세션과 트랜잭션에서는 쓸 수 없습니다. 고아 도큐먼트를 피해야 한다면 local 같은 다른 레벨을 씁니다.
+- **majority:** 레플리카 셋의 과반이 승인한 데이터만 돌려줍니다. 각 멤버는 majority-commit point 기준의 인메모리 뷰에서 읽습니다. 공식 문서는 majority 가 다른 레벨과 성능이 비슷하며 쿼리 성능을 떨어뜨리지 않고 클라이언트로 무엇이 돌아가는지만 바꾼다고 적습니다. WiredTiger 스토리지 엔진이 필요합니다.
+- **linearizable:** 읽기가 시작되기 전에 완료된 과반 승인 쓰기를 모두 반영합니다. 프라이머리에서만 쓸 수 있고, 단일 도큐먼트를 유일하게 식별하는 필터에만 보장이 적용되며, 집계의 `$out`·`$merge` 와는 함께 쓸 수 없습니다. 과반 멤버가 사라졌을 때 무한정 대기하지 않도록 `maxTimeMS` 를 함께 주라고 문서가 권합니다.
+- **snapshot:** 최근 과거의 한 시점에 과반이 커밋한 데이터의 스냅샷에서 읽습니다. 트랜잭션 안의 모든 읽기에 쓸 수 있고, 트랜잭션 밖에서는 `find`, `aggregate`, 그리고 샤딩되지 않은 컬렉션의 `distinct` 에서 쓸 수 있습니다.
+
+기본값은 프라이머리와 세컨더리 모두 local 입니다. 명시하지 않은 연산은 전역 기본값을 물려받고, 전역 기본값은 `setDefaultRWConcern` 명령으로 설정합니다. 트랜잭션은 local, majority, snapshot 만 지원하고, 레벨은 개별 연산이 아니라 트랜잭션 단위로 지정합니다. 트랜잭션 안에서는 컬렉션·데이터베이스 레벨 설정이 무시됩니다.
+
+```javascript
+db.restaurants.find( { _id: 5 } ).readConcern("linearizable").maxTimeMS(10000)
+```
+
+> **IMPORTANT** — MongoDB 5.0 부터 `enableMajorityReadConcern` 과 `--enableMajorityReadConcern` 은 변경할 수 없고 항상 `true` 입니다. majority 레벨을 쓰기 위해 별도로 켜야 하는 설정은 없습니다. PSA(Primary-Secondary-Arbiter) 구성에서 스토리지 캐시 압박을 피하려고 이 값을 끄는 우회는 이제 쓸 수 없고, 공식 문서는 PSA 성능 완화 가이드를 대신 안내합니다.
+
+레벨을 바꾸더라도 한 가지는 남습니다. 어떤 레벨을 쓰든 특정 노드의 최신 데이터가 시스템 전체의 최신 버전이라는 보장은 없습니다.
+
+#### Read Preference cursor.readPref()
+
+쿼리에 따라서는 복제가 조금 지연된 세컨더리에서 읽어도 괜찮습니다. 최신 데이터가 아니어도 되고, 양이 많아 프라이머리에 부담을 주고 싶지 않은 조회가 여기에 해당합니다. readPreference 는 어느 멤버에서 읽을지 정하는 옵션이고, 모드는 다섯 가지입니다.
+
+| 모드 | 설명 |
+| --- | --- |
+| `primary` | 기본값. 모든 읽기를 현재 프라이머리에서 처리합니다. |
+| `primaryPreferred` | 보통 프라이머리에서 읽고, 없으면 세컨더리에서 읽습니다. |
+| `secondary` | 모든 읽기를 세컨더리에서 처리합니다. |
+| `secondaryPreferred` | 세컨더리에서 읽고, 가능한 세컨더리가 없으면 프라이머리에서 읽습니다. |
+| `nearest` | 지연 임계값 안에 있는 멤버 중 하나에서 읽습니다. 프라이머리·세컨더리를 구분하지 않습니다. |
+
+```javascript
+db.collection.find().readPref("secondaryPreferred")
+```
+
+`primary` 를 뺀 모든 모드는 오래된 데이터를 돌려줄 수 있습니다. 세컨더리가 비동기로 복제하기 때문입니다. 지연이 심한 멤버를 피하려면 `maxStalenessSeconds` 를 지정하고, 태그 셋과 함께 쓰면 클라이언트가 먼저 지연으로 걸러낸 다음 태그로 고릅니다. `maxStalenessSeconds` 나 태그 셋을 `primary` 와 함께 지정하면 드라이버가 오류를 냅니다.
+
+읽기를 포함하는 트랜잭션은 `primary` 로만 실행할 수 있습니다. readPreference 는 연결 문자열에도 지정할 수 있어서 레플리카 셋과 샤드 클러스터 모두 같은 방식으로 설정합니다. 다만 readPreference 는 데이터의 가시성이나 인과 일관성(causal consistency)을 바꾸지는 않습니다.
+
+#### 쿼리 코멘트 cursor.comment()
+
+MongoDB의 쿼리는 BSON 포맷이라 SQL처럼 주석을 달 수 없습니다. 대신 코멘트를 붙여 두면 슬로우 쿼리 로그에 남은 쿼리가 어느 모듈에서 실행된 것인지 추적할 수 있습니다.
+
+#### 실행 계획 cursor.explain()
+
+쿼리의 실행 계획을 확인합니다. 상세 수준(verbosity)은 세 가지이고 기본값은 `queryPlanner` 입니다. 실행 통계가 필요하면 `executionStats`, 후보 계획들의 부분 실행 정보까지 보려면 `allPlansExecution` 으로 실행합니다.
+
+계획은 단계(stage) 트리로 표시되고, 각 단계는 결과를 부모 노드로 넘깁니다. 단계 이름은 동작을 그대로 나타냅니다. 컬렉션 스캔은 `COLLSCAN`, 인덱스 키 스캔은 `IXSCAN`, 도큐먼트를 가져오는 단계는 `FETCH`, 인덱스로 정렬을 얻지 못한 메모리 정렬은 `SORT`, 샤드의 고아 도큐먼트를 걸러내는 단계는 `SHARDING_FILTER` 입니다. 커버드 쿼리는 `IXSCAN` 이 `FETCH` 의 하위가 아니고 `executionStats.totalDocsExamined` 가 0 인 것으로 확인합니다.
+
+출력 구조는 쿼리 엔진에 따라 달라집니다. 클래식 엔진은 `winningPlan.stage` 아래로 `inputStage` 가 이어지고, 슬롯 기반 실행 엔진(SBE)은 `winningPlan.queryPlan` 아래에 계획 트리가 들어갑니다. MongoDB 8.0 에서는 기존 `queryHash` 와 같은 값을 담은 `planCacheShapeHash` 필드가 추가됐고, 공식 문서는 `queryHash` 를 deprecated 로 표시하며 이후 버전에서 제거한다고 안내합니다. 같은 버전에서 일반적인 쿼리 계획 단계를 건너뛰고 최적화된 인덱스 스캔을 쓰는 `EXPRESS` 단계도 추가됐습니다.
+
+`explain` 은 플랜 캐시를 보지 않고 후보 계획을 새로 만들어 승자를 고르며, 이때 고른 계획을 캐시에 넣지도 않습니다.
+
+#### 힌트 cursor.hint()
+
+쿼리가 적절한 인덱스를 고르지 못할 때 사용자가 특정 인덱스를 지정합니다. 인덱스를 비교해 볼 때 유용합니다.
+
 ### FindAndModify
 
-MongoDB에서는 여러 명령을 하나의 트랜잭션으로 묶어서 사용할 수 없기 때문에, 변경 직전이나 직후의 도큐먼트의 데이터를 확인하는 것이 어렵습니다. FindAndModify 명령은 검색 조건에 일치하는 도큐먼트를 검색하고, 그 도큐먼트를 변경하거나 삭제하는 후속 오퍼레이션을 설정할 수 있습니다.  FindAndModify 명령의 조건에 일치하는 도큐먼트가 여러 건일 수도 있지만, FindAndModify 명령은 한 번에 하나의 도큐먼트만 변경하고, 변경된 또는 변경전의 도큐먼트를 반환합니다.  FindAndModify 명령의 조건에 일치하는 도큐먼트가 여러건일때, 특정 도큐먼트만 변경하거나 삭제하고 싶다면 sort옵션을 사용하면 됩니다.
+MongoDB는 여러 도큐먼트·컬렉션·데이터베이스·샤드에 걸친 ACID 트랜잭션을 지원하고, `findAndModify` 도 분산 트랜잭션 안에서 쓸 수 있습니다. 그래도 변경 직전이나 직후의 도큐먼트를 한 번에 받아야 하는 요구는 자주 생깁니다. `findAndModify` 는 조건에 맞는 도큐먼트를 찾아 변경하거나 삭제하고 그 도큐먼트를 돌려주는 명령입니다.
 
-기본적으로 find() 명령의 옵션이나 update() 명령의 옵션을 이용할 수 있습니다. 하지만 FindAndModify를 사용하는 방법은 "majority" 레벨의 WriteConcern이 설정되야 하므로 "majority" 레벨의 ReadConcern을 사용하는 것보다 높은 비용이 발생하며, 굳이 FindAndModify 사용하기보다는 ReadConcern 옵션을 활용하는 방법을 고려하는 편이 좋습니다.
+- 조건에 여러 건이 맞아도 한 건만 변경합니다. 단일 도큐먼트 변경은 원자적으로 처리됩니다.
+- 기본적으로 변경 전 도큐먼트를 돌려줍니다. 변경 후 도큐먼트가 필요하면 `new: true` 를 줍니다.
+- 여러 건 중 어느 도큐먼트를 바꿀지는 `sort` 로 정합니다. 안정 정렬이 아니므로 정렬 순서를 확정하려면 `_id` 처럼 값이 유일한 필드를 정렬에 포함합니다.
+- `upsert: true` 는 조건에 맞는 도큐먼트가 없으면 새로 만듭니다. 유니크 인덱스가 없으면 중복 도큐먼트가 생길 수 있습니다.
+- `remove` 와 `update` 중 하나는 반드시 지정해야 합니다.
+
+```javascript
+db.runCommand( {
+    findAndModify: "people",
+    query: { state: "active" },
+    sort: { rating: 1 },
+    remove: true
+} )
+```
+
+`updateOne()` 과 비교하면 차이가 분명합니다. 단일 도큐먼트를 변경할 때 두 명령 모두 원자적이지만, `updateOne()` 은 조건에 맞는 첫 도큐먼트를 변경하고 연산 상태만 돌려줍니다. 여러 건 중 대상을 고르고 그 도큐먼트까지 받아야 하면 `findAndModify` 를 씁니다. 변경 후에 `find()` 로 다시 읽는 방법도 있지만, 그 사이 다른 갱신이 끼어들 수 있습니다.
+
+`mongosh` 헬퍼인 `db.collection.findAndModify()` 는 도큐먼트만 돌려주고 명령 형태에서 받을 수 있는 `lastErrorObject` 는 돌려주지 않습니다. 트랜잭션 안에서 실행할 때는 writeConcern 을 명시하지 않고 트랜잭션 단위 설정을 따릅니다.
 
 #### 참고 자료
 
-도서 : 맛있는 몽고DB
+도서: 맛있는 몽고DB
 
 도서: Real MongoDB
 
@@ -417,4 +472,4 @@ MongoDB에서는 여러 명령을 하나의 트랜잭션으로 묶어서 사용�
 
 도서: MongoDB in Action
 
-MongoDB Manual: [https://docs.mongodb.com/manual/](https://docs.mongodb.com/manual/ "https://docs.mongodb.com/manual/")
+MongoDB Manual: [https://www.mongodb.com/docs/manual/](https://www.mongodb.com/docs/manual/)

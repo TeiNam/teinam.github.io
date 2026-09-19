@@ -2,37 +2,32 @@
 date: 2021-03-31 15:22:57 +0900
 title: "MongoDB Transaction Management"
 category: mongodb
-excerpt: "MongoDB Transaction Management MongoDB의 트랜잭션 MongoDB 4.0이 릴리즈 되면서 Replica Set에서 작동하는 다중 도큐먼트 트랜잭션에 대한 지원을 추가되었습니다. 또, MongoDB 4.2의 릴리스와 함께 다중 도큐먼트 트랜잭션에 대한 지…"
-updated: 2026-09-17
+excerpt: "MongoDB는 여러 연산과 컬렉션, 데이터베이스, 도큐먼트, 샤드에 걸친 ACID 트랜잭션을 지원합니다. 트랜잭션의 격리와 내구성을 결정하는 Read Concern, Write Concern, Read Preference를 정리했습니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — WriteConflict 재시도 동작, 스냅샷 격리, 단일/다중 도큐먼트 트랜잭션, 트랜잭션 기본 제한 60초, Read/Write Concern 설명은 현재도 유효합니다. 본문 표의 API 링크와 버전 기준(4.2/4.4)은 오래되었고, 해당 버전들은 모두 지원 종료 상태입니다.
+## MongoDB의 트랜잭션
 
-## MongoDB Transaction Management
+MongoDB는 여러 연산과 컬렉션, 데이터베이스, 도큐먼트, 그리고 샤드에 걸친 ACID 트랜잭션을 지원합니다. 공식 문서는 레플리카 셋과 샤드 클러스터 양쪽에서 분산 트랜잭션이 동작하며, 설정한 Read Concern과 Write Concern에 따라 원자성, 일관성, 격리성, 내구성을 제공한다고 적습니다. 다중 도큐먼트 트랜잭션은 4.0에서 레플리카 셋에 먼저 들어왔고 4.2에서 샤드 클러스터로 확장됐지만, 두 버전 모두 지원이 끝났습니다. 아래 내용은 MongoDB 8.0 문서를 기준으로 합니다.
 
-### MongoDB의 트랜잭션
+MongoDB는 WiredTiger 스토리지 엔진을 사용합니다. WiredTiger는 애초에 NoSQL 전용으로 설계된 엔진이 아니었기 때문에 RDBMS에 가까운 특성을 여럿 보여줍니다.
 
-MongoDB 4.0이 릴리즈되면서 Replica Set에서 작동하는 다중 도큐먼트 트랜잭션 지원을 추가했습니다. 또, MongoDB 4.2의 릴리스와 함께 다중 도큐먼트 트랜잭션 지원이 Sharded Cluster로 확장되었습니다.
+그렇다고 MongoDB를 관계형 데이터베이스처럼 쓰는 것이 좋은 선택은 아닙니다. 단일 도큐먼트에 대한 연산은 그 자체로 원자적이고, 임베디드 도큐먼트와 배열로 데이터 사이의 관계를 한 도큐먼트 안에 담을 수 있습니다. 공식 문서도 여러 도큐먼트와 컬렉션으로 정규화하는 대신 이 방식을 쓰면 실무의 많은 경우에 다중 도큐먼트 트랜잭션이 필요하지 않다고 적습니다. 같은 문서는 분산 트랜잭션이 단일 도큐먼트 쓰기보다 비용이 크므로, 트랜잭션을 쓸 수 있다는 사실이 스키마 설계를 대신하지는 못한다고 덧붙입니다.
 
-현재의 MongoDB는 WiredTiger 스토리지 엔진을 사용하는데, WiredTiger 스토리지 엔진 자체가 NoSQL을 위한 엔진이 아니었습니다. 그래서 RDBMS의 특성을 많이 보여주며, RDBMS와 비슷한 ACID를 제공합니다.
+그래서 트랜잭션은 도큐먼트 설계만으로 원자성을 확보할 수 없을 때 꺼내는 수단입니다. 애플리케이션 요건상 모든 데이터를 한 도큐먼트에 담을 수 없거나, 데이터가 여러 컬렉션에 나뉘어야 하는데 그 전체에 ACID 보장이 필요한 상황이 여기에 해당합니다.
 
-하지만 MongoDB는 NoSQL 데이터베이스이며, 항상 단일 도큐먼트에 필요한 만큼의 데이터를 저장하도록 장려한다는 점에서 SQL 데이터 모델링과는 근본적으로 다릅니다. MongoDB의 특성을 알고 MongoDB에 맞게 사용하면 성능이 더 좋아지는 점을 기억하며, 관계형 데이터베이스처럼 사용하는 것을 피하는 것이 좋습니다.
+분산 트랜잭션의 원자성은 다음과 같이 동작합니다.
 
-MongoDB는 단일 도큐먼트에서 ACID 트랜잭션을 지원하므로 애플리케이션 개발자는 여러 도큐먼트에서 ACID 보장을 걱정할 필요가 없습니다. 그러나 때로는 응용 프로그램의 요구 사항과 디자인에 따라 하나의 도큐먼트에 모든 것을 포함할 수 없습니다. 도큐먼트가 여러 컬렉션에 분산되기를 원할 수 있으며 이러한 시나리오에서는 ACID 보장이 필요합니다.
+- 트랜잭션은 변경을 전부 적용하거나 전부 되돌립니다.
+- 커밋 전에는 트랜잭션 안의 변경이 트랜잭션 밖에서 보이지 않고, 커밋하면 보입니다. 중단되면 밖에서 한 번도 보이지 않은 채 폐기됩니다.
+- 트랜잭션이 여러 샤드에 쓰는 경우, 밖에서 들어온 읽기가 모든 샤드에서 변경이 보일 때까지 기다리지는 않습니다. Read Concern `"local"`로 읽으면 샤드 A의 쓰기만 보이고 샤드 B의 쓰기는 아직 보이지 않는 상태를 읽을 수 있습니다.
+- 커밋하지 않은 트랜잭션이 WiredTiger 캐시를 과도하게 쓰면 트랜잭션이 중단되고 쓰기 충돌 오류를 반환합니다. 캐시에 결코 들어갈 수 없는 크기라면 `TransactionTooLargeForCache` 오류를 반환합니다.
 
-WiredTiger 스토리지 엔진이 제공하는 트랜잭션의 ACID (Atomicity, Consistency, Isolation, Durability) 속성은 아래와 같은 특성이 있습니다.
+MongoDB는 RDBMS처럼 READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIALIZABLE 네 단계 중에서 골라 쓰는 격리 수준 설정을 제공하지 않습니다. 대신 트랜잭션마다 Read Concern을 `"local"`, `"majority"`, `"snapshot"` 중에서 고르고, 그 선택이 격리 수준의 역할을 합니다.
 
-- 최고 레벨의 격리 수준은 Snapshot (Repeatable-read)
-- 트랜잭션의 Commit과 Checkpoint 2가지 형태로 영속성(Durability)을 보장
-- Commit되지 않은 변경 데이터는 공유 캐시 크기보다 작아야 함
+## 쓰기 충돌 (Write Conflict)
 
-일반적인 RDBMS에서는 READ-UNCOMMITED, READ-COMMITED, REPEATABLE-READ와 SERIALIZABLE, 총 4가지 격리 수준을 제공합니다. WiredTiger 스토리지 엔진은 SERIALIZABLE은 지원하지 않으며, READ-UNCOMMITED, READ-COMMITED의 격리 수준을 제공하긴 하지만 실제 선택해 사용할 수는 없습니다. MongoDB 서버에서 격리 수준을 SNAPSHOT으로 고정해서 초기화하기 때문입니다.
-
-### 쓰기 충돌 (Write Conflict)
-
-트랜잭션 범위 밖에 있는 동일한 도큐먼트에서 동시에 여러 쓰기 작업을 수행하면 쓰기 충돌(WriteConflict)이 발생합니다. 그러나 쓰기 충돌이 발생하지 않는 시점 또는 사전에 정의된 시점까지 WiredTiger 스토리지 엔진이 WriteConflict 오류를 내부적으로 처리하고 지속적으로 업데이트를 재시도하기 때문에 이 문제를 걱정할 필요가 없습니다.
-
-WriteConflict는 여러 사용자가 동시에 동일한 도큐먼트를 업데이트하려고 할 때를 나타냅니다. MongoDB는 WiredTiger 스토리지 엔진을 사용하여 이러한 문제를 처리합니다. 0이 아닌 WriteConflict는 도큐먼트 업데이트 요청이 데이터 동시성 위반을 일으킬 수 있음을 엔진에 알립니다. WiredTiger API가 동시성 위반으로 인해 WriteConflict를 감지할 때마다 WriteConflict 지표를 증가시키고 MongoDB는 충돌 없이 완료될 때까지 내부적으로 업데이트를 재시도합니다. WriteConflict의 수가 많으면 응용 프로그램 응답이 지연될 수 있으며 그 원인을 찾아야 합니다.
+여러 사용자가 동시에 같은 도큐먼트를 업데이트하려고 하면 쓰기 충돌(WriteConflict)이 발생합니다. 트랜잭션 밖의 쓰기라면 대개 이 문제를 신경 쓰지 않아도 됩니다. WiredTiger API가 동시성 위반으로 쓰기 충돌을 감지할 때마다 WriteConflict 지표를 올리고, MongoDB가 충돌 없이 완료될 때까지 내부적으로 업데이트를 재시도하기 때문입니다. 다만 쓰기 충돌이 잦으면 애플리케이션 응답이 지연될 수 있으므로 그 원인을 찾아야 합니다.
 
 일반적으로 RDBMS에서는 두 개의 세션이 하나의 레코드에 변경 작업이 발생하는 경우 아래와 같이 동작합니다.
 
@@ -73,134 +68,137 @@ WriteCommandError({
 })
 ```
 
-WriteConflict가 지속적으로 발생하여 재처리 과정이 늘어나면 CPU의 사용량이 높아지며, WiredTiger 스토리지 캐시에 직접적인 부담을 주기 때문에 사용자 요청을 처리하는 성능이 떨어집니다. WriteConflictException이 얼마나 발생하는지는 `db.serverStatus()` 명령으로 확인할 수 있으며, WriteConflictException이 자주 발생한다면 컬렉션 모델을 수정하여 WriteConflictException 발생을 최소화하는 편이 좋습니다.
+WriteConflict가 지속적으로 발생하여 재처리 과정이 늘어나면 CPU의 사용량이 높아지며, WiredTiger 스토리지 캐시에 직접적인 부담을 주기 때문에 사용자 요청을 처리하는 성능이 떨어집니다. 쓰기 충돌이 얼마나 발생하는지는 `db.serverStatus()` 출력의 `metrics.operation.writeConflicts` 에서 확인할 수 있습니다. 공식 문서는 이 값을 쓰기 충돌을 만난 쿼리의 누적 개수라고 설명합니다. 이 값이 계속 늘어난다면 컬렉션 모델을 수정해 충돌을 줄이는 편이 좋습니다.
 
-### 단일 도큐먼트 트랜잭션 (Single Document Transaction)과 다중 도큐먼트 트랜잭션 (Multi Document Transaction)
+위 예시처럼 트랜잭션 안에서 쓰기 충돌이 나면 오류에 `TransientTransactionError` 라벨이 붙습니다. 트랜잭션 안의 개별 쓰기는 `retryWrites` 값과 무관하게 재시도되지 않고, 트랜잭션 전체를 다시 실행해야 합니다. 드라이버의 Callback API는 트랜잭션을 시작하고 지정한 연산을 실행한 뒤 커밋까지(오류가 나면 중단까지) 처리하면서 `TransientTransactionError` 와 `UnknownTransactionCommitResult` 재시도 로직을 포함합니다. Core API는 시작과 커밋을 직접 호출해야 하고 이 두 오류의 재시도 로직을 포함하지 않으므로, 애플리케이션이 재시도를 직접 구현해야 합니다.
 
-앞에서 4.0 버전이 릴리즈되면서부터 다중 도큐먼트 트랜잭션 지원이 가능해졌다고 설명했습니다. MongoDB는 4.0 이전 버전까지는 단일 도큐먼트의 트랜잭션만 지원했습니다.
+> **NOTE** — MongoDB 6.2부터는 `TransactionTooLargeForCache` 오류를 받으면 서버가 트랜잭션을 재시도하지 않습니다. 캐시가 너무 작아 재시도해도 실패할 가능성이 높다는 뜻입니다. 기준값을 정하는 `transactionTooLargeForCacheThreshold` 의 기본값은 `0.75` 여서, 트랜잭션이 캐시의 75%를 넘게 쓰면 재시도 대신 이 오류를 반환합니다.
 
-단일 도큐먼트 트랜잭션이란 단일 도큐먼트의 변경에 대해서는 원자 단위의 처리가 보장된다는 것을 의미합니다. RDBMS의 데이터 모델에서는 서로 관계가 있는 데이터들을 정규화하여 서로 다른 테이블에 저장하지만, MongoDB의 도큐먼트 데이터 모델에서는 정규화를 하지 않고 한번에 로딩되어야 하는 데이터들은 하나의 도큐먼트에 넣는 것이 유리하기 때문에, MongoDB가 추구하는 방향에 따라 데이터 모델링을 한다면 단일 도큐먼트 트랜잭션만으로도 충분히 데이터의 정합성이 보장되었습니다. 하지만 항상 조건에 맞는 상황만 있는 것이 아니기 때문에, 이전 버전에서 다중 도큐먼트 트랜잭션을 구현하기 위해서 애플리케이션 단에서 2-Phase-Commits 같은 방법을 이용해 개발 단에서 구현해야 했습니다. 하지만 4.0 버전부터는 MongoDB 자체가 다중 도큐먼트 트랜잭션을 지원하기 시작했고, 4.2 버전부터는 단일 노드가 아닌 샤드 클러스터에 대해 다중 도큐먼트 트랜잭션을 구현합니다.
+## 단일 도큐먼트 트랜잭션 (Single Document Transaction)과 다중 도큐먼트 트랜잭션 (Multi Document Transaction)
 
-MongoDB의 기본 트랜잭션 제한은 60초이며 제한을 벗어나 실행되는 모든 트랜잭션은 중단됩니다. 이 설정 값을 변경하여 더 오랜 시간 동안 트랜잭션을 실행할 수 있습니다. 하지만 장시간 실행되는 트랜잭션은 WiredTiger 스토리지 엔진 캐시에 부담을 준다고 설명했습니다. 시간 초과 문제를 방지하려면 트랜잭션을 더 작은 부분으로 나누면서 DB 작업만 수행해야 합니다.
+단일 도큐먼트 트랜잭션이란 단일 도큐먼트의 변경에 대해서는 원자 단위의 처리가 보장된다는 것을 의미합니다. RDBMS의 데이터 모델에서는 서로 관계가 있는 데이터들을 정규화하여 서로 다른 테이블에 저장하지만, MongoDB의 도큐먼트 데이터 모델에서는 정규화를 하지 않고 한번에 로딩되어야 하는 데이터들을 하나의 도큐먼트에 넣는 것이 유리합니다. MongoDB가 추구하는 방향에 따라 데이터 모델링을 한다면 단일 도큐먼트 트랜잭션만으로도 데이터의 정합성이 보장됩니다. 하지만 항상 조건에 맞는 상황만 있는 것은 아니어서, 다중 도큐먼트 트랜잭션이 없던 4.0 이전에는 2-Phase-Commits 같은 방법으로 애플리케이션 단에서 직접 구현해야 했습니다.
 
-여러 샤드에 영향을 미치는 트랜잭션은 쿼리가 네트워크를 통해 여러 참여 노드에 브로드캐스트되므로 성능 비용이 더 많이 발생합니다. 쿼리를 식별하고 적절한 인덱싱을 제공합니다. 분산 다중 샤드에서 일관된 읽기를 원하면 Read Concern "Snapshot"을 사용해야 합니다. 이를 통해 여러 샤드에서 일관된 데이터 스냅 샷을 제공받을 수 있습니다. 지연 시간이 애플리케이션의 문제인 경우 Read Concern 레벨 "local"을 사용하는 것이 좋습니다.
+기본적으로 트랜잭션은 1분 안에 끝나야 합니다. `mongod` 의 `transactionLifetimeLimitSeconds` 로 이 한도를 바꿀 수 있고, 샤드 클러스터라면 모든 샤드 레플리카 셋 멤버에서 값을 바꿔야 합니다. 한도를 넘긴 트랜잭션은 만료된 것으로 보아 주기적인 정리 과정이 중단시킵니다. 이 한도 자체가 만료된 트랜잭션을 주기적으로 정리해 스토리지 캐시 압박을 덜어 주는 역할도 합니다.
 
-다중 도큐먼트 트랜잭션을 지원하는 CRUD 동작들입니다.
+캐시 압박이 성능을 깎지 않게 하려면 공식 문서는 두 가지를 권고합니다. 트랜잭션을 그냥 버리지 말고 명시적으로 중단하고, 트랜잭션 안의 개별 연산에서 오류를 만나면 중단한 뒤 트랜잭션을 다시 실행하는 것입니다.
+
+단일 샤드를 대상으로 하는 트랜잭션은 레플리카 셋 트랜잭션과 성능이 비슷하지만, 여러 샤드에 걸친 트랜잭션은 비용이 더 큽니다. 샤드 클러스터 트랜잭션에서 샤드 간 일관된 스냅샷을 제공하는 것은 `"snapshot"` Read Concern 뿐입니다. 샤드 클러스터에서 트랜잭션을 쓰려면 `writeConcernMajorityJournalDefault` 가 `true` 여야 하고, 트랜잭션의 쓰기가 여러 샤드에 걸치는데 그중 하나라도 아비터를 가진 샤드가 끼면 MongoDB가 그 트랜잭션을 막습니다.
+
+트랜잭션 안에서 사용할 수 있는 읽기, 쓰기 연산은 다음과 같습니다.
 
 | Method | Command | Note |
 | --- | --- | --- |
-| [`db.collection.aggregate()`](https://docs.mongodb.com/manual/reference/method/db.collection.aggregate/#mongodb-method-db.collection.aggregate) | [`aggregate`](https://docs.mongodb.com/manual/reference/command/aggregate/#mongodb-dbcommand-dbcmd.aggregate) | 다음 스테이지 제외 :   - [`$collStats`](https://docs.mongodb.com/manual/reference/operator/aggregation/collStats/#mongodb-pipeline-pipe.-collStats) - [`$currentOp`](https://docs.mongodb.com/manual/reference/operator/aggregation/currentOp/#mongodb-pipeline-pipe.-currentOp) - [`$indexStats`](https://docs.mongodb.com/manual/reference/operator/aggregation/indexStats/#mongodb-pipeline-pipe.-indexStats) - [`$listLocalSessions`](https://docs.mongodb.com/manual/reference/operator/aggregation/listLocalSessions/#mongodb-pipeline-pipe.-listLocalSessions) - [`$listSessions`](https://docs.mongodb.com/manual/reference/operator/aggregation/listSessions/#mongodb-pipeline-pipe.-listSessions) - [`$merge`](https://docs.mongodb.com/manual/reference/operator/aggregation/merge/#mongodb-pipeline-pipe.-merge) - [`$out`](https://docs.mongodb.com/manual/reference/operator/aggregation/out/#mongodb-pipeline-pipe.-out) - [`$planCacheStats`](https://docs.mongodb.com/manual/reference/operator/aggregation/planCacheStats/#mongodb-pipeline-pipe.-planCacheStats) |
-| [`db.collection.countDocuments()`](https://docs.mongodb.com/manual/reference/method/db.collection.countDocuments/#mongodb-method-db.collection.countDocuments) |  | 다음 쿼리 연산자 표현식 제외 :   - [`$where`](https://docs.mongodb.com/manual/reference/operator/query/where/#mongodb-query-op.-where) - [`$near`](https://docs.mongodb.com/manual/reference/operator/query/near/#mongodb-query-op.-near) - [`$nearSphere`](https://docs.mongodb.com/manual/reference/operator/query/nearSphere/#mongodb-query-op.-nearSphere)   이 메서드는 쿼리에 `$match` 집계 스테이지를 사용하고 `$sum` 표현식과 함께 `$group` 집계 스테이지를 사용하여 계산을 수행합니다. |
-| [`db.collection.distinct()`](https://docs.mongodb.com/manual/reference/method/db.collection.distinct/#mongodb-method-db.collection.distinct) | [`distinct`](https://docs.mongodb.com/manual/reference/command/distinct/#mongodb-dbcommand-dbcmd.distinct) | 샤딩되지 않은 컬렉션에서만 사용할 수 있습니다.  샤드된 컬렉션의 경우 `$group` 단계에서 집계 파이프라인을 사용하세요. [Distinct Operation](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-distinct)을 참고 |
-| [`db.collection.find()`](https://docs.mongodb.com/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find) | [`find`](https://docs.mongodb.com/manual/reference/command/find/#mongodb-dbcommand-dbcmd.find) |  |
-|  | [`geoSearch`](https://docs.mongodb.com/manual/reference/command/geoSearch/#mongodb-dbcommand-dbcmd.geoSearch) |  |
-| [`db.collection.deleteMany()`](https://docs.mongodb.com/manual/reference/method/db.collection.deleteMany/#mongodb-method-db.collection.deleteMany)  [`db.collection.deleteOne()`](https://docs.mongodb.com/manual/reference/method/db.collection.deleteOne/#mongodb-method-db.collection.deleteOne)  [`db.collection.remove()`](https://docs.mongodb.com/manual/reference/method/db.collection.remove/#mongodb-method-db.collection.remove) | [`delete`](https://docs.mongodb.com/manual/reference/command/delete/#mongodb-dbcommand-dbcmd.delete) |  |
-| [`db.collection.findOneAndDelete()`](https://docs.mongodb.com/manual/reference/method/db.collection.findOneAndDelete/#mongodb-method-db.collection.findOneAndDelete)  [`db.collection.findOneAndReplace()`](https://docs.mongodb.com/manual/reference/method/db.collection.findOneAndReplace/#mongodb-method-db.collection.findOneAndReplace)  [`db.collection.findOneAndUpdate()`](https://docs.mongodb.com/manual/reference/method/db.collection.findOneAndUpdate/#mongodb-method-db.collection.findOneAndUpdate) | [`findAndModify`](https://docs.mongodb.com/manual/reference/command/findAndModify/#mongodb-dbcommand-dbcmd.findAndModify) | 4.4 버전 이상의 경우, update 또는 replace 동작을 `upsert: true` 옵션을 주고 사용한다면 존재하지 않는 컬렉션을 즉시 생성합니다.  4.2 이하의 버전의 경우 `upsert: true` 옵션을 준 동작은 기존 컬렉션에 대해서만 실행됩니다.  [DDL Operations](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-ddl)을 참고 |
-| [`db.collection.insertMany()`](https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/#mongodb-method-db.collection.insertMany)  [`db.collection.insertOne()`](https://docs.mongodb.com/manual/reference/method/db.collection.insertOne/#mongodb-method-db.collection.insertOne)  [`db.collection.insert()`](https://docs.mongodb.com/manual/reference/method/db.collection.insert/#mongodb-method-db.collection.insert) | [`insert`](https://docs.mongodb.com/manual/reference/command/insert/#mongodb-dbcommand-dbcmd.insert) | 4.4 버전 이상의 경우, 존재하지 않는 컬렉션을 즉시 생성합니다.  4.2 버전 이하에서는 기존 컬렉션에 대해서만 실행됩니다.  [DDL Operations](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-ddl)을 참고 |
-| [`db.collection.save()`](https://docs.mongodb.com/manual/reference/method/db.collection.save/#mongodb-method-db.collection.save) |  | 4.4 버전 이상의 경우, 존재하지 않는 컬렉션에 대한 insert 작업은 컬렉션을 즉시 생성합니다.  4.2 버전 이하에서는 기존 컬렉션에 대해서만 실행됩니다.  [DDL Operations](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-ddl)을 참고 |
-| [`db.collection.updateOne()`](https://docs.mongodb.com/manual/reference/method/db.collection.updateOne/#mongodb-method-db.collection.updateOne)  [`db.collection.updateMany()`](https://docs.mongodb.com/manual/reference/method/db.collection.updateMany/#mongodb-method-db.collection.updateMany)  [`db.collection.replaceOne()`](https://docs.mongodb.com/manual/reference/method/db.collection.replaceOne/#mongodb-method-db.collection.replaceOne)  [`db.collection.update()`](https://docs.mongodb.com/manual/reference/method/db.collection.update/#mongodb-method-db.collection.update) | [`update`](https://docs.mongodb.com/manual/reference/command/update/#mongodb-dbcommand-dbcmd.update) | 4.4 이상의 버전에서 `upsert: true` 옵션을 주고 사용한다면 존재하지 않는 컬렉션을 즉시 생성합니다.  4.2 이하의 버전의 경우 `upsert: true` 옵션을 준 동작은 기존 컬렉션에 대해서만 실행됩니다.  [DDL Operations](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-ddl)을 참고 |
-| [`db.collection.bulkWrite()`](https://docs.mongodb.com/manual/reference/method/db.collection.bulkWrite/#mongodb-method-db.collection.bulkWrite)  Various [Bulk Operation Methods](https://docs.mongodb.com/manual/reference/method/js-bulk/) |  | 4.4 이상의 버전에서 insert와 update 작업에 `upsert: true` 옵션을 주고 사용한다면 존재하지 않는 컬렉션을 즉시 생성합니다.  4.2 이하의 버전의 경우 `upsert: true` 옵션을 준 동작은 기존 컬렉션에 대해서만 실행됩니다.  [DDL Operations](https://docs.mongodb.com/manual/core/transactions-operations/#std-label-transactions-operations-ddl)을 참고 |
+| `db.collection.aggregate()` | `aggregate` | `$collStats`, `$currentOp`, `$indexStats`, `$listLocalSessions`, `$listSessions`, `$merge`, `$out`, `$planCacheStats`, `$unionWith` 스테이지 제외 |
+| `db.collection.countDocuments()` |  | `$where`, `$near`, `$nearSphere` 쿼리 연산자 표현식 제외. 이 메서드는 쿼리에 `$match` 스테이지를, 계산에 `$sum` 표현식을 쓴 `$group` 스테이지를 사용합니다 |
+| `db.collection.distinct()` | `distinct` | 샤딩되지 않은 컬렉션에서만 사용할 수 있습니다. 샤딩된 컬렉션에서는 `$group` 스테이지를 쓴 집계 파이프라인을 사용합니다 |
+| `db.collection.find()` | `find` |  |
+| `db.collection.deleteOne()`, `deleteMany()`, `remove()` | `delete` |  |
+| `db.collection.findOneAndDelete()`, `findOneAndReplace()`, `findOneAndUpdate()` | `findAndModify` | update 또는 replace를 없는 컬렉션에 `upsert: true` 로 실행하면 컬렉션이 암묵적으로 생성됩니다 |
+| `db.collection.insertOne()`, `insertMany()` | `insert` | 없는 컬렉션에 실행하면 컬렉션이 암묵적으로 생성됩니다 |
+| `db.collection.updateOne()`, `updateMany()`, `replaceOne()` | `update` | 없는 컬렉션에 실행하면 컬렉션이 암묵적으로 생성됩니다 |
+| `db.collection.bulkWrite()` 및 각종 Bulk 연산 메서드 |  | 없는 컬렉션에 실행하면 컬렉션이 암묵적으로 생성됩니다 |
 
-### MongoDB의 격리 수준
+표에서 눈여겨볼 점이 몇 가지 있습니다. 없는 컬렉션을 암묵적으로 생성하는 동작에는 버전 조건이 붙지 않습니다. `geoSearch` 명령은 목록에 없습니다. `db.collection.save()`, `insert()`, `update()`, `count()` 는 mongosh에서 deprecated로 표시돼 있어서, 목록에도 `insertOne()`, `insertMany()`, `updateOne()`, `updateMany()`, `countDocuments()` 같은 대체 메서드가 올라가 있습니다. 전체 목록은 [Transactions and Operations](https://www.mongodb.com/docs/manual/core/transactions-operations/) 문서에서 확인할 수 있습니다.
 
-MongoDB의 WiredTiger 스토리지 엔진은 SNAPSHOT 격리 수준만을 지원한다고 위에서 설명했습니다. SNAPSHOT 격리 수준에서는 하나의 트랜잭션 내에서 하나의 쿼리는 항상 같은 결과를 반환해야 합니다. 첫 번째 세션에서 트랜잭션이 발생한 동안 두 번째 세션에서 업데이트가 이루어진 경우에, 트랜잭션이 끝나지 않은 첫 번째 세션에서는, 두 번째 세션에서 값이 업데이트되었음에도 불구하고, 트랜잭션이 끝나기 전까지는 트랜잭션을 시작했을 때의 값을 보여주는 것을 의미합니다.
+샤드 키 값을 바꾸는 작업도 트랜잭션 안에서 할 수 있습니다. 샤드 키 필드가 변경 불가능한 `_id` 가 아니라면, 단일 도큐먼트 update 또는 findAndModify로 샤드 키 값을 변경할 수 있습니다.
 
-MongoDB의 데이터 변경은 하나의 도큐먼트를 변경할 때마다 내부적으로 트랜잭션이 커밋되기 때문에, 배치 작업으로 실행되는 업데이트나 삭제 작업에도 내부적으로는 개별 트랜잭션으로 처리되어 처리하는 도중에 장애가 발생하여 멈추게 되더라도, 앞에 처리해버린 도큐먼트들은 롤백할 수 없습니다. 이러한 트랜잭션 구조 때문에 대량의 변경 작업이 있어도 실제 도큐먼트당 발생하는 트랜잭션의 유지 시간이 짧기 때문에, RDBMS처럼 대량의 변경 작업으로 인한 트랜잭션 유지에 의한 성능 저하는 거의 발생하지 않습니다.
+## MongoDB의 격리 수준
 
-반면에 읽기 쿼리는 도큐먼트 한 건을 읽을 때마다 트랜잭션을 발생하는 구조가 아니며 일정 단위로 트랜잭션을 시작하고 완료합니다. 모든 도큐먼트 읽기 작업을 할 때 트랜잭션을 시작하고 완료하게 되면 성능 저하가 발생하기 때문에 읽기 트랜잭션은 쓰기와 다른 방식으로 동작한다는 사실을 알아두셔야 합니다.
+앞에서 MongoDB가 RDBMS식 격리 수준 설정을 제공하지 않고 Read Concern이 그 역할을 한다고 했습니다. 스냅샷 격리는 트랜잭션을 연 시점의 값을 트랜잭션이 끝날 때까지 보여주는 동작을 말합니다. 첫 번째 세션의 트랜잭션이 진행되는 동안 두 번째 세션이 같은 도큐먼트를 업데이트해도, 첫 번째 세션은 트랜잭션을 시작했을 때의 값을 계속 읽습니다.
+
+레플리카 셋에서는 Read Concern이 `"local"` 이어도 트랜잭션을 연 시점의 스냅샷에서 읽는, 더 강한 격리가 관찰될 수 있습니다. 반면 샤드 클러스터에서는 `"local"` 과 `"majority"` 모두 샤드 전체에 걸쳐 같은 스냅샷을 본다고 보장하지 않으므로, 스냅샷 격리가 필요하면 `"snapshot"` 을 지정해야 합니다.
+
+`"snapshot"` 이 과반 커밋된 데이터의 스냅샷을 돌려주는 것은 트랜잭션을 Write Concern `"majority"` 로 커밋할 때뿐입니다. 커밋에 `"majority"` 를 쓰지 않으면 `"snapshot"` 이 과반 커밋 데이터의 스냅샷을 읽는다는 보장은 사라집니다. 샤드 클러스터에서는 `"snapshot"` 이 보는 스냅샷이 샤드 간에 동기화됩니다.
+
+> **NOTE** — 트랜잭션 안의 읽기가 언제나 최신 상태를 본다고 가정하면 안 됩니다. 공식 문서는 트랜잭션 안의 읽기가 오래된 데이터를 돌려줄 수 있고(stale read), 다른 트랜잭션이 커밋한 쓰기나 트랜잭션 밖의 쓰기를 본다고 보장되지 않는다고 적습니다. 특정 도큐먼트를 확실히 잡아 두어야 한다면 `findOneAndUpdate` 로 도큐먼트를 변경해 잠금을 획득하는 방법을 쓸 수 있습니다.
+
+명시적인 트랜잭션을 열지 않은 데이터 변경은 도큐먼트 하나를 변경할 때마다 내부적으로 트랜잭션이 커밋됩니다. 배치로 실행하는 업데이트나 삭제도 내부에서는 개별 트랜잭션으로 처리됩니다. 그래서 처리 도중에 장애가 나서 멈추더라도 앞서 처리한 도큐먼트들은 롤백되지 않습니다. 대신 도큐먼트당 트랜잭션 유지 시간이 짧아, RDBMS에서 긴 트랜잭션이 유발하는 성능 저하는 거의 나타나지 않습니다.
+
+반면에 읽기 쿼리는 도큐먼트 한 건을 읽을 때마다 트랜잭션을 여는 구조가 아니라 일정 단위로 트랜잭션을 시작하고 완료합니다. 도큐먼트를 읽을 때마다 트랜잭션을 여닫으면 성능이 떨어지기 때문에, 읽기 트랜잭션은 쓰기와 다른 방식으로 동작합니다.
 
 ## Read & Write Concern, Read Preference
 
-대부분의 RDBMS는 단일 노드로 작동하는 아키텍처를 기본으로 하고 있습니다. 반면 MongoDB는 분산 처리를 기본 아키텍처로 선택하고 있기 때문에 레플리카 셋을 구성하는 멤버 간 동기화 역시 제어할 수 있습니다. 필요한 데이터의 동기화 (ACID의 Durability 속성) 수준에 따라 데이터를 변경할 수 있도록 Read Concern과 Write Concern 옵션을 제공합니다. RDBMS에서는 디스크의 동기화 처리를 일괄적으로 설정하지만, MongoDB에서는 클라이언트 프로그램에서 쿼리 단위로 다르게 설정할 수 있습니다.
+대부분의 RDBMS는 단일 노드로 작동하는 아키텍처를 기본으로 합니다. 반면 MongoDB는 분산 처리를 기본 아키텍처로 선택했기 때문에 레플리카 셋 멤버 간의 동기화까지 제어할 수 있습니다. 필요한 동기화 수준, 즉 ACID의 Durability 속성을 어디까지 요구할지 고르는 수단이 Read Concern과 Write Concern입니다. RDBMS는 디스크 동기화 처리를 서버 단위로 일괄 설정하지만, MongoDB는 클라이언트에서 쿼리 단위로 다르게 설정할 수 있습니다.
 
-Read Concern에 대한 내용은 이전에 읽기 연산에 대한 포스팅에서 설명을 한적이 있습니다.
+Read Concern은 읽기 연산을 다룬 이전 글에서도 설명한 적이 있습니다.
 
 ### Read Concern
 
-MongoDB의 서버는 분산 처리 구조로 되어 있기 때문에 여러 레플리카 멤버 중에서 어떤 멤버를 선택하느냐에 따라 FIND 결과가 달라질 수도 있습니다. MongoDB의 복제는 비동기 모드이며, 최종 일관성(Eventual Consistency) 모델을 채택하고 있기 때문입니다. 하지만 데이터를 읽어가는 쿼리 입장에서는 "Eventual Consistency"가 수많은 문제점을 유발할 가능성이 있습니다. 이런 동기화 과정 중에 데이터 읽기를 일관성 있게 유지하도록 Read Concern 옵션을 제공합니다. Read Concern 옵션은 Write Concern 옵션과 달리 레플리카 셋 간의 동기화 이슈만 제어합니다.
+MongoDB 서버는 분산 처리 구조라서 여러 레플리카 멤버 중 어떤 멤버를 고르느냐에 따라 같은 find 쿼리의 결과가 달라질 수 있습니다. 복제가 비동기로 동작하는 최종 일관성(Eventual Consistency) 모델이기 때문입니다. 데이터를 읽는 쿼리 입장에서는 이 성질이 곧 롤백 가능한 값이나 오래된 값을 읽을 위험이 됩니다. 동기화가 진행되는 중에도 읽기 일관성을 유지하도록 제공하는 것이 Read Concern이며, Write Concern과 달리 레플리카 셋 간의 동기화만 제어합니다.
 
-Read Concern 옵션은 4.4 버전 이상의 버전에서 다섯 가지를 가지고 있습니다.
+Read Concern은 다섯 가지 레벨이 있습니다.
 
-- **local:** MongoDB의 기본 Read Concern 옵션인데, local 모드에서는 다른 멤버가 가진 데이터의 상태를 확인하지 않기 때문에 최신의 데이터를 프라이머리 멤버만 가진 상태에서 프라이머리 멤버가 비정상적으로 종료되거나 연결이 끊어지면 그 데이터는 롤백되어 Phantom Read와 비슷한 상황이 발생할 수도 있습니다. causally consistent session 또는 트랜잭션에서 사용할 수 있습니다.
-- **available:** 과반수에 기록되었음을 확인하지 않고 데이터를 반환합니다. 읽어온 데이터가 롤백될 수 있습니다. causally consistent session 또는 트랜잭션에서 사용할 수 없습니다.
-- **majority:** 레플리카 셋에서 다수의 멤버가 최신의 데이터를 가졌을 때에만 읽기 결과가 반환됩니다. 이를 충족하기 위해 각 레플리카 셋 멤버가 메모리의 majority-commit point를 반환해야 합니다. 따라서 위 두 설정에 비해 성능이 떨어집니다. causally consistent session 또는 트랜잭션에서 사용할 수 있습니다. PSA 아키텍처를 사용할 때 이 설정을 쓰지 않게 설정할 수 있습니다. 하지만 이것은 Change Streams, 트랜잭션, 샤드 클러스터에 영향을 줄 수 있습니다. 자세한 내용은 [Disable Read Concern Majority](https://docs.mongodb.com/manual/reference/read-concern-majority/#disable-read-concern-majority)에서 확인하시길 바랍니다.
-- **linearizable:** 모든 레플리카 셋의 멤버가 데이터를 반영하고 있을 때 결과를 반환합니다. 프라이머리 스위칭이 일어나도 데이터가 롤백될 일이 없으며, Phantom Read가 전혀 발생하지 않습니다. causally consistent session 또는 트랜잭션에서 사용할 수 없습니다.  
-  프라이머리 노드에만 설정할 수 있습니다. 어그리게이션의 $out, $merge 스테이지에서 사용할 수 없습니다. 유니크하게 식별 가능한 단일 도큐먼트에 읽기 작업에서만 보장됩니다.
-- **snapshot:** 트랜잭션이 causally consistent session이 아니고 Write Concern이 majority인 경우, 트랜잭션은 과반이 커밋된 데이터의 스냅샷에서 읽습니다. 트랜잭션이 causally consistent session이고 Write Concern이 majority인 경우, 트랜잭션 시작 직전에 과반이 커밋된 데이터의 스냅샷에서 읽습니다. 멀티 도큐먼트 트랜잭션에서만 사용 가능합니다. 샤드 클러스터 중 하나라도 [Disable Read Concern Majority](https://docs.mongodb.com/manual/reference/read-concern-majority/#disable-read-concern-majority) 설정을 할 경우 사용할 수 없습니다.
+- **local:** 프라이머리와 세컨더리 읽기의 기본값입니다. 데이터가 레플리카 셋의 과반에 기록됐는지 확인하지 않고 반환하므로, 최신 데이터를 프라이머리만 가진 상태에서 프라이머리가 내려가면 그 데이터는 롤백될 수 있습니다. causally consistent session과 트랜잭션에서 쓸 수 있습니다.
+- **available:** 과반 기록 여부를 확인하지 않고 데이터를 반환합니다. 읽은 데이터가 롤백될 수 있고, 샤딩된 컬렉션을 읽을 때는 orphaned document가 섞여 나올 수 있습니다. causally consistent session과 트랜잭션에서는 쓸 수 없습니다.
+- **majority:** 레플리카 셋의 과반이 확인한 데이터를 반환합니다. 장애가 나더라도 반환된 도큐먼트는 유지됩니다. 앞의 두 레벨보다 비용이 큽니다. causally consistent session과 트랜잭션에서 쓸 수 있고, WiredTiger 스토리지 엔진에서 사용할 수 있습니다.
+- **linearizable:** 읽기가 시작되기 전에 완료된 모든 과반 확인 쓰기를 반영한 데이터를 반환합니다. 프라이머리에만 지정할 수 있고, causally consistent session과 트랜잭션에서는 쓸 수 없습니다. `"majority"` 나 `"local"` 보다 상당히 느릴 수 있습니다.
+- **snapshot:** 최근 특정 시점에 샤드 전체에 걸쳐 보이는 과반 커밋 데이터를 반환합니다. 샤드 클러스터 트랜잭션에서 샤드 간 일관된 스냅샷을 보장하는 유일한 레벨입니다. capped collection을 읽을 때는 사용할 수 없습니다.
 
-majority 모드의 Read Concern을 사용하려면 반드시 MongoDB 설정에 enableMajorityReadConcern 옵션이 활성화되어 있어야 합니다.
+> **NOTE** — `linearizable` 을 쓸 때는 `maxTimeMS` 를 함께 지정하라고 공식 문서가 권고합니다. 데이터를 가진 멤버의 과반을 쓸 수 없는 상황에서 요청이 무한히 대기하는 대신 오류로 끝나게 만들기 때문입니다.
 
-```json
-$ mongod --enableMajorityReadConcern
-
-or
-
-setParameter:
-   enableMajorityReadConcern: true
+```javascript
+db.restaurants.find( { _id: 5 } ).readConcern("linearizable").maxTimeMS(10000)
 ```
 
-MongoDB에서 Read Concern 모드로 쿼리를 실행하면 오직 레플리카 셋의 OpLog 동기화 여부에만 의존해서 쿼리의 Read Concern을 처리합니다. 프라이머리 멤버는 모든 세컨더리 멤버가 OpLog의 어느 부분까지 동기화하고 있는지 정보를 가지고 있으며, 각 세컨더리 멤버는 프라이머리 멤버의 OpLog를 조회할 때마다 자신이 얼마나 동기화했는지를 프라이머리 멤버에 보고하는 방식으로 동작합니다. 프라이머리 멤버는 클라이언트의 쿼리 요청이 오면 자신이 가진 세컨더리 멤버의 OpLog 상태 정보를 참고하여 설정 값에 따른 멤버가 현재 자신의 OpLog와 동일한지 확인 후 쿼리를 처리합니다. 설정 값에 따라 멤버가 프라이머리의 OpLog와 동일한 상태가 아니라면 쿼리를 멈추고, 세컨더리 멤버가 원하는 수준까지 동기화될 때까지 기다립니다. Read Concern을 사용할 때에는 "local"이 아닌 경우에는 반드시 maxTimeMS 옵션을 설정하기를 권장하고 있습니다.
+예전에는 PSA(Primary-Secondary-Arbiter) 구성에서 스토리지 캐시 압박을 피하려고 `enableMajorityReadConcern` 을 `false` 로 두어 `"majority"` Read Concern을 끌 수 있었습니다. MongoDB 5.0부터는 스토리지 엔진이 개선되면서 이 설정을 바꿀 수 없고 항상 `true` 입니다.
 
-Read Concern 옵션은 클라이언트와 데이터베이스, 그리고 컬렉션 레벨의 3가지 방법으로 설정할 수 있습니다.
+MongoDB에서 Read Concern 모드로 쿼리를 실행하면 오직 레플리카 셋의 OpLog 동기화 여부에만 의존해서 쿼리의 Read Concern을 처리합니다. 프라이머리 멤버는 각 세컨더리 멤버가 OpLog의 어디까지 동기화했는지를 알고 있습니다. 세컨더리 멤버가 프라이머리의 OpLog를 조회할 때마다 자신의 동기화 위치를 프라이머리에 보고하는 방식입니다. 프라이머리는 쿼리 요청이 오면 그 정보를 참고해 설정 값이 요구하는 멤버들이 자신의 OpLog와 같은 상태인지 확인한 뒤 쿼리를 처리하고, 아직 따라오지 못했다면 원하는 수준까지 동기화될 때까지 기다립니다.
+
+Read Concern은 클라이언트, 데이터베이스, 컬렉션 세 레벨에서 설정할 수 있습니다. 다만 트랜잭션 안에서는 컬렉션과 데이터베이스 레벨의 Read Concern이 무시되고 트랜잭션 레벨의 Read Concern이 쓰입니다. 트랜잭션 레벨이 비어 있으면 세션 레벨, 세션 레벨도 비어 있으면 클라이언트 레벨을 따르는데, 클라이언트 레벨의 기본값은 프라이머리 읽기에 대해 `"local"` 입니다. 레플리카 셋과 샤드 클러스터는 전역 기본 Read Concern도 지원하며, `setDefaultRWConcern` 으로 설정합니다.
 
 ### Write Concern
 
-이전 버전의 MongoDB에서는 RDBMS와는 달리 트랜잭션의 시작과 종료(Commit)을 명시적으로 실행할 방법이 없기 때문에 도큐먼트를 저장할 때 사용자의 데이터 변경 요청에 응답을 반환하는 시점이 트랜잭션의 커밋으로 간주됩니다. 변경 요청에 대한 응답 시점을 결정하는 옵션을 Write Concern이라고 합니다. Write Concern은 Insert, update, delete 작업에서만 설정이 가능합니다. Write Concern 옵션 역시 클라이언트와 데이터베이스, 그리고 컬렉션 레벨의 3가지 방법으로 설정할 수 있습니다.
+Write Concern은 데이터 변경 요청에 응답을 돌려줄 시점을 결정하는 옵션입니다. insert, update, delete 작업에 설정할 수 있고, Read Concern과 마찬가지로 클라이언트, 데이터베이스, 컬렉션 세 레벨에서 설정할 수 있습니다. 명시적인 트랜잭션을 쓰는 경우에는 개별 쓰기에 Write Concern을 지정하면 오류가 나고, 커밋 시점에 트랜잭션 레벨의 Write Concern이 적용됩니다.
 
-단일 노드의 동기화 제어 방법은 변경된 데이터가 디스크에 동기화되었는가에 따라 언제 완료 메시지를 보낼 것인지 판단하는 기준이 됩니다. 단일 노드 동기화 제어 옵션으로는 UNACKNOWLEDGED, ACKNOWLEDGED, JOURNALED 옵션 세 가지가 있습니다. UNACKNOWLEDGED는 현재 버전에서는 잘 사용하지 않고 ACKNOWLEDGED가 기본값으로 사용됩니다. ACKNOWLEDGED는 변경값을 메모리에만 적용하고, 바로 클라이언트에 성공 또는 실패 응답을 전달합니다. 실제로 다른 커넥션에서 조회하면 변경된 값으로 조회되며 변경값이 실제 반영된 것처럼 보입니다. 하지만 디스크에도 변경된 내용이 기록되었는지에 대해서는 보장하지 않습니다. 메모리상에 변경 적용된 데이터가 디스크에 기록되기 전에 장애가 발생한다면 데이터 손실의 위험이 있습니다.
+Write Concern은 `{ w: <value>, j: <boolean>, wtimeout: <number> }` 형태로 지정합니다.
 
-MongoDB 2.6부터 저널 로그가 도입되었는데, 저널 로그는 클라이언트가 변경한 데이터를 RDBMS의 트랜잭션 로그처럼 디스크로 먼저 동기화하여 서버의 비정상적인 종료로부터 데이터 손실을 방지합니다. 즉 데이터 파일에 기록하기 전에 저널 로그에 먼저 기록해두는 것인데 ACKNOWLEDGED 모드의 Write Concern이 서비스 요건으로 만족하지 못할 때 JOURNALED 옵션을 고려할 수 있습니다. 하지만 JOURNALED 옵션이 최상의 일관성 옵션을 보장해주는 것은 아닙니다. 단일 노드는 디스크 동기화만 신경 쓰면 되지만, 레플리카 셋에서는 세컨더리 멤버의 디스크 동기화까지 고려해야 합니다.
+- **`w: <숫자>`**: 쓰기가 전파돼야 하는 `mongod` 인스턴스의 수입니다. `w: 1` 은 스탠드얼론 `mongod` 또는 레플리카 셋 프라이머리까지만 전파되면 응답하므로, 세컨더리로 복제되기 전에 프라이머리가 내려가면 데이터가 롤백될 수 있습니다. `w: 0` 은 쓰기 확인을 아예 요청하지 않지만 소켓 예외나 네트워크 오류는 애플리케이션에 전달될 수 있습니다.
+- **`w: "majority"`**: 데이터를 가진 투표 멤버의 과반이 자신의 OpLog에 변경을 내구성 있게 기록했음을 확인합니다. 멤버 수가 자주 바뀌는 환경에서도 값을 고쳐 줄 필요가 없습니다.
+- **`j`**: `j: true` 는 `w` 로 지정한 `mongod` 인스턴스가 디스크의 저널에 기록했음을 확인받습니다. 저널이 켜져 있으면 `w: "majority"` 가 `j: true` 를 함의할 수 있고, 이 동작은 `writeConcernMajorityJournalDefault` 설정이 결정합니다. 저널링 없이 실행 중인 `mongod` 에 `j: true` 를 주면 오류가 납니다.
+- **`wtimeout`**: 프라이머리에서 성공한 뒤 Write Concern을 충족할 때까지의 제한 시간(밀리초)입니다. `w` 가 1 이하면 적용되지 않습니다. 제한을 넘기면 쓰기 우려 오류를 반환하지만, 그때까지 성공한 데이터 변경을 되돌리지는 않습니다. 지정하지 않으면 충족 불가능한 Write Concern에서 무한히 대기합니다.
 
-그래서 MongoDB에는 레플리카 셋 전체에 걸쳐 동작하는 Write Concern 모드가 있습니다. 레플리카 셋의 여러 노드에 대해 Write Concern을 설정하는 방법은 `{ w: <?> }` 옵션을 사용하면 됩니다.
+암묵적 기본 Write Concern은 `w: "majority"` 입니다. 예외가 하나 있습니다. 아비터가 있고 데이터를 가진 투표 멤버 수가 투표 멤버 과반보다 많지 않은 구성이라면 기본값이 `w: 1` 입니다. 예를 들어 데이터 멤버 2대와 아비터 1대인 구성은 `w: 1`, 데이터 멤버 4대와 아비터 1대인 구성은 `w: "majority"` 가 기본값입니다. 전역 기본 Write Concern 역시 `majority` 입니다.
 
-- **숫자값**: 이 값은 레플리카 셋에서 데이터를 동기화해야 하는 멤버의 수를 나타내는데, 프라이머리를 포함한 숫자이기 때문에 2로 설정하면 프라이머리 1대와 세컨더리 1대가 변경 요청을 필요한 수준까지 처리해야 성공 또는 실패 메시지를 반환하게 됩니다. 2는 Write Concern 모드의 기본값입니다. 물론 1로 놓고 써도 저널 로그를 통해 롤백이 가능하기 때문에 수동으로 복구가 가능한 환경이라면 `j:true, w:1`로 놓고, 프라이머리에 저널 로그가 기록되면 반환하는 옵션을 사용하기도 합니다.
-- **majority**: 과반수의 멤버가 동기화되는 옵션인데, 레플리카 셋의 멤버 수가 자주 변하는 환경이라면, 멤버 수가 바뀔 때 숫자값을 설정하면 매번 수동으로 바꿔줘야 하지만, majority는 옵션값을 유지한 채로 사용이 가능해집니다.
+MongoDB 8.0부터 `{ w: "majority" }` 쓰기는 데이터를 가진 멤버의 과반이 OpLog 엔트리를 내구성 있게 기록한 시점에 응답을 돌려줍니다. 멤버들은 그 뒤 자신의 로컬 OpLog를 읽어 변경을 비동기로 적용합니다. 이전 릴리스에서는 멤버가 쓰기를 적용할 때까지 기다린 뒤 응답했습니다.
+
+저널 로그는 클라이언트가 변경한 데이터를 RDBMS의 트랜잭션 로그처럼 디스크에 먼저 기록해, 서버가 비정상 종료될 때의 데이터 손실을 막습니다. 데이터 파일에 쓰기 전에 저널에 먼저 남기는 방식입니다. 다만 저널 기록만으로 최상의 일관성이 보장되지는 않습니다. 단일 노드는 디스크 동기화만 신경 쓰면 되지만 레플리카 셋에서는 세컨더리 멤버의 동기화까지 고려해야 하기 때문입니다.
 
 ### Read Preference
 
-Secondary 노드가 동기화한 데이터를 예비 Primary를 위한 후보군으로만 사용하는 것이 아니라 Read 작업을 분산할 수 있도록 설정해주는 것입니다.
+Read Preference는 읽기 작업을 어느 멤버에서 처리할지 정하는 설정입니다. 세컨더리가 동기화해 둔 데이터를 예비 프라이머리 후보로만 두지 않고 읽기 처리에도 쓰게 만들어, 프라이머리에 들어오는 부하를 줄일 수 있습니다.
 
-읽기 작업의 분산을 통해 Primary에 들어오는 부하를 줄일 수 있습니다.
-
-[![Read Preference 옵션 다이어그램: primary, primaryPreferred, secondary, secondaryPreferred, nearest](/assets/img/wp/2021/01/스크린샷-2021-01-08-오후-12.52.31.png)](https://docs.mongodb.com/manual/core/read-preference/)
+[![Read Preference 옵션 다이어그램: primary, primaryPreferred, secondary, secondaryPreferred, nearest](/assets/img/wp/2021/01/스크린샷-2021-01-08-오후-12.52.31.png)](https://www.mongodb.com/docs/manual/core/read-preference/)
 
 read Preference
 
-기본값일 때는 모든 작업이 Primary에서 동작합니다. 하지만 Read Preference 설정을 하게 되면 읽기 작업을 Secondary에서 할 수 있습니다.
+기본값일 때는 모든 작업이 Primary에서 동작합니다. 하지만 Read Preference 설정을 하게 되면 읽기 작업을 Secondary에서 할 수 있습니다. 읽기 연산을 포함하는 트랜잭션은 Read Preference가 `primary` 여야 하며, 한 트랜잭션의 모든 연산은 같은 멤버로 라우팅되어야 합니다.
 
-4.4 버전부터는 샤드 클러스터에 대한 hedged read를 지원합니다. hedged read를 사용하면 mongos 인스턴스는 쿼리된 각 샤드당 2개의 레플리카 셋 구성원으로 읽기 작업을 라우팅하고 샤드당 첫 번째 응답자의 결과를 반환할 수 있습니다.
+Read Preference는 5가지 모드가 있습니다.
 
-nearest 옵션을 사용하면, 해당 구성원이 Primary인지 Secondary인지에 관계없이 네트워크 대기 시간이 가장 짧은 레플리카 셋의 구성원에서 읽기 작업을 합니다.
+- **primary**: 기본값이며, 모든 읽기를 현재 프라이머리에서 처리합니다.
+- **primaryPreferred**: 대부분의 상황에서 프라이머리에서 읽지만, 프라이머리를 쓸 수 없으면 세컨더리에서 읽습니다.
+- **secondary**: 모든 읽기를 세컨더리에서 처리합니다.
+- **secondaryPreferred**: 보통 세컨더리에서 읽습니다. 레플리카 셋이 프라이머리 하나뿐이고 다른 멤버가 없으면 프라이머리에서 읽습니다.
+- **nearest**: 프라이머리와 세컨더리를 구분하지 않고, 지정한 지연 시간 기준을 만족하는 멤버 중 무작위로 하나를 골라 읽습니다. 이때 지연 시간 계산에는 `localThresholdMS` 연결 옵션, `maxStalenessSeconds`, 지정한 태그 셋 목록이 반영됩니다.
 
-Read Preference 설정은 실제로 클라이언트의 드라이버에서 설정하는 것이기 때문에 개발 환경마다 설정하는 방법이 조금씩 다를 수 있습니다. 각 개발 언어별로 설정하는 법은 MongoDB API 문서([https://docs.mongodb.com/drivers/](https://docs.mongodb.com/drivers/ "https://docs.mongodb.com/drivers/"))에서 확인하시면 됩니다.
+Read Preference는 클라이언트 드라이버에서 설정하는 값이라 언어와 드라이버에 따라 방법이 조금씩 다릅니다. 언어별 설정 방법은 [MongoDB 드라이버 문서](https://www.mongodb.com/docs/drivers/)에서 확인할 수 있습니다. 드라이버와 무관하게 통하는 방법은 연결 문자열에 옵션으로 넣는 것입니다. 값은 대소문자를 구분합니다.
 
-아래는 node.js에서 mongoose 모듈을 이용해 설정하는 방법입니다. (예제 출처: 맛있는 몽고DB 7장 복제)
-
-```javascript
-var opts = {
-  replSet: {readPreference: 'ReadPreference.NEAREST'}
-};
-mongoose.connect('mongodb://<연결 주소> ', opts);
+```text
+mongodb://<연결 주소>/?replicaSet=myRepl&readPreference=nearest
 ```
 
-커서나 컬렉션을 불러올 때 Read Preference 옵션을 사용하여 읽기 분산을 처리할 수 있습니다.
-
-MongoDB의 공식 문서에 따르면 Read Preference 옵션은 5가지가 있습니다.
-
-- **primary**: 기본값이며, Primary 구성원으로부터 값을 읽고 오며, 딜레이 없이 데이터 수정 및 삽입 작업이 가능합니다.
-- **primaryPreferred**: Primary 구성원으로부터 우선적으로 데이터를 읽어옵니다. 특별히 Primary 쪽의 읽기 작업이 밀려있지 않으면 Primary에서 데이터를 가져오기 때문에 변경사항을 바로 확인할 수 있습니다. 읽기가 밀려 있는 상태라면 Secondary에서 데이터를 읽어옵니다.
-- **secondary**: 모든 읽기 작업을 Secondary에서 처리합니다.
-- **secondaryPreferred**: 우선적으로 읽기 작업이 발생하면 Secondary에 작업을 요청합니다. 하지만 모든 Secondary에서 작업이 밀려 있는 경우 Primary에 읽기 작업을 요청합니다.
-- **nearest**: 해당 구성원이 Primary인지 Secondary인지에 관계없이 네트워크 대기 시간이 가장 짧은 레플리카 셋의 구성원에서 읽기 작업을 합니다.
+커서나 컬렉션을 불러올 때 Read Preference 옵션을 사용하여 읽기 분산을 처리할 수도 있습니다.
 
 MongoDB의 복제는 비동기 방식으로 처리되므로 세컨더리 멤버를 통해 무거운 쿼리를 많이 돌게 되면 복제 지연이 발생할 수도 있습니다. 하지만 복제 지연에 민감하지 않거나, 복잡한 연산으로 프라이머리에 부하를 많이 줄 수 있는 통계 작업이 있다면 세컨더리 노드를 활용하는 것도 좋은 방법입니다.
 
-3.4 버전부터는 Read Preference 옵션을 설정할 때 maxStalenessSeconds 옵션을 설정하여 MongoDB 드라이버나 Mongos 라우터가 지정된 시간보다 복제 지연이 심한 경우 해당 세컨더리 멤버를 접속 가능한 대상 목록에서 제거하고 접속하지 못하도록 차단합니다.
+`maxStalenessSeconds` 를 설정하면 드라이버와 mongos 라우터가 지정한 시간보다 복제 지연이 심한 세컨더리를 읽기 대상에서 제외합니다. 기본적으로는 최대 지연 제한이 없어서 클라이언트가 세컨더리의 지연을 고려하지 않습니다. 최솟값은 90초이고, 0과 90 사이의 값을 주면 오류가 납니다. `primary` 모드는 태그 셋 목록이나 `maxStalenessSeconds` 와 함께 쓸 수 없습니다. 둘을 같이 지정하면 드라이버가 오류를 냅니다. 읽기 설정에 `maxStalenessSeconds` 와 태그 셋 목록을 함께 주면 클라이언트는 지연으로 먼저 걸러낸 뒤 태그로 걸러냅니다.
+
+> **NOTE** — 샤드 클러스터에서 샤드당 두 멤버로 읽기를 보내고 먼저 응답한 쪽 결과를 쓰던 hedged read는 MongoDB 8.1에서 제거됐습니다. 쿼리에 hedge 옵션을 지정하면 MongoDB가 쿼리는 실행하되 옵션을 무시하고 경고를 남깁니다.
 
 레플리카 셋의 태그(tag) 기능을 이용해 레플리카 셋의 지역을 나눠 여러 지역에서의 고가용성을 확보할 수도 있습니다. 태그와 nearest 옵션을 사용해 Read Preference를 통한 실제 거리상으로 가까운 지역의 레플리카 멤버를 선택하여 쿼리할 수도 있습니다.
 
-#### 참고 자료
+## 참고 자료
 
 도서: Real MongoDB
 
-MongoDB Manual: [https://docs.mongodb.com/manual/](https://docs.mongodb.com/manual/ "https://docs.mongodb.com/manual/")
+MongoDB Manual: [https://www.mongodb.com/docs/manual/](https://www.mongodb.com/docs/manual/)
