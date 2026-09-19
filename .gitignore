@@ -6,3 +6,6 @@ Gemfile.lock
 
 # 브라우저 자동화 산출물 (스크린샷·콘솔 로그)
 .playwright-mcp/
+
+# tech-writer 스킬 작업 산출물
+_workspace/
