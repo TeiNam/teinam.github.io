@@ -195,8 +195,20 @@ p { text-wrap: pretty; }
 .prose th code, .prose td code { overflow-wrap: anywhere; }
 .table-scroll { overflow-x: auto; }
 .table-scroll table { min-width: 100%; }
+/* 칼럼 폭을 내용 길이에 맡기면 긴 산문 칼럼이 폭을 다 먹고 나머지가 짓눌린다.
+   그러면 `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 폭을 고정한다.
+   마크다운 표에 `{: .col-table}` 을 붙여 쓴다. */
+.col-table { table-layout: fixed; }
+.col-table td:nth-child(1) { width: 20%; overflow-wrap: break-word; }
+.col-table td:nth-child(2) { width: 48%; }
+.col-table td:nth-child(3) { width: 32%; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
+/* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
+   .prose > * 의 70ch 제한을 그대로 두면 댓글창이 본문보다 좁아 답답하다. */
+.comments { max-width: 100% !important; display: flex; flex-direction: column; gap: 14px; padding-top: 26px; border-top: 1px solid var(--line); }
+.comments .giscus, .comments .giscus-frame { width: 100%; }
+.comments noscript { font-size: 14px; color: var(--ink3); }
 .share { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--line); }
 .share-links { display: flex; gap: 6px; }
 .share-links a, .share-links button {
@@ -277,6 +289,10 @@ p { text-wrap: pretty; }
   .post-row { grid-template-columns: 1fr; gap: 6px; }
   .post-row .mono:last-child { text-align: left; }
   .ad--leaderboard { padding: 0 24px 32px; }
+  /* 좁은 화면에서 3칼럼을 폭 고정으로 밀어 넣으면 칼럼마다 두세 글자만 남는다.
+     고정 폭을 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로 스크롤을 내준다. */
+  .col-table { table-layout: auto; min-width: 560px; }
+  .col-table td:nth-child(1), .col-table td:nth-child(2), .col-table td:nth-child(3) { width: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

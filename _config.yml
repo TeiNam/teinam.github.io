@@ -39,6 +39,21 @@ nav:
 # /writing/ 필터 버튼 순서. 여기 없는 카테고리는 뒤에 붙는다(필터에서 누락되지 않도록).
 category_order: [database, mysql, postgresql, mongodb, redis]
 
+# 포스트 댓글 (giscus — GitHub Discussions 를 저장소로 쓴다).
+# repo_id·category_id 가 비어 있으면 댓글 영역이 아예 렌더되지 않는다.
+#
+# 켜려면 순서대로:
+#   1. 저장소 Settings → General → Features → Discussions 체크
+#   2. Discussions 에 Announcements 형식으로 "Comments" 카테고리 생성
+#      (Announcements 여야 관리자만 글을 열 수 있어 아무나 빈 스레드를 못 만든다)
+#   3. https://github.com/apps/giscus 에서 이 저장소에 앱 설치
+#   4. https://giscus.app 에 저장소를 넣으면 나오는 두 ID 를 아래에 붙인다
+giscus:
+  repo: TeiNam/teinam.github.io
+  repo_id: ''
+  category: Comments
+  category_id: ''
+
 defaults:
   - scope: { path: "", type: posts }
     values: { layout: post }

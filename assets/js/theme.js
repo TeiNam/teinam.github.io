@@ -3,11 +3,46 @@
   var btn = document.getElementById('theme-toggle');
   function label() { if (btn) btn.textContent = root.dataset.theme === 'dark' ? 'light mode' : 'dark mode'; }
   label();
+  function currentTheme() { return root.dataset.theme === 'dark' ? 'dark' : 'light'; }
+
   if (btn) btn.addEventListener('click', function () {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', root.dataset.theme);
     label();
+    // giscus 는 iframe 안에 있어 CSS 가 닿지 않는다. postMessage 로 테마를 따로 알려야
+    // 다크 모드에서 흰 댓글창이 남지 않는다.
+    var frame = document.querySelector('iframe.giscus-frame');
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: currentTheme() } } }, 'https://giscus.app');
+    }
   });
+
+  // 댓글 스크립트는 JS 에서 주입한다. data-theme 를 빌드 시점에 박으면 다크 모드로
+  // 들어온 사람에게 흰 위젯이 한 번 번쩍인다.
+  var gis = document.querySelector('[data-giscus]');
+  if (gis) {
+    var s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    var conf = {
+      'repo': gis.dataset.repo,
+      'repo-id': gis.dataset.repoId,
+      'category': gis.dataset.category,
+      'category-id': gis.dataset.categoryId,
+      'mapping': 'pathname',
+      'strict': '1',
+      'reactions-enabled': '1',
+      'emit-metadata': '0',
+      'input-position': 'top',
+      'theme': currentTheme(),
+      'lang': 'ko',
+      'loading': 'lazy'
+    };
+    Object.keys(conf).forEach(function (k) { s.setAttribute('data-' + k, conf[k]); });
+    gis.appendChild(s);
+  }
 
   // 목차 자동 생성 + 현재 위치 하이라이트
   var rail = document.querySelector('[data-toc] .toc');
