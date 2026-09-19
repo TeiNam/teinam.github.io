@@ -2,63 +2,90 @@
 date: 2021-03-02 10:18:01 +0900
 title: "MongoDB에서 n-gram Full text Search 이용하기"
 category: mongodb
-excerpt: "Percona MongoDB MongoDB를 헤비하게 사용하던 K사에 다니셨던 지인분이 MongoDB 커뮤니티를 사용할 것이라면 Percona MongoDB를 사용해보는건 어떻겠냐고 추천을 해주셨습니다. K사에서도 Percona 버전을 사용했다고 하시더군요. Percona Mong…"
-updated: 2026-09-17
+excerpt: "MongoDB Community Edition의 text 인덱스는 한국어를 지원하지 않습니다. Percona Server for MongoDB는 n-gram 기반 전문 검색을 추가 기능으로 제공하여 한국어 검색을 지원합니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — Percona Server for MongoDB 8.0 에도 ngram 전문 검색이 유지되어 접근법 자체는 유효합니다. 다만 기능 비교표와 링크는 4.4 시절 기준이며, 현재는 Atlas 및 자체 관리형 배포에서 MongoDB Search/Vector Search 를 쓰는 선택지도 있습니다.
+## MongoDB의 한국어 전문 검색 문제
 
-## Percona MongoDB
+MongoDB Community Edition의 `text` 인덱스는 한국어를 지원하지 않습니다. MongoDB 8.0 기준으로 `text` 인덱스가 지원하는 언어는 15개 유럽 언어(영어, 프랑스어, 독일어, 스페인어 등)뿐이며, 한국어·일본어·중국어 같은 CJK 언어는 포함되지 않습니다.
 
-MongoDB를 헤비하게 사용하던 K사에 다니셨던 지인분이 MongoDB 커뮤니티를 사용할 것이라면 Percona MongoDB를 사용해보는 건 어떠냐고 권장하셨습니다. K사에서도 Percona 버전을 사용했다고 하시더군요. Percona MongoDB를 추천받게 된 계기는 이렇습니다.
+`text` 인덱스는 단어 단위 토큰화와 스테밍을 기반으로 동작하는데, 한국어는 조사가 붙는 교착어 특성상 이 방식으로 정확한 검색이 어렵습니다. 예를 들어 "서울"을 검색할 때 "서울은", "서울이", "서울에서" 같은 변형을 모두 찾아야 하는데, `text` 인덱스는 이를 처리할 수 없습니다.
 
-MongoDB의 전문 검색(Full Text Search, FTS) 기능 중 한글 검색에 대한 이슈 때문이었습니다. 기본적으로 형태소 분석 방식을 사용하는 MongoDB의 한글 검색 지원기능은 그리 만족스러운 수준은 아닙니다.
+## Percona Server for MongoDB의 n-gram 지원
 
-그런 얘기가 오가던 중, K사에서도 3.2버전에서 n-gram을 커스터마이징 해서 사용하다, 3.4 버전에서 Percona MongoDB에서 n-gram FTS가 정식으로 내재화 되었다고 하였습니다.
+Percona Server for MongoDB는 MongoDB Community Edition의 드롭인 대체품으로, 엔터프라이즈 기능을 추가로 제공합니다. 그중 하나가 n-gram 기반 전문 검색입니다. Percona 3.4 버전부터 n-gram이 정식 기능으로 포함되었고, 2026년 9월 현재 Percona Server for MongoDB 8.0에도 유지되고 있습니다.
 
-### n-gram 이란?
+## n-gram이란?
 
-n-gram 알고리즘은 통계와 확률을 바탕으로 한 색인 분석 등에 널리 쓰이는 방식으로 초기 검색사이트가 취한 색인 검색 알고리즘의 하나입니다. 개념이 무척 직관적이고 빠르기 때문에 여러 학문에 적용하기 쉽습니다. 예를 들어 검색시스템에서 키워드 추출이라든지, 악성코드의 API 추출이라든지 다방면에서 사용되고 있죠.
+n-gram은 텍스트를 고정 길이 n개의 문자 단위로 분할하는 토큰화 방식입니다. 예를 들어 "서울시"를 bigram(n=2)으로 분할하면 "서울", "울시"가 됩니다. 이 방식은 언어의 형태소 구조를 몰라도 부분 문자열 매칭이 가능하므로 한국어·일본어·중국어처럼 띄어쓰기가 불분명하거나 형태 변화가 복잡한 언어에서 효과적입니다.
 
-n-gram 알고리즘은 n개의 문자열 크기만큼의 창(window)을 만들어 문자열을 왼쪽에서 오른쪽으로 한 단위씩 움직이며 추출되는 시컨스의 집합의 출현 빈도수를 기록합니다. 이때 n은 얼마만큼의 단위로 잘라낼지를 나타내는 지표인데, 이 값이 1이면 unigram, 2이면 bigram, 3이면 trigram이라 부르며, 그 값은 더 커질 수 있습니다.
+n-gram은 검색 시스템 외에도 자연어 처리, 오타 보정, 유사 문자열 검색 등 다양한 분야에서 사용됩니다. n 값이 1이면 unigram, 2면 bigram, 3이면 trigram이라 부릅니다.
 
-딥러닝에서도 자연어처리를 위해 많이 사용합니다. RDBMS로 구성된 환경에서도 n-gram을 사용하여 검색엔진을 사용하면, 오타나 비슷한 단어로 검색을 한다거나 하는 것이 가능해집니다.
+## Percona MongoDB vs MongoDB Community Edition
 
-### Percona MongoDB vs MongoDB Community Ver.
+Percona Server for MongoDB는 무료이며, MongoDB Community Edition에 없는 엔터프라이즈 기능 일부를 제공합니다.
 
-우선 Percona server for MongoDB 역시 Community 버전처럼 Percona에서 무료로 지원합니다. 커뮤니티버전에 비해 장점이 많은 대신 문제가 발생 했을 때, Percona의 지원을 받아야 할 수도 있습니다.
+| 기능 | Percona Server | MongoDB Community | MongoDB Enterprise |
+| --- | --- | --- | --- |
+| **n-gram 전문 검색** | ✅ | ❌ | ❌ |
+| In-Memory 스토리지 엔진 | ✅ | ❌ | ✅ |
+| 암호화(Encryption-at-Rest) | ✅ (Vault 연동) | ❌ | ✅ (KMIP) |
+| Hot Backup | ✅ | ❌ | ✅ |
+| LDAP/Kerberos 인증 | ✅ | ❌ | ✅ |
+| Audit Logging | ✅ | ❌ | ✅ |
 
-다음은 Percona MongoDB와 Community 버전의 차이점 입니다.
+웹이나 애플리케이션에서 한국어 검색이 중요하다면 Percona의 n-gram 지원이 유용한 선택지가 될 수 있습니다.
 
-|  |  |  |
-| --- | --- | --- |
-|  | **PSMDB** | **MongoDB** |
-| Storage Engines | [WiredTiger](https://docs.mongodb.org/manual/core/wiredtiger/) (default)  [Percona Memory Engine](https://www.percona.com/doc/percona-server-for-mongodb/LATEST/inmemory.html#inmemory) | [WiredTiger](https://docs.mongodb.org/manual/core/wiredtiger/) (default)  [In-Memory](https://docs.mongodb.com/v4.4/core/inmemory/) (Enterprise only) |
-| Encryption-at-Rest | Key server = Hashicorp Vault  Fully opensource | Key server = KMIP  Enterprise only |
-| [Hot Backup](https://www.percona.com/doc/percona-server-for-mongodb/LATEST/hot-backup.html#hot-backup) | YES (replicaset) | NO |
-| LDAP Authentication | Simple LDAP Auth  (legacy) [External SASL Authentication](https://www.percona.com/doc/percona-server-for-mongodb/LATEST/authentication.html#ext-auth) | Enterprise only  Enterprise only |
-| LDAP Authorization | YES | Enterprise only |
-| Kerberos Authentication | YES | Enterprise only |
-| [Audit Logging](https://www.percona.com/doc/percona-server-for-mongodb/LATEST/audit-logging.html#audit-log) | YES | Enterprise only |
-| Log redaction | YES | Enterprise only |
-| SNMP Monitoring | NO | Enterprise only |
+## Percona MongoDB에서 n-gram 사용하기
 
-MongoDB에서는 엔터프라이즈 버전에서만 사용가능한 몇가지 요소들을 Percona MongoDB에서는 무료로 사용할 수 있습니다. In-Memory 스토리지 엔진이라던가,  암호화 기능, HotBackup 기능, LDAP 인증 및 Audit이나 SNMP 모니터링까지 가능합니다.
+인덱스를 생성할 때 `default_language` 파라미터를 `ngram`으로 설정합니다.
 
-또, 표에는 없는 n-gram FTS를 내재하고 있기 때문에 웹이나 애플리케이션 단에서 검색 기능이 중요하다면 n-gram을 내재한 Percona MongoDB의 선택도 좋을 것 같습니다.
-
-### Percona MongoDB에서 n-gram FTS를 적용하는 방법
-
-인덱스를 생성할 때 default_language 파라미터를 ngram으로 설정해줍니다.
-
-```json
-> db.collection.createIndex({name:"text"}, {default_language: "ngram"})
+```javascript
+db.articles.createIndex({ content: "text" }, { default_language: "ngram" })
 ```
 
-ngram 검색 알고리즘은 특수 문자를 개별 용어처럼 처리합니다. 따라서 텍스트 색인을 쿼리할 때 검색 문자열 내 특수 문자를 이스케이프할 필요가 없습니다. 예를 들어 2021-02-12 날짜가 포함된 문서를 검색하려면 다음을 지정하십시오.
+n-gram은 특수 문자도 개별 토큰으로 처리하므로, 날짜나 코드처럼 특수 문자가 포함된 문자열도 이스케이프 없이 검색할 수 있습니다.
 
-```json
-> db.collection.find({ $text: { $search: "2021-02-12" } })
+```javascript
+db.articles.find({ $text: { $search: "2021-02-12" } })
 ```
 
-아마 MongoDB를 사용하는 많은 분들이 한글 FTS의 성능이나 지원에 대해 부족하다고 생각하는 경우가 많을 것입니다. Percona MongoDB를 이용하는 것도 하나의 대안이 될 것입니다.
+## MongoDB Search: 현재 권장 방식
+
+MongoDB는 현재 `text` 인덱스와 `$text` 연산자보다 MongoDB Search를 권장합니다. MongoDB Search는 Atlas에서 관리형으로 제공되며, 자체 관리형 배포에서는 MongoDB 8.3.4 이상에서 별도 `mongot` 프로세스를 통해 사용할 수 있습니다.
+
+MongoDB Search는 한국어를 포함한 41개 언어를 지원하며, 한국어 전용 분석기(`lucene.korean`, `lucene.nori`)와 CJK 공통 분석기(`lucene.cjk`)를 제공합니다. n-gram 토크나이저(`nGram`, `edgeGram`)도 사용할 수 있어 부분 문자열 검색이나 자동완성 구현이 가능합니다.
+
+```javascript
+// MongoDB Search 인덱스 정의 예시
+{
+  "mappings": {
+    "fields": {
+      "content": {
+        "type": "string",
+        "analyzer": "lucene.korean"
+      }
+    }
+  }
+}
+
+// $search 쿼리
+db.articles.aggregate([
+  {
+    $search: {
+      text: { query: "서울", path: "content" }
+    }
+  }
+])
+```
+
+> **NOTE** — 자체 관리형 MongoDB Search는 8.3.4 이상에서만 지원되며, 별도 `mongot` 프로세스 설치와 구성이 필요합니다. Atlas에서는 MongoDB Search가 관리형 서비스로 제공되어 별도 설정 없이 사용할 수 있습니다.
+
+## 정리
+
+MongoDB Community Edition의 `text` 인덱스는 한국어를 지원하지 않습니다. 한국어 전문 검색이 필요하다면 다음 선택지를 고려할 수 있습니다:
+
+- **Percona Server for MongoDB**: n-gram 기반 전문 검색을 무료로 제공하며, MongoDB Community Edition과 호환됩니다.
+- **MongoDB Search**: MongoDB가 권장하는 최신 전문 검색 솔루션으로, 한국어 전용 분석기와 고급 검색 기능을 제공합니다. Atlas 관리형 또는 자체 관리형(8.3.4+)으로 사용 가능합니다.
+- **애플리케이션 레벨 n-gram**: 애플리케이션에서 직접 n-gram을 생성해 배열 필드로 저장하고 멀티키 인덱스로 검색하는 방식도 가능하지만, 도큐먼트 크기 증가와 인덱스 키 폭증(`indexMaxNumGeneratedKeysPerDocument` 기본값 100,000 제한)을 고려해야 합니다.

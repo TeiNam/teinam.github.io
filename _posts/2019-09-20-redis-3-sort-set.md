@@ -2,13 +2,11 @@
 date: 2019-09-20 01:14:59 +0900
 title: "Redis #.3 Sort Set"
 category: redis
-excerpt: "Sort SET Sort SET은 Redis가 가진 각각의 데이터 타입들의 특성을 고루 가지고 있습니다. List 처럼 정렬되며, Set처럼 고유한 값들을 갖습니다. Hash 처럼 키 필드와 값의 쌍으로된 데이터를 갖지만, 문자열 대신 값의 순서를 나타내는 지수(score)를..."
-updated: 2026-09-17
+excerpt: "Sort SET은 Redis가 가진 각 데이터 타입의 특성을 고루 갖습니다. List처럼 정렬되며, Set처럼 고유한 값을 갖고, Hash처럼 키-값 쌍 구조를 가지되 값에 순서를 매기는 지수(score)를 사용합니다."
+updated: 2026-09-20
 ---
 
-> **검증 노트 (2026-09) · 참고** — ZADD·ZINCRBY·ZRANGE·ZUNIONSTORE·ZINTERSTORE 및 WEIGHTS/AGGREGATE 옵션 설명은 현재도 정확합니다. 다만 예제의 `ZREVRANGE`, `ZRANGEBYSCORE`, `ZREVRANGEBYSCORE` 는 Redis 6.2 부터 폐기 예고되어 `ZRANGE ... REV` / `ZRANGE ... BYSCORE` 로 대체되었습니다.
-
-**Sort SET**
+## Sort SET
 
 Sort SET은 Redis가 가진 각 데이터 타입의 특성을 고루 가진다. List처럼 정렬되며, Set처럼 고유한 값을 갖는다. Hash처럼 키 필드와 값의 쌍으로 된 데이터를 갖지만, 문자열 대신 값의 순서를 나타내는 지수(score)를 사용한다. Sort SET은 무작위로 액세스하는 우선순위 큐(priority queue)와 비슷하다. 내부적으로 Sort SET은 값을 정렬된 상태로 유지한다. 따라서 데이터를 추가할 때 Sort SET의 소요시간은 log(N)의 시간이 필요하다. N은 Set 크기이다.
 
@@ -35,10 +33,10 @@ Set에서 값을 읽어올때 RANGE 명령을 사용했듯이, Sort SET에서는
 127.0.0.1:6379>
 ```
 
-점수가 큰 순으로 조회하면서 점수도 같이 출력하고 싶을 때는 ZREVRANGE 명령을 사용하고 WITHSCORES 옵션을 줍니다.
+점수가 큰 순으로 조회하면서 점수도 같이 출력하고 싶을 때는 `ZRANGE` 명령에 `REV`와 `WITHSCORES` 옵션을 줍니다.
 
 ```bash
-127.0.0.1:6379> ZREVRANGE score 0 -1 withscores
+127.0.0.1:6379> ZRANGE score 0 -1 REV WITHSCORES
 1) "lion"
 2) "100"
 3) "cat"
@@ -50,11 +48,12 @@ Set에서 값을 읽어올때 RANGE 명령을 사용했듯이, Sort SET에서는
 127.0.0.1:6379>
 ```
 
-- **ZRANGEBYSCORE** : 조건에 맞는 값만 호출. 범위 값으로 양수, 음수, 무한대 모두 줄수 있음.
+> **NOTE** — Redis 6.2 이전에는 `ZREVRANGE` 명령을 따로 제공했으나, 6.2부터는 `ZRANGE ... REV` 로 통합되었습니다.
 
-  
+지수(score) 범위로 조회할 때는 `ZRANGE`에 `BYSCORE` 옵션을 사용합니다. 범위 값으로 양수, 음수, 무한대(`-inf`/`+inf`) 모두 지정할 수 있습니다.
+
 ```bash
-127.0.0.1:6379> ZRANGEBYSCORE score -inf inf
+127.0.0.1:6379> ZRANGE score -inf inf BYSCORE
 1) "eundoon"
 2) "hols"
 3) "cat"
@@ -62,9 +61,10 @@ Set에서 값을 읽어올때 RANGE 명령을 사용했듯이, Sort SET에서는
 127.0.0.1:6379>
 ```
 
-- **ZREVRANGEBYSCORE** : ZRANGEBYSCORE의 역순으로 출력.
+> **NOTE** — Redis 6.2 이전에는 `ZRANGEBYSCORE`/`ZREVRANGEBYSCORE` 명령을 따로 제공했으나, 6.2부터는 `ZRANGE ... BYSCORE [REV]` 로 통합되었습니다.
+
 - **ZREMRANGEBYRANK** : rank 별로 값을 삭제.
-- **ZREMRANGBYSCORE** : 지수별로 값을 삭제.
+- **ZREMRANGEBYSCORE** : 지수별로 값을 삭제.
 
 **집합의 연산**
 
@@ -78,7 +78,7 @@ Set에서 값을 읽어올때 RANGE 명령을 사용했듯이, Sort SET에서는
 
 127.0.0.1:6379> ZUNIONSTORE importance 2 score votes WEIGHTS 2 1 AGGREGATE SUM
 (integer) 4
-127.0.0.1:6379> ZRANGEBYSCORE importance -inf inf WITHSCORES
+127.0.0.1:6379> ZRANGE importance -inf inf BYSCORE WITHSCORES
 1) "eundoon"
 2) "20"
 3) "hols"
@@ -90,4 +90,4 @@ Set에서 값을 읽어올때 RANGE 명령을 사용했듯이, Sort SET에서는
 127.0.0.1:6379>
 ```
 
-투표 Sort SET을 만들고, 점수와 투표의 합집합을 가지고 점수에 2배 가중치를 줘서 결과값을 출력해 봤습니다.
+투표 Sort SET을 만들고, 점수와 투표의 합집합에서 점수에 2배 가중치를 줘서 결과값을 출력했습니다.

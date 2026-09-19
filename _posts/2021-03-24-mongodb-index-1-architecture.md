@@ -150,9 +150,9 @@ db.orders.aggregate([ { $indexStats: { } } ])
 
 MongoDB는 전문 검색을 위한 MongoDB Search와 벡터 검색을 위한 MongoDB Vector Search를 제공합니다. 둘 다 컬렉션에 별도의 검색 인덱스를 정의하며, 지금까지 다룬 B-tree 인덱스와는 성격이 다릅니다.
 
-전문 검색은 `$search`와 `$searchMeta` aggregation stage로 질의합니다. `$search`를 쓸 수 있는 배포는 Atlas, 8.2 이상의 Community, 그리고 Kubernetes Operator와 함께 운영하는 8.2 이상의 Enterprise입니다.
+전문 검색은 `$search`와 `$searchMeta` aggregation stage로 질의합니다. Atlas에서는 관리형으로 제공되고, 직접 운영하는 배포에서는 검색 프로세스인 `mongot`을 따로 띄워야 합니다. 직접 운영할 때 요구하는 서버 버전은 계속 올라가고 있어, 공식 호환성 문서는 현재 MongoDB Server 8.3.4 이상을 요구하고 8.0·8.2를 지원 대상에서 제외합니다. 도입하려면 그 문서의 버전 조합표를 먼저 확인해야 합니다.
 
-Vector Search 인덱스는 기본적으로 HNSW(Hierarchical Navigable Small Worlds) 그래프 구조로 ANN(Approximate Nearest Neighbor) 검색을 수행하고, `indexingMethod`를 `flat`으로 두면 전수 검색을 합니다. 벡터 차원 수(`numDimensions`)는 8192 이하여야 합니다. 질의는 `$vectorSearch` aggregation stage로 하며, Atlas에서는 MongoDB 6.0.11·7.0.2 이상, self-managed 배포에서는 8.0.0 이상이 필요합니다.
+Vector Search 인덱스는 기본적으로 HNSW(Hierarchical Navigable Small Worlds) 그래프 구조로 ANN(Approximate Nearest Neighbor) 검색을 수행하고, `indexingMethod`를 `flat`으로 두면 전수 검색을 합니다. 벡터 차원 수(`numDimensions`)는 8192 이하여야 합니다. 질의는 `$vectorSearch` aggregation stage로 하며, Atlas에서는 MongoDB 6.0.11·7.0.2 이상이 필요합니다. 직접 운영하는 배포는 Search와 같은 `mongot`을 쓰므로 버전 조건도 같이 적용됩니다.
 
 ## 참고 자료
 
