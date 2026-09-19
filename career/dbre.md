@@ -1,9 +1,9 @@
 ---
-date: 2023-08-02 17:06:05 +0900
 title: "데이터베이스 신뢰성 엔지니어(Database Reliability Engineer, DBRE)"
-category: database
-excerpt: "데이터베이스 신뢰성 엔지니어(DBRE)는 데이터베이스의 안정성, 확장성, 성능을 중심으로 운영과 자동화를 담당하는 직군입니다."
-updated: 2026-09-20
+permalink: /career/dbre/
+redirect_from:
+  - /writing/what-is-dbre/
+description: "DBRE 가 어떤 직군이고 DBA 와 무엇이 다른지"
 ---
 
 IT에 종사하면서 DB를 만지게 되는 직군은 크게 세 가지입니다.
@@ -50,4 +50,4 @@ DBA는 전통적으로 사내 인프라에서 데이터베이스를 운영하며
 
 DBA는 SQL 같은 데이터베이스 언어, 데이터 모델링, 백업 및 복구 전략의 깊은 이해가 필요합니다. DBRE는 데이터베이스 시스템 외에도 클라우드 기술, 소프트웨어 엔지니어링, 시스템 아키텍처, 네트워크의 지식이 필요하며, 프로그래밍 언어의 이해도 요구됩니다.
 
-DBA와 DBRE는 많은 공통점을 공유하지만 중요한 차이가 있으며, 그 역할은 조직의 요구와 기술 환경에 따라 다르게 정의됩니다. DBA 팀의 R&R 정의에 대한 자세한 내용은 [DBA 혹은 DB팀의 R&R을 정의 할 때](/writing/dba-team-rnr/)를 참고하세요.
+DBA와 DBRE는 많은 공통점을 공유하지만 중요한 차이가 있으며, 그 역할은 조직의 요구와 기술 환경에 따라 다르게 정의됩니다. DBA 팀의 R&R 정의에 대한 자세한 내용은 [DBA 혹은 DB팀의 R&R을 정의 할 때](/career/dba-rnr/)를 참고하세요.

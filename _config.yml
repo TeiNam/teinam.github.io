@@ -37,7 +37,7 @@ nav:
   - { name: about, url: /about/ }
 
 # /writing/ 필터 버튼 순서. 여기 없는 카테고리는 뒤에 붙는다(필터에서 누락되지 않도록).
-category_order: [database, mysql, postgresql, mongodb, redis, etc]
+category_order: [database, mysql, postgresql, mongodb, redis]
 
 defaults:
   - scope: { path: "", type: posts }

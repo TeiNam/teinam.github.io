@@ -1,9 +1,9 @@
 ---
-date: 2023-08-10 16:19:54 +0900
 title: "DBA 혹은 DB팀의 R&R을 정의 할 때"
-category: database
-excerpt: "데이터베이스 관리자(DBA)나 DB팀의 역할과 책임(R&R)을 정의할 때 고려해야 할 업무 영역과 조직 환경별 차이를 설명합니다."
-updated: 2026-09-20
+permalink: /career/dba-rnr/
+redirect_from:
+  - /writing/dba-team-rnr/
+description: "DBA·DB팀의 역할과 책임을 정의할 때 볼 기준"
 ---
 
 대기업은 DBA 포지션이 오래전부터 유지된 경우가 많아 그 회사에 맞는 R&R이 이미 정의되어 있습니다. 반면 스타트업은 DBA가 없다가 생기면서 R&R과 정책을 직접 정의해야 하는 경우가 많습니다.
@@ -18,7 +18,7 @@ DBA의 업무 영역은 크게 운영관리 영역과 구축·설계 영역으�
 
 클라우드 환경에서 AWS 같은 매니지드 서비스를 사용하는 조직은 엔진 설치, 패치, 백업 같은 인프라 계층 작업이 벤더에 위임되어, 비즈니스 로직에 따른 설계, 구축, 개선 업무에 집중하게 됩니다.
 
-SRE(Site Reliability Engineer)처럼 DBRE(Database Reliability Engineer)로 DB 인프라와 모니터링, 자동화를 위한 개발 업무를 함께 수행하는 경우도 있습니다. DBRE의 역할과 DBA와의 차이는 [데이터베이스 신뢰성 엔지니어(DBRE)](/writing/what-is-dbre/)를 참고하세요.
+SRE(Site Reliability Engineer)처럼 DBRE(Database Reliability Engineer)로 DB 인프라와 모니터링, 자동화를 위한 개발 업무를 함께 수행하는 경우도 있습니다. DBRE의 역할과 DBA와의 차이는 [데이터베이스 신뢰성 엔지니어(DBRE)](/career/dbre/)를 참고하세요.
 
 하나의 기종에 특화되기보다 다양한 기종의 데이터베이스를 다룰 수 있는 편이 유리해졌습니다.
 
