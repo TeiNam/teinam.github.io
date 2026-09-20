@@ -109,6 +109,65 @@ p { text-wrap: pretty; }
 .hero-fig { margin: 0; display: flex; flex-direction: column; gap: 9px; }
 .hero-fig img { width: 100%; height: auto; border: 1px solid var(--line); }
 .hero-fig figcaption, .prose figcaption { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+
+/* archify 다이어그램. 생성된 SVG 는 색을 하드코딩하지 않고 CSS 변수로만 칠하므로,
+   archify 변수를 사이트 변수에 이어 주면 사이트의 테마 토글이 그대로 먹는다.
+   그래서 SVG 파일은 손대지 않는다 — 다시 렌더하면 덮인다.
+
+   팔레트는 사이트에 이미 있는 두 색조만 쓴다(accent 파랑 · warn 호박). 상태 다이어그램에
+   색을 더 들이면 이 사이트의 담백한 톤이 깨진다. 상태 이름과 부제는 archify 가 언제나
+   `t-primary`/`t-muted` 로 찍으므로 어떤 매핑을 줘도 가독성은 유지된다. */
+/* 본문 칼럼은 672px 인데 다이어그램 viewBox 는 810px 이다. 그대로 넣으면 축소율 0.83 으로
+   SVG 안의 7px 레이블이 5.8px 가 되어 안 읽힌다. 오른쪽 사이드 레일 자리(216 + gap 40)까지
+   빼내면 928px · 1.15배가 되어 8px 이상으로 커진다. 왼쪽으로는 빼내지 않는다 — 목차 레일을
+   덮는다. `max-width` 는 none 이어야 한다. 100% 면 컨테이너 폭으로 다시 잘려 빼낸 게 무효가 된다. */
+.diagram { margin: 0 -256px 0 0; max-width: none !important; display: flex; flex-direction: column; gap: 10px; }
+.diagram-canvas { min-width: 0; }
+.diagram svg {
+  width: 100%; height: auto; font-family: var(--mono);
+  --mask: var(--surface);
+  --grid: var(--line2);
+  --text: var(--ink); --text-muted: var(--ink2); --text-dim: var(--ink3);
+  --arrow: var(--ink3); --arrow-emphasis: var(--accent);
+  /* start — 아직 트랜잭션이 없는 상태 */
+  --frontend-fill: transparent; --frontend-stroke: var(--ink3);
+  /* active — 세션에 묶인 비영속 상태 */
+  --backend-fill: var(--line2); --backend-stroke: var(--ink2);
+  /* waiting — PREPARED. 영속이라 눈에 걸려야 한다 */
+  --cloud-fill: var(--warn-bg); --cloud-stroke: var(--warn-ink);
+  /* success — 커밋 확정 */
+  --database-fill: var(--note-bg); --database-stroke: var(--accent);
+  /* failure + 점선 화살표 */
+  --security-fill: transparent; --security-stroke: var(--ink3);
+  --external-fill: transparent; --external-stroke: var(--line);
+  /* archify 가 쓰는 나머지 계열도 비워 두지 않는다 */
+  --messagebus-fill: var(--line2); --messagebus-stroke: var(--ink2);
+}
+/* archify 는 이 클래스 정의를 생성 HTML 의 <head> 에 넣는다. SVG 만 떼어 오면 정의가
+   따라오지 않아 전부 기본 검정으로 칠해진다. 그래서 여기로 옮겨 둔다.
+   SVG 가 실제로 쓰는 22개만 가져왔다. */
+.diagram svg .c-mask { fill: var(--mask); stroke: none; }
+.diagram svg .c-grid { stroke: var(--grid); fill: none; }
+.diagram svg .c-frontend { fill: var(--frontend-fill); stroke: var(--frontend-stroke); }
+.diagram svg .c-backend { fill: var(--backend-fill); stroke: var(--backend-stroke); }
+.diagram svg .c-cloud { fill: var(--cloud-fill); stroke: var(--cloud-stroke); }
+.diagram svg .c-database { fill: var(--database-fill); stroke: var(--database-stroke); }
+.diagram svg .c-security { fill: var(--security-fill); stroke: var(--security-stroke); }
+.diagram svg .a-default { stroke: var(--arrow); fill: none; }
+.diagram svg .a-emphasis { stroke: var(--arrow-emphasis); fill: none; }
+.diagram svg .a-security { stroke: var(--security-stroke); fill: none; stroke-dasharray: 5,5; }
+.diagram svg .m-default { fill: var(--arrow); }
+.diagram svg .m-emphasis { fill: var(--arrow-emphasis); }
+.diagram svg .m-security { fill: var(--security-stroke); }
+.diagram svg .m-dashed { fill: var(--database-stroke); }
+.diagram svg .t-primary { fill: var(--text); }
+.diagram svg .t-muted { fill: var(--text-muted); }
+.diagram svg .t-dim { fill: var(--text-dim); }
+.diagram svg .t-frontend { fill: var(--frontend-stroke); }
+.diagram svg .t-backend { fill: var(--backend-stroke); }
+.diagram svg .t-cloud { fill: var(--cloud-stroke); }
+.diagram svg .t-database { fill: var(--database-stroke); }
+.diagram svg .t-security { fill: var(--security-stroke); }
 .ph {
   aspect-ratio: 4/3; border: 1px solid var(--line); display: grid; place-items: center;
   font-family: var(--mono); font-size: 11px; color: var(--ink3);
@@ -302,6 +361,9 @@ p { text-wrap: pretty; }
 @media (max-width: 1100px) {
   .article-grid { grid-template-columns: 200px minmax(0, 1fr); }
   .side-rail { display: none; }
+  /* 사이드 레일이 사라지면 본문 칼럼이 이미 그 폭을 받으므로 빼낼 자리가 없다.
+     그대로 두면 오른쪽으로 넘친다. */
+  .diagram { margin-right: 0; }
   .docs-shell { grid-template-columns: 220px minmax(0, 1fr); }
   .docs-toc { display: none; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
@@ -324,6 +386,10 @@ p { text-wrap: pretty; }
   .post-row { grid-template-columns: 1fr; gap: 6px; }
   .post-row .mono:last-child { text-align: left; }
   .ad--leaderboard { padding: 0 24px 32px; }
+  /* 좁은 화면에서 810px viewBox 를 다 축소하면 글자가 사라진다. 최소 폭을 주고
+     캔버스만 가로로 스크롤한다 — figure 에 overflow 를 주면 캡션까지 끌려간다. */
+  .diagram-canvas { overflow-x: auto; }
+  .diagram-canvas svg { min-width: 660px; }
   /* 좁은 화면에서는 폭 제한을 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로
      스크롤을 내준다. 안 그러면 칼럼마다 두세 글자만 남는다.
      선택자는 위의 `.prose .col-table` 과 같은 단계여야 min-width 가 덮인다.

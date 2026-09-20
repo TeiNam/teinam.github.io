@@ -1,0 +1,20 @@
+{%- comment -%}
+  archify 로 만든 SVG 다이어그램을 본문에 인라인으로 넣는다.
+
+  사용:
+    {% include diagram.html src="xa-states.svg" caption="XA 트랜잭션 상태 전이" %}
+
+  `<img>` 로 넣지 않는 이유 — archify 의 dual-theme SVG 는 `prefers-color-scheme`(OS 설정)을
+  따르는데 이 사이트는 수동 `[data-theme]` 토글을 쓴다. 그러면 토글을 누른 순간 페이지와
+  다이어그램의 테마가 어긋난다. 인라인으로 넣으면 SVG 안의 CSS 변수가 사이트 변수를 상속해
+  토글 하나로 같이 바뀐다 (변수·클래스 연결은 main.css 의 `.diagram` 블록 참조).
+
+  캔버스를 따로 감싸는 이유 — 좁은 화면에서는 가로 스크롤이 필요한데, figure 에 overflow 를
+  주면 캡션까지 같이 스크롤된다.
+
+  src 는 _includes/diagrams/ 아래 파일명이다. 다시 렌더하면 덮이므로 SVG 를 손으로 고치지 않는다.
+{%- endcomment -%}
+<figure class="diagram">
+  <div class="diagram-canvas">{% include diagrams/{{ include.src }} %}</div>
+  {%- if include.caption %}<figcaption>{{ include.caption }}</figcaption>{% endif %}
+</figure>

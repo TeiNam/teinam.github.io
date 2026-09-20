@@ -92,6 +92,8 @@ XA RECOVER [FORMAT=['RAW'|'SQL']]
 
 각 문장은 트랜잭션의 상태를 바꾸고, 상태가 그다음에 할 수 있는 동작을 결정합니다.
 
+{% include diagram.html src="xa-states.svg" caption="XA 문장과 상태 전이. PREPARED 만 영속 상태이고, IDLE 에서는 PREPARE 를 건너뛰는 1-phase 경로가 열려 있습니다." %}
+
 | 문장 | 상태 전이 |
 | --- | --- |
 | `XA START xid` | `NON-EXISTING` → `ACTIVE` |

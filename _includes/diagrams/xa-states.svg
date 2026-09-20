@@ -1,0 +1,108 @@
+<svg viewBox="0 0 810 640" role="img" aria-label="MariaDB XA 트랜잭션 상태 전이 — XA 문장이 상태를 바꾸고, 상태가 다음에 허용되는 문장을 결정한다 (lifecycle diagram)">
+        <!-- Definitions -->
+        <defs>
+          <marker id="xa-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-default" />
+          </marker>
+          <marker id="xa-arrowhead-emphasis" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-emphasis" />
+          </marker>
+          <marker id="xa-arrowhead-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-security" />
+          </marker>
+          <marker id="xa-arrowhead-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-dashed" />
+          </marker>
+          <pattern id="xa-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" class="c-grid" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <!-- Background Grid -->
+        <rect width="100%" height="100%" fill="url(#xa-grid)" />
+
+        <!-- Lifecycle bands -->
+        <path d="M 72 112 L 738 112" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
+        <text x="72" y="100" class="t-dim" font-size="10" font-weight="600">01 / 상태</text>
+        <path d="M 72 264 L 738 264" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
+        <text x="72" y="252" class="t-dim" font-size="10" font-weight="600">02 / Interruptions + recovery</text>
+        <path d="M 72 436 L 738 436" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
+        <text x="72" y="424" class="t-dim" font-size="10" font-weight="600">03 / 되돌림</text>
+
+        <!-- Primary lifecycle rail -->
+        <path d="M 154 157 L 748 157" class="a-emphasis" stroke-width="2.2" marker-end="url(#xa-arrowhead-emphasis)"/>
+
+        <!-- Transition paths -->
+        <path d="M 153 157 L 189 157" class="a-emphasis" stroke-width="2" marker-end="url(#xa-arrowhead-emphasis)"/>
+        <path d="M 307 157 L 343 157" class="a-emphasis" stroke-width="2" marker-end="url(#xa-arrowhead-emphasis)"/>
+        <path d="M 461 157 L 497 157" class="a-emphasis" stroke-width="2" marker-end="url(#xa-arrowhead-emphasis)"/>
+        <path d="M 615 157 L 651 157" class="a-emphasis" stroke-width="2" marker-end="url(#xa-arrowhead-emphasis)"/>
+        <path d="M 402 126 L 402 108 Q 402 98 412 98 L 700 98 Q 710 98 710 108 L 710 126" class="a-default" stroke-width="1.1" marker-end="url(#xa-arrowhead)"/>
+        <path d="M 402 188 L 402 450" class="a-security" stroke-width="1.1" marker-end="url(#xa-arrowhead-security)"/>
+        <path d="M 556 188 L 556 323.5 Q 556 333.5 546 333.5 L 471 333.5 Q 461 333.5 461 343.5 L 461 479" class="a-security" stroke-width="1.1" marker-end="url(#xa-arrowhead-security)"/>
+
+        <!-- States -->
+        <rect x="35" y="126" width="118" height="62" rx="7" class="c-mask"/>
+        <rect x="35" y="126" width="118" height="62" rx="7" class="c-frontend" stroke-width="1.5"/>
+        <text x="45" y="140" class="t-frontend" font-size="7" font-weight="700">01</text>
+        <text x="94" y="147" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">NON-EXISTING</text>
+        <text x="94" y="163" class="t-muted" font-size="7" text-anchor="middle">트랜잭션 없음</text>
+
+        <rect x="189" y="126" width="118" height="62" rx="7" class="c-mask"/>
+        <rect x="189" y="126" width="118" height="62" rx="7" class="c-backend" stroke-width="1.5"/>
+        <text x="199" y="140" class="t-backend" font-size="7" font-weight="700">02</text>
+        <text x="248" y="147" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">ACTIVE</text>
+        <text x="248" y="163" class="t-muted" font-size="7" text-anchor="middle">문장 실행 중</text>
+
+        <rect x="343" y="126" width="118" height="62" rx="7" class="c-mask"/>
+        <rect x="343" y="126" width="118" height="62" rx="7" class="c-backend" stroke-width="1.5"/>
+        <text x="353" y="140" class="t-backend" font-size="7" font-weight="700">03</text>
+        <text x="402" y="147" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">IDLE</text>
+        <text x="402" y="163" class="t-muted" font-size="7" text-anchor="middle">실행 끝</text>
+        <text x="402" y="177" class="t-backend" font-size="7" text-anchor="middle">분기</text>
+
+        <rect x="497" y="126" width="118" height="62" rx="7" class="c-mask"/>
+        <rect x="497" y="126" width="118" height="62" rx="7" class="c-cloud" stroke-width="1.5"/>
+        <text x="507" y="140" class="t-cloud" font-size="7" font-weight="700">04</text>
+        <text x="556" y="147" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PREPARED</text>
+        <text x="556" y="163" class="t-muted" font-size="7" text-anchor="middle">영속 · 크래시에도 남음</text>
+        <text x="556" y="177" class="t-cloud" font-size="7" text-anchor="middle">10.5+</text>
+
+        <rect x="651" y="126" width="118" height="62" rx="7" class="c-mask"/>
+        <rect x="651" y="126" width="118" height="62" rx="7" class="c-database" stroke-width="1.5"/>
+        <text x="661" y="140" class="t-database" font-size="7" font-weight="700">05</text>
+        <text x="710" y="147" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">COMMITTED</text>
+        <text x="710" y="163" class="t-muted" font-size="7" text-anchor="middle">커밋 확정</text>
+
+        <rect x="343" y="450" width="118" height="58" rx="7" class="c-mask"/>
+        <rect x="343" y="450" width="118" height="58" rx="7" class="c-security" stroke-width="1.5"/>
+        <text x="402" y="471" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">ROLLED BACK</text>
+        <text x="402" y="487" class="t-muted" font-size="7" text-anchor="middle">되돌림 확정</text>
+
+        <!-- Transition labels -->
+        <rect x="145.4" y="111" width="51.2" height="16" rx="4" class="c-mask"/>
+        <text x="171" y="122" class="t-backend" font-size="8" text-anchor="middle">XA START</text>
+        <rect x="304.3" y="111" width="41.400000000000006" height="16" rx="4" class="c-mask"/>
+        <text x="325" y="122" class="t-backend" font-size="8" text-anchor="middle">XA END</text>
+        <rect x="448.5" y="111" width="61" height="16" rx="4" class="c-mask"/>
+        <text x="479" y="122" class="t-backend" font-size="8" text-anchor="middle">XA PREPARE</text>
+        <rect x="604.95" y="111" width="56.1" height="16" rx="4" class="c-mask"/>
+        <text x="633" y="122" class="t-backend" font-size="8" text-anchor="middle">XA COMMIT</text>
+        <rect x="527.95" y="77" width="56.1" height="16" rx="4" class="c-mask"/>
+        <text x="556" y="88" class="t-muted" font-size="8" text-anchor="middle">ONE PHASE</text>
+        <rect x="369.05" y="309" width="65.9" height="16" rx="4" class="c-mask"/>
+        <text x="402" y="320" class="t-security" font-size="8" text-anchor="middle">XA ROLLBACK</text>
+        <rect x="446.05" y="389" width="65.9" height="16" rx="4" class="c-mask"/>
+        <text x="479" y="400" class="t-security" font-size="8" text-anchor="middle">XA ROLLBACK</text>
+
+        <!-- Legend -->
+        <text x="220" y="522" class="t-primary" font-size="10" font-weight="600">Legend</text>
+        <rect x="220" y="534" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
+        <text x="240" y="542" class="t-muted" font-size="7">active state</text>
+        <rect x="325" y="534" width="14" height="9" rx="2" class="c-cloud" stroke-width="1"/>
+        <text x="345" y="542" class="t-muted" font-size="7">waiting</text>
+        <rect x="415" y="534" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
+        <text x="435" y="542" class="t-muted" font-size="7">terminal success</text>
+        <rect x="560" y="534" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
+        <text x="580" y="542" class="t-muted" font-size="7">failure / exit</text>
+      </svg>
