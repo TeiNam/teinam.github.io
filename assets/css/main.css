@@ -201,7 +201,7 @@ p { text-wrap: pretty; }
    `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 그래서 세 칼럼의 폭을
    명시한다 — 다만 이름 칼럼만은 숫자로 못 박지 않는다(아래 참조).
 
-   전체 폭은 문서 영역의 80% (1184px → 947px). `.prose table` 의 width:100% 와
+   전체 폭은 문서 영역의 70% (1184px → 829px). `.prose table` 의 width:100% 와
    `.table-scroll table` 의 min-width:100% 를 둘 다 눌러야 한다 — CSS 에서 min-width 가
    max-width 보다 우선하므로 max-width 만 주면 안 먹는다. 그래서 선택자를
    `.prose .col-table` 로 한 단계 올린다.
@@ -211,14 +211,15 @@ p { text-wrap: pretty; }
    유지된다. 퍼센트나 `ch` 로 재려 하면 안 된다: `ch` 는 셀 자기 글꼴로 계산되는데
    th(mono 10.5px)와 td(sans 14.5px)의 글꼴이 달라 값이 어긋난다.
 
-   그래서 table-layout 을 auto 로 둔다. 표 폭이 80% 로 확정돼 있으므로, 양 끝 칼럼의
-   요구 폭을 먼저 채우고 남는 폭은 auto 인 산문 칼럼이 전부 받는다.
+   그래서 table-layout 을 auto 로 둔다. 표 폭이 확정돼 있으므로, 양 끝 칼럼의 요구 폭을
+   먼저 채우고 남는 폭은 auto 인 산문 칼럼이 전부 받는다. 전체 폭을 조절하면 이름·스택은
+   그대로 있고 한 일 칼럼만 늘거나 줄어든다 — 비율을 다시 계산할 일이 없다.
      이름  nowrap + width:1% → 가장 긴 `oracle-migration-analyzer` 의 실측 폭
      한 일 auto → 남는 폭 전부
      스택  11rem(176px) → mono 12px 로 약 24자. 긴 값은 ` / ` 공백에서 두 줄로 갈린다
    퍼센트를 섞지 않는다 — 합이 100% 를 넘으면 브라우저가 비율대로 눌러 버려서
    어느 칼럼이 얼마를 받는지 예측이 안 된다. */
-.prose .col-table { table-layout: auto; width: 80%; min-width: 0; }
+.prose .col-table { table-layout: auto; width: 70%; min-width: 0; }
 .col-table th:nth-child(1), .col-table td:nth-child(1) { white-space: nowrap; width: 1%; }
 .col-table th:nth-child(2), .col-table td:nth-child(2) { width: auto; }
 .col-table th:nth-child(3), .col-table td:nth-child(3) { width: 11rem; }
@@ -314,7 +315,7 @@ p { text-wrap: pretty; }
   .post-row { grid-template-columns: 1fr; gap: 6px; }
   .post-row .mono:last-child { text-align: left; }
   .ad--leaderboard { padding: 0 24px 32px; }
-  /* 좁은 화면에서는 80% 를 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로
+  /* 좁은 화면에서는 폭 제한을 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로
      스크롤을 내준다. 안 그러면 칼럼마다 두세 글자만 남는다.
      선택자는 위의 `.prose .col-table` 과 같은 단계여야 min-width 가 덮인다.
      이름 칼럼의 nowrap 은 그대로 둔다 — 스크롤되므로 한 줄을 유지하는 편이 낫다. */
