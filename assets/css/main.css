@@ -5,6 +5,11 @@
   --accent: oklch(0.55 0.11 225); --accent-line: oklch(0.55 0.11 225 / 0.35);
   --note-bg: oklch(0.97 0.02 225); --code-bg: oklch(0.985 0.002 250); --code-ink: oklch(0.30 0.01 250);
   --warn-bg: oklch(0.97 0.03 80); --warn-line: oklch(0.60 0.10 70 / 0.4); --warn-ink: oklch(0.48 0.10 70);
+  /* 구문 강조. 본문이 두 색조로 절제돼 있으므로 코드도 세 색조까지만 쓴다.
+     이름·구두점·연산자는 색을 주지 않고 --code-ink 로 둔다 — 토큰의 80% 가 거기 속해
+     색을 주면 블록 전체가 알록달록해진다. */
+  --code-key: oklch(0.45 0.14 290); --code-str: oklch(0.44 0.11 150);
+  --code-num: oklch(0.48 0.11 65); --code-cmt: oklch(0.56 0.015 250);
   --sans: "IBM Plex Sans KR", system-ui, sans-serif;
   --mono: "Spline Sans Mono", ui-monospace, monospace;
   /* 본문 읽기 폭은 50rem(800px, 한글 한 줄 50자). 한국어 본문이 편한 범위(35~50자)의
@@ -22,6 +27,8 @@
   --accent: oklch(0.74 0.11 215); --accent-line: oklch(0.74 0.11 215 / 0.4);
   --note-bg: oklch(0.235 0.03 225); --code-bg: oklch(0.135 0.012 250); --code-ink: oklch(0.87 0.01 250);
   --warn-bg: oklch(0.24 0.035 80); --warn-line: oklch(0.70 0.10 75 / 0.45); --warn-ink: oklch(0.82 0.11 75);
+  --code-key: oklch(0.78 0.13 290); --code-str: oklch(0.76 0.11 150);
+  --code-num: oklch(0.80 0.10 65); --code-cmt: oklch(0.60 0.015 250);
 }
 
 * { box-sizing: border-box; }
@@ -275,6 +282,34 @@ p { text-wrap: pretty; }
    스크롤 컨테이너가 되어 가로 스크롤바가 코드 위에 겹쳐 그려진다.
    스크롤은 패딩을 가진 바깥 div.highlight 가 맡는다. */
 .prose div.highlight pre { border: 0; padding: 0; background: transparent; overflow: visible; }
+/* rouge 토큰. 언어별 클래스가 아니라 언어 공통 토큰이라 이 한 벌로 sql·bash·javascript·
+   rust·python·json·yaml 이 모두 커버된다. `text`/`plaintext` 는 rouge 가 토큰을 만들지
+   않으므로 터미널 출력과 설정 덤프는 단색으로 남는다 — 의도한 동작이다.
+   여기 없는 토큰은 --code-ink 를 물려받는다. 특히 .n·.p·.o·.nx 가 전체의 80% 라
+   색을 주지 않는 편이 낫다. .err 는 rouge 가 렉싱에 실패한 조각이므로 붉게 칠하지 않는다. */
+.prose .highlight .k,  .prose .highlight .kc, .prose .highlight .kd,
+.prose .highlight .kn, .prose .highlight .kp, .prose .highlight .kr,
+.prose .highlight .kt, .prose .highlight .nb, .prose .highlight .no,
+.prose .highlight .bp, .prose .highlight .ow, .prose .highlight .nd
+  { color: var(--code-key); }
+.prose .highlight .s,  .prose .highlight .s1, .prose .highlight .s2,
+.prose .highlight .sb, .prose .highlight .sc, .prose .highlight .sd,
+.prose .highlight .sh, .prose .highlight .si, .prose .highlight .sx,
+.prose .highlight .sr, .prose .highlight .ss, .prose .highlight .se,
+.prose .highlight .dl { color: var(--code-str); }
+.prose .highlight .m,  .prose .highlight .mi, .prose .highlight .mf,
+.prose .highlight .mb, .prose .highlight .mh, .prose .highlight .mo,
+.prose .highlight .il { color: var(--code-num); }
+.prose .highlight .c,  .prose .highlight .c1, .prose .highlight .cm,
+.prose .highlight .cs, .prose .highlight .cp, .prose .highlight .cd,
+.prose .highlight .ch { color: var(--code-cmt); }
+/* 설정·직렬화 형식의 키. ini·yaml·json 에서 키가 구분되면 읽기가 크게 나아진다. */
+.prose .highlight .na, .prose .highlight .nt, .prose .highlight .py,
+.prose .highlight .nl { color: var(--code-key); }
+/* 함수·클래스·네임스페이스는 굵기로만 구분한다 — 네 번째 색조를 들이지 않는다. */
+.prose .highlight .nf, .prose .highlight .nc, .prose .highlight .nn,
+.prose .highlight .fm { font-weight: 500; }
+
 .copy-code {
   position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 10.5px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink3);
