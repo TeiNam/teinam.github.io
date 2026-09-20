@@ -46,6 +46,6 @@ layout: default
       <span class="label">Related</span>
       {%- for r in related %}<a href="{{ r.url | relative_url }}">{{ r.title }}</a>{% endfor %}
     </div>
-    {% include ad.html slot=site.adsense.sidebar variant="sidebar" %}
+    {% include ad.html slot=site.adsense.sidebar variant="sidebar" width=160 height=600 %}
   </aside>
 </div>
