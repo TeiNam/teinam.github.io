@@ -404,12 +404,19 @@ p { text-wrap: pretty; }
    min-height 는 채워지기 전 자리를 잡아 두는 값이다. 실제 렌더 높이와 어긋나면 광고가
    뜰 때 본문이 밀려 CLS 가 올라간다. 실측한 높이(가로형 280 · 세로형 600)에 맞춘다. */
 .ad { display: flex; flex-direction: column; gap: 6px; }
-.ad ins { min-height: 100px; background: var(--line2); }
+/* 배경을 깔지 않는다. 회색을 깔아 두면 창작물이 박스보다 작을 때 남는 폭이 그대로
+   회색 여백으로 보인다. 배경이 없으면 안 채워진 공간은 페이지 배경과 구분되지 않는다.
+   높이는 배너 표준인 90px 에 맞춘다. */
+.ad ins { min-height: 90px; }
+
+/* 가로형 자리는 970px 로 묶는다. AdSense 디스플레이의 가로 창작물 상한이 970(large
+   leaderboard)이라 박스를 그보다 넓게 두면 채울 수 있는 창작물이 없어서 남는다.
+   사이드바는 제외 — 거기는 inline 으로 160×600 이 정해져 있고 width:100% 를 주면 늘어난다. */
+.ad:not(.ad--sidebar) ins { width: 100%; max-width: 970px; margin: 0 auto; }
 
 .ad--leaderboard { padding: 0 48px 40px; }
 /* .ad 가 column flex 라 cross 축 auto 마진은 stretch 를 끈다. 폭을 명시하지 않으면
    비어 있는 ins 의 콘텐츠 폭(0)으로 붕괴한다 — width:100% 를 함께 줘야 한다 */
-.ad--leaderboard ins { width: 100%; margin: 0 auto; }
 
 /* 광고 폭은 그 페이지에서 표·그림이 쓰는 폭에 맞춘다. 본문 산문(50rem·52rem)보다
    넓지만 칼럼을 넘지는 않아서, 이미 칼럼 전체를 쓰는 표·다이어그램과 같은 선에 선다.
