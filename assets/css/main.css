@@ -117,10 +117,14 @@ p { text-wrap: pretty; }
    팔레트는 사이트에 이미 있는 두 색조만 쓴다(accent 파랑 · warn 호박). 상태 다이어그램에
    색을 더 들이면 이 사이트의 담백한 톤이 깨진다. 상태 이름과 부제는 archify 가 언제나
    `t-primary`/`t-muted` 로 찍으므로 어떤 매핑을 줘도 가독성은 유지된다. */
-/* 본문 칼럼은 672px 인데 다이어그램 viewBox 는 810px 이다. 그대로 넣으면 축소율 0.83 으로
-   SVG 안의 7px 레이블이 5.8px 가 되어 안 읽힌다. 오른쪽 사이드 레일 자리(216 + gap 40)까지
-   빼내면 928px · 1.15배가 되어 8px 이상으로 커진다. 왼쪽으로는 빼내지 않는다 — 목차 레일을
-   덮는다. `max-width` 는 none 이어야 한다. 100% 면 컨테이너 폭으로 다시 잘려 빼낸 게 무효가 된다. */
+/* 본문 칼럼은 672px 인데 다이어그램 viewBox 는 980px 이다. 그대로 넣으면 축소율 0.69 로
+   상태 이름이 6.9px, 부제가 4.8px 가 되어 안 읽힌다. 오른쪽 사이드 레일 자리(216 + gap 40)까지
+   빼내면 928px · 축소율 0.95 가 되어 상태 이름 9.5px · 최소 6.6px 로 올라온다(archify 의
+   자체 가독성 기준은 6px). 왼쪽으로는 빼내지 않는다 — 목차 레일을 덮는다.
+   `max-width` 는 none 이어야 한다. 100% 면 컨테이너 폭으로 다시 잘려 빼낸 게 무효가 된다.
+
+   viewBox 를 더 좁히면 안 된다. 폭을 줄이면 종횡비가 세로로 길어져 archify 의 표준 뷰어가
+   1440×900 에서 세로로 넘치고 `visual-check` 가 실패한다. 980×566 이 양쪽을 만족하는 값이다. */
 .diagram { margin: 0 -256px 0 0; max-width: none !important; display: flex; flex-direction: column; gap: 10px; }
 .diagram-canvas { min-width: 0; }
 .diagram svg {
@@ -168,6 +172,18 @@ p { text-wrap: pretty; }
 .diagram svg .t-cloud { fill: var(--cloud-stroke); }
 .diagram svg .t-database { fill: var(--database-stroke); }
 .diagram svg .t-security { fill: var(--security-stroke); }
+.diagram svg .t-messagebus { fill: var(--messagebus-stroke); }
+.diagram svg .a-dashed { stroke: var(--database-stroke); fill: none; stroke-dasharray: 4,4; }
+/* archify 2.17 이 상태 박스에 semantic sigil(작은 기호)을 넣는다. `currentColor` 로 칠하므로
+   `s-*` 가 color 를 정하고 sigil 이 그것을 따른다. */
+.diagram svg .semantic-sigil { fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; opacity: 0.76; pointer-events: none; }
+.diagram svg .semantic-sigil > * { vector-effect: non-scaling-stroke; }
+.diagram svg .semantic-sigil .sigil-fill { fill: currentColor; stroke: none; }
+.diagram svg .s-frontend { color: var(--frontend-stroke); }
+.diagram svg .s-backend { color: var(--backend-stroke); }
+.diagram svg .s-cloud { color: var(--cloud-stroke); }
+.diagram svg .s-database { color: var(--database-stroke); }
+.diagram svg .s-security { color: var(--security-stroke); }
 .ph {
   aspect-ratio: 4/3; border: 1px solid var(--line); display: grid; place-items: center;
   font-family: var(--mono); font-size: 11px; color: var(--ink3);
