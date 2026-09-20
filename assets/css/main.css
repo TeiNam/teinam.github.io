@@ -7,9 +7,12 @@
   --warn-bg: oklch(0.97 0.03 80); --warn-line: oklch(0.60 0.10 70 / 0.4); --warn-ink: oklch(0.48 0.10 70);
   --sans: "IBM Plex Sans KR", system-ui, sans-serif;
   --mono: "Spline Sans Mono", ui-monospace, monospace;
-  /* 본문 텍스트는 80ch(실측 806px, 한글 한 줄 50자)로 묶는다. 한국어 본문이 편한 범위
-     (35~50자)의 상한이라 여기서 더 늘리지 않는다. shell 을 넓혀 남는 폭은 다이어그램·표·
-     코드블록이 받는다 — 좁은 글, 넓은 그림. */
+  /* 본문 읽기 폭은 50rem(800px, 한글 한 줄 50자). 한국어 본문이 편한 범위(35~50자)의
+     상한이라 더 늘리지 않는다. shell 을 넓혀 남는 폭은 다이어그램·표·코드블록이 받는다.
+
+     `ch` 를 쓰면 안 된다 — 요소 자기 font-size 기준이라 같은 80ch 가 h1(42px)에서는
+     2115px, p(16px)에서는 806px 이 된다. 그러면 제목만 칼럼 전체를 쓰고 본문은 좁아
+     오른쪽 끝이 들쭉날쭉해진다. rem 은 루트 기준이라 모든 블록이 같은 폭을 받는다. */
   --shell: 1600px;
 }
 [data-theme="dark"] {
@@ -233,13 +236,16 @@ p { text-wrap: pretty; }
 .toc a:hover { text-decoration: none; color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--accent); }
 /* 읽기 폭 제한은 .prose 가 아니라 자식에 둔다. 표만 가운데 칼럼 전체를 쓰게
-   하려면 부모가 80ch 로 묶고 있으면 안 된다. */
+   하려면 부모가 읽기 폭으로 묶고 있으면 안 된다. */
 .prose { display: flex; flex-direction: column; gap: 22px; }
-.prose > * { max-width: 80ch; min-width: 0; }
-/* 산문만 80ch 로 묶는다. 표·코드·다이어그램은 칼럼 전체를 쓴다 — shell 1600 에서 본문
-   텍스트(806px)와 칼럼(992px) 사이에 186px 여백이 남는데, 긴 SQL 을 그 안에 접어 넣을
-   이유가 없다. `mysql` 클라이언트 출력처럼 가로로 넓은 블록이 특히 이득을 본다. */
-.prose > table, .prose > .table-scroll, .prose > div.highlight, .prose > pre, .prose > figure { max-width: 100%; }
+.prose > * { max-width: 50rem; min-width: 0; }
+/* 산문만 읽기 폭으로 묶는다. 표·코드·다이어그램은 칼럼 전체를 쓴다 — 긴 SQL 이나 `mysql`
+   클라이언트 출력을 800px 안에 접어 넣을 이유가 없다.
+   코드블록의 `.prose` 직계 자식은 rouge 가 감싼 `div.language-<lang>.highlighter-rouge` 다.
+   `.highlight` 는 그 안에 한 겹 더 들어 있어서 직계 선택자로는 안 잡힌다. */
+.prose > table, .prose > .table-scroll, .prose > figure,
+.prose > .highlighter-rouge, .prose > [class*="language-"],
+.prose > div.highlight, .prose > pre { max-width: 100%; }
 .prose > h1 { font-size: clamp(28px, 3.4vw, 42px); line-height: 1.18; }
 .prose h2 { font-size: 26px; margin-top: 12px; scroll-margin-top: 96px; }
 .prose h3 { font-size: 20px; margin-top: 8px; scroll-margin-top: 96px; }
@@ -317,7 +323,7 @@ p { text-wrap: pretty; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
 /* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
-   .prose > * 의 80ch 제한을 그대로 두면 댓글창이 본문보다 좁아 답답하다. */
+   .prose > * 의 읽기 폭 제한을 그대로 두면 댓글창이 본문보다 좁아 답답하다. */
 .comments { max-width: 100% !important; display: flex; flex-direction: column; gap: 14px; padding-top: 26px; border-top: 1px solid var(--line); }
 .comments .giscus, .comments .giscus-frame { width: 100%; }
 .comments noscript { font-size: 14px; color: var(--ink3); }
@@ -344,10 +350,11 @@ p { text-wrap: pretty; }
 
 /* page (about / work) — 단독 산문 페이지 */
 /* 읽기 폭 제한은 컨테이너가 아니라 자식에 둔다 — .prose·.docs-body 와 같은 규칙이다.
-   컨테이너를 82ch 로 묶으면 표가 그 안에 갇혀 칼럼이 짓눌린다. */
+   컨테이너를 읽기 폭으로 묶으면 표가 그 안에 갇혀 칼럼이 짓눌린다. */
 .page-body { padding: 52px 48px 72px; }
-.page-body > * { max-width: 82ch; min-width: 0; }
-.page-body > table, .page-body > .table-scroll { max-width: 100%; }
+.page-body > * { max-width: 52rem; min-width: 0; }
+.page-body > table, .page-body > .table-scroll, .page-body > figure,
+.page-body > .highlighter-rouge, .page-body > [class*="language-"] { max-width: 100%; }
 
 /* archive */
 .archive-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding: 44px 48px 22px; border-bottom: 1px solid var(--line); }
@@ -373,8 +380,10 @@ p { text-wrap: pretty; }
 .nav-group a.is-current { color: var(--ink); border-left-color: var(--accent); }
 /* .prose 와 같은 이유로 폭 제한을 자식에 둔다 (표만 본문보다 넓게). */
 .docs-body { padding: 36px 40px 64px; }
-.docs-body > * { max-width: 82ch; min-width: 0; }
-.docs-body > table, .docs-body > .table-scroll, .docs-body > div.highlight, .docs-body > pre, .docs-body > figure { max-width: 100%; }
+.docs-body > * { max-width: 52rem; min-width: 0; }
+.docs-body > table, .docs-body > .table-scroll, .docs-body > figure,
+.docs-body > .highlighter-rouge, .docs-body > [class*="language-"],
+.docs-body > div.highlight, .docs-body > pre { max-width: 100%; }
 .breadcrumb { font-size: 11px; }
 .docs-toc { border-left: 1px solid var(--line); padding: 36px 20px; }
 .doc-pager { display: flex; justify-content: space-between; gap: 12px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; }
