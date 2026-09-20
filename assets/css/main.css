@@ -407,8 +407,16 @@ p { text-wrap: pretty; }
    비어 있는 ins 의 콘텐츠 폭(0)으로 붕괴한다 — width:100% 를 함께 줘야 한다 */
 .ad--leaderboard ins { width: 100%; max-width: 970px; margin: 0 auto; }
 
-/* 216px 그대로 두면 160×600 이 들어오고 56px 이 남는다. 160 으로 고정해 정확히 맞춘다 */
-.ad--sidebar ins { width: 160px; margin: 0 auto; min-height: 600px; }
+/* 사이드 레일은 160×600 고정 규격을 요청한다(ad.html 이 width·height 를 inline 으로
+   넣는다). 반응형으로 두면 216px 폭에 맞춰 높이를 스스로 정하는데, 예약해 둔 높이보다
+   낮게 채워지면 그 차이가 세로 여백으로 남았다. 고정이면 상자와 광고가 같은 크기다.
+   216px 레일 안에서 가운데로 놓는다 — 폭이 inline 으로 정해져 있어 auto 마진이 듣는다. */
+.ad--sidebar ins { margin: 0 auto; }
+
+/* 채워지지 않은 슬롯은 통째로 접는다. AdSense 가 ins 에 data-ad-status="unfilled" 를
+   붙여 주는데, 그대로 두면 예약한 높이만큼 빈 칸과 'Advertisement' 라벨이 남는다. */
+.ad:has(ins[data-ad-status="unfilled"]) { display: none; }
+.ad ins[data-ad-status="unfilled"] { display: none !important; }
 /* docs·handbook 하단. 좌우 여백은 .docs-body 가 이미 갖고 있다 */
 .ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 

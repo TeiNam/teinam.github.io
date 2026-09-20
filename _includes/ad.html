@@ -1,8 +1,23 @@
+{%- comment %}
+  광고 슬롯. slot 이 비어 있거나 adsense.client 가 없으면 아무것도 렌더하지 않는다.
+
+  width·height 를 함께 주면 그 크기의 고정 규격을 요청한다. 주지 않으면 반응형이다.
+  둘의 차이가 세로 여백을 만든다 — 반응형은 컨테이너 폭에 맞춰 높이를 스스로 정하므로
+  CSS 로 예약한 높이보다 낮게 채워지면 그 차이가 빈 칸으로 남는다. 사이드 레일처럼
+  규격이 정해진 자리는 고정으로 요청해야 상자와 광고 크기가 일치한다.
+{% endcomment -%}
 {%- assign slot = include.slot -%}
 {%- if site.adsense.client != "" and slot != "" -%}
 <div class="ad ad--{{ include.variant | default: 'in-article' }}">
   <span class="label">Advertisement</span>
+  {%- if include.width and include.height %}
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:{{ include.width }}px;height:{{ include.height }}px"
+       data-ad-client="{{ site.adsense.client }}"
+       data-ad-slot="{{ slot }}"></ins>
+  {%- else %}
   <ins class="adsbygoogle" style="display:block" data-ad-client="{{ site.adsense.client }}" data-ad-slot="{{ slot }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  {%- endif %}
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 {%- endif -%}
