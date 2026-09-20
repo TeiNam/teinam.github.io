@@ -159,7 +159,7 @@ p { text-wrap: pretty; }
   --database-fill: var(--note-bg); --database-stroke: var(--accent);
   /* failure + 점선 화살표 */
   --security-fill: transparent; --security-stroke: var(--ink3);
-  --external-fill: transparent; --external-stroke: var(--line);
+  --external-fill: transparent; --external-stroke: var(--ink3);
   /* archify 가 쓰는 나머지 계열도 비워 두지 않는다 */
   --messagebus-fill: var(--line2); --messagebus-stroke: var(--ink2);
 }
@@ -173,6 +173,8 @@ p { text-wrap: pretty; }
 .diagram svg .c-cloud { fill: var(--cloud-fill); stroke: var(--cloud-stroke); }
 .diagram svg .c-database { fill: var(--database-fill); stroke: var(--database-stroke); }
 .diagram svg .c-security { fill: var(--security-fill); stroke: var(--security-stroke); }
+.diagram svg .c-external { fill: var(--external-fill); stroke: var(--external-stroke); }
+.diagram svg .c-messagebus { fill: var(--messagebus-fill); stroke: var(--messagebus-stroke); }
 /* 경계 박스. architecture 의 region·security-group 과 workflow·lifecycle 의 lane 이 쓴다.
    lane 은 archify 가 rgba 로 하드코딩해 두었으므로 사이트 변수로 갈아 준다. */
 .diagram svg .c-region { fill: transparent; stroke: var(--warn-ink); stroke-dasharray: 4,4; }
@@ -194,6 +196,7 @@ p { text-wrap: pretty; }
 .diagram svg .t-database { fill: var(--database-stroke); }
 .diagram svg .t-security { fill: var(--security-stroke); }
 .diagram svg .t-messagebus { fill: var(--messagebus-stroke); }
+.diagram svg .t-external { fill: var(--external-stroke); }
 .diagram svg .a-dashed { stroke: var(--database-stroke); fill: none; stroke-dasharray: 4,4; }
 /* archify 2.17 이 상태 박스에 semantic sigil(작은 기호)을 넣는다. `currentColor` 로 칠하므로
    `s-*` 가 color 를 정하고 sigil 이 그것을 따른다. */
@@ -205,6 +208,8 @@ p { text-wrap: pretty; }
 .diagram svg .s-cloud { color: var(--cloud-stroke); }
 .diagram svg .s-database { color: var(--database-stroke); }
 .diagram svg .s-security { color: var(--security-stroke); }
+.diagram svg .s-external { color: var(--external-stroke); }
+.diagram svg .s-messagebus { color: var(--messagebus-stroke); }
 .ph {
   aspect-ratio: 4/3; border: 1px solid var(--line); display: grid; place-items: center;
   font-family: var(--mono); font-size: 11px; color: var(--ink3);
