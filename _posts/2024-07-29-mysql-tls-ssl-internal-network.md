@@ -151,6 +151,10 @@ tls_version=TLSv1.2,TLSv1.3
 
 문서는 기본값 `PREFERRED`가 서버 신원을 확인하지 않는다는 점을 짚고, 정교한 중간자 공격을 막으려면 `VERIFY_CA`나 `VERIFY_IDENTITY`를 쓰라고 권합니다. 두 값이 기본이 아닌 이유는 모든 클라이언트에 CA 인증서를 안정적으로 배포하지 않으면 가용성 문제가 생기기 때문입니다. 서버가 자동 생성한 자기서명 인증서에는 Common Name에 서버 이름이 없어 `VERIFY_IDENTITY`가 동작하지 않으므로, 1절의 자동 발견으로 켜진 TLS를 그대로 두면 신원 검증까지는 가지 못합니다.
 
+{% include diagram.html src="tls-enforcement.svg" caption="세 강제 지점과 각 지점에서 갈라지는 약한 결과" %}
+
+세 지점을 다 지나야 암호화 연결입니다. 하나만 켜 두면 아래 칸의 결과 가운데 하나로 떨어지고, 그중 평문 연결은 오류 없이 조용히 맺힙니다.
+
 암호군은 프로토콜별로 변수가 다릅니다. TLSv1.2는 서버 `ssl_cipher`와 클라이언트 `--ssl-cipher`, TLSv1.3은 서버 `tls_ciphersuites`와 클라이언트 `--tls-ciphersuites`입니다. `tls_ciphersuites`를 설정하지 않으면 기본값 `NULL`로 기본 집합을 허용하고, 빈 문자열로 두면 활성 암호군이 없어 암호화 연결을 맺을 수 없습니다.
 
 대체로 기본값을 그대로 쓰는 편이 안전합니다. 8.4가 TLSv1.2에 기본으로 넘기는 암호군은 ECDHE·DHE 키 교환과 GCM·CCM·CHACHA20-POLY1305 조합뿐입니다. 순방향 비밀성과 AEAD 모드를 갖춘 것만 켜 둔 셈입니다. 반대로 `aNULL`·`eNULL`·`EXPORT`·`LOW`·`MD5`·`DES`·`RC2`·`RC4`·`PSK`·`SSLv3`은 영구 제한입니다. `ssl_cert`에 지정한 인증서가 제한된 암호군을 쓰면 서버는 암호화 연결 지원을 끈 상태로 기동합니다.

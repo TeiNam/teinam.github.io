@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "MySQL 접속이 통과하는 TLS 강제 지점",
+    "quality_profile": "showcase",
+    "viewBox": [900, 528],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": { "label": "클라이언트", "visible": true },
+        "security": { "label": "서버·계정 강제", "visible": true },
+        "backend": { "label": "핸드셰이크", "visible": true },
+        "cloud": { "label": "약한 결과", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "client", "label": "클라이언트" },
+    { "id": "server", "label": "서버·계정 강제" },
+    { "id": "weak", "label": "거절과 평문" }
+  ],
+  "mainPath": ["attempt", "transport", "account", "handshake", "encrypted"],
+  "nodes": [
+    {
+      "id": "attempt",
+      "lane": "client",
+      "col": 0,
+      "type": "frontend",
+      "label": "접속 시도",
+      "sublabel": "--ssl-mode"
+    },
+    {
+      "id": "encrypted",
+      "lane": "client",
+      "col": 5,
+      "type": "frontend",
+      "label": "암호화 연결",
+      "sublabel": "VERIFY_CA 이상"
+    },
+    {
+      "id": "transport",
+      "lane": "server",
+      "col": 1,
+      "type": "security",
+      "label": "전송 방식",
+      "sublabel": "require_secure_transport",
+      "width": 104
+    },
+    {
+      "id": "account",
+      "lane": "server",
+      "col": 3,
+      "type": "security",
+      "label": "계정 요구",
+      "sublabel": "REQUIRE SSL"
+    },
+    {
+      "id": "handshake",
+      "lane": "server",
+      "col": 5,
+      "type": "backend",
+      "label": "핸드셰이크",
+      "sublabel": "tls_version"
+    },
+    {
+      "id": "denied_tcp",
+      "lane": "weak",
+      "col": 1,
+      "type": "cloud",
+      "label": "전송 거절",
+      "sublabel": "소켓은 통과한다"
+    },
+    {
+      "id": "denied_socket",
+      "lane": "weak",
+      "col": 3,
+      "type": "cloud",
+      "label": "계정 거절",
+      "sublabel": "소켓도 막힌다"
+    },
+    {
+      "id": "plaintext",
+      "lane": "weak",
+      "col": 5,
+      "type": "cloud",
+      "label": "평문 연결",
+      "sublabel": "PREFERRED 로 내려감"
+    }
+  ],
+  "edges": [
+    { "from": "attempt", "to": "transport", "variant": "default" },
+    { "from": "transport", "to": "denied_tcp", "label": "암호화 없음", "variant": "default", "role": "branch" },
+    { "from": "transport", "to": "account", "variant": "emphasis" },
+    { "from": "account", "to": "denied_socket", "label": "소켓 접속", "variant": "default", "role": "branch" },
+    { "from": "account", "to": "handshake", "variant": "emphasis" },
+    { "from": "handshake", "to": "plaintext", "label": "핸드셰이크 실패", "variant": "default", "role": "branch" },
+    { "from": "handshake", "to": "encrypted", "label": "REQUIRED 이상", "variant": "emphasis" }
+  ]
+}
