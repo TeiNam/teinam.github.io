@@ -3,7 +3,7 @@ date: 2024-07-28 14:56:08 +0900
 title: "쿠버네티스와 EKS에서의 데이터베이스 영속성: PV, StorageClass, EBS 비교 분석"
 category: database
 excerpt: "EKS 위 작은 데이터베이스에 RDS 를 붙이기 아까울 때, PersistentVolume·StorageClass·Amazon EBS 로 컨테이너 데이터를 남기는 방법을 비용·백업·가용성 기준으로 비교합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## RDS 사용하기는 아깝고, EKS 올리기엔 불안한 컨테이너 데이터베이스

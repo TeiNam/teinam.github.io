@@ -3,7 +3,7 @@ date: 2019-03-03 00:56:49 +0900
 title: "PostgreSQL 테이블스페이스 및 오브젝트 사용량 확인"
 category: postgresql
 excerpt: "PostgreSQL에서 테이블스페이스·데이터베이스·테이블·인덱스의 디스크 사용량을 조회하는 시스템 함수를 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 PostgreSQL은 데이터베이스 오브젝트의 디스크 사용량을 조회하는 시스템 함수를 제공합니다. 모든 함수는 바이트 단위로 반환하며, `pg_size_pretty()`로 사람이 읽기 쉬운 형식(KB, MB, GB)으로 변환할 수 있습니다.

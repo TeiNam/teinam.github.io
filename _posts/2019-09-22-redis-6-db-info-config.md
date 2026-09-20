@@ -3,7 +3,7 @@ date: 2019-09-22 22:52:10 +0900
 title: "Redis #.6 Redis DB 정보 조회 및 환경설정"
 category: redis
 excerpt: "Redis 8.10 기준으로 INFO 섹션과 CONFIG GET·CONFIG SET 사용법, redis.conf 의 주요 설정 기본값을 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## INFO 명령으로 서버 상태 조회

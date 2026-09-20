@@ -3,7 +3,7 @@ date: 2020-09-03 11:58:24 +0900
 title: "MongoDB 시작하기"
 category: mongodb
 excerpt: "MongoDB의 데이터베이스와 컬렉션을 생성·조회·삭제하는 기본 명령을 정리합니다. mongosh 셸에서 사용하는 use, show dbs, db.createCollection(), db.dropDatabase() 명령과 데이터베이스 상태 조회 방법을 다룹니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## 데이터베이스 생성

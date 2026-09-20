@@ -3,7 +3,7 @@ title: "4. 제약조건 · 인덱스 네이밍 규칙"
 permalink: /docs/database/naming/constraints-indexes/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 제약조건·인덱스 명명과 유일성 범위"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 5
 nav_title: "제약·인덱스"

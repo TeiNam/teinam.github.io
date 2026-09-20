@@ -3,7 +3,7 @@ title: "부칙 B. 공공시스템운영기관 특례"
 permalink: /docs/database/ops/annex-public-system/
 breadcrumb: "Docs / Database / 표준 데이터베이스 운영관리 지침서"
 description: "운영관리 지침서 — 공공시스템운영기관 특례"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: ops
 order: 4
 nav_title: "부칙 B. 공공시스템"

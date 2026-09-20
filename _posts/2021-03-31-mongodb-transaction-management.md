@@ -3,7 +3,7 @@ date: 2021-03-31 15:22:57 +0900
 title: "MongoDB Transaction Management"
 category: mongodb
 excerpt: "MongoDB는 여러 연산과 컬렉션, 데이터베이스, 도큐먼트, 샤드에 걸친 ACID 트랜잭션을 지원합니다. 트랜잭션의 격리와 내구성을 결정하는 Read Concern, Write Concern, Read Preference를 정리했습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## MongoDB의 트랜잭션

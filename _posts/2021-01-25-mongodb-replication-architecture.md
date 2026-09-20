@@ -3,7 +3,7 @@ date: 2021-01-25 23:10:35 +0900
 title: "MongoDB 복제 아키텍처"
 category: mongodb
 excerpt: "MongoDB는 Secondary가 Primary에서 OpLog를 가져와 재생하여 데이터를 동기화합니다. 레플리카 셋은 최대 50개 멤버를 지원하며, 이 중 7개까지 투표권을 가질 수 있습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MongoDB는 Secondary가 Primary에서 OpLog를 가져온 다음 OpLog를 재생해서 데이터를 동기화합니다. Secondary 멤버는 Primary뿐만 아니라 다른 Secondary 멤버의 OpLog를 재생할 수도 있습니다.

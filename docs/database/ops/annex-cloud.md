@@ -3,7 +3,7 @@ title: "부칙 A. 클라우드 환경 적용"
 permalink: /docs/database/ops/annex-cloud/
 breadcrumb: "Docs / Database / 표준 데이터베이스 운영관리 지침서"
 description: "운영관리 지침서 — 클라우드 환경 적용"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: ops
 order: 3
 nav_title: "부칙 A. 클라우드"

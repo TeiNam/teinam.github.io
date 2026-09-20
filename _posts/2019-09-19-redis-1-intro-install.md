@@ -3,7 +3,7 @@ date: 2019-09-19 15:29:08 +0900
 title: "Redis #.1 소개 및 설치"
 category: redis
 excerpt: "Redis 는 모든 데이터를 메모리에 두는 인메모리 Key-Value 저장소로, 복제와 RDB·AOF 영속성을 제공하며 캐시·메시지 큐·세션 저장소로 널리 쓰입니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## Redis 란?

@@ -3,7 +3,7 @@ date: 2019-02-24 15:51:10 +0900
 title: "PostgreSQL DB 생성 및 삭제"
 category: postgresql
 excerpt: "PostgreSQL에서 데이터베이스를 생성·삭제하는 방법입니다. SQL 명령(CREATE DATABASE, DROP DATABASE)과 셸 명령(createdb, dropdb)을 모두 사용할 수 있습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 PostgreSQL을 관리하는 방법은 크게 두 가지입니다.

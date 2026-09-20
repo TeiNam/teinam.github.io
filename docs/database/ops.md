@@ -3,7 +3,7 @@ title: "표준 데이터베이스 운영관리 지침서"
 permalink: /docs/database/ops/
 breadcrumb: "Docs / Database"
 description: "데이터베이스 운영 관리 지침. 본문은 환경 무관 요구사항, 부칙 A 는 클라우드, 부칙 B 는 공공시스템 특례"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: ops
 order: 0
 nav_title: "개요"

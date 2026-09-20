@@ -3,7 +3,7 @@ title: "8. JDBC Driver / Connector 선택"
 permalink: /docs/database/mysql-for-developers/jdbc-drivers/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — JDBC 드라이버 선택과 커넥션 풀 설정"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 8
 nav_title: "JDBC 드라이버"

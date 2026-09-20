@@ -3,7 +3,7 @@ date: 2021-03-04 02:18:09 +0900
 title: "MongoDB의 읽기 연산"
 category: mongodb
 excerpt: "읽기 연산은 쿼리로 도큐먼트를 돌려주는 핵심 기능입니다. find() 의 조건과 프로젝션, 커서 옵션, readConcern 과 readPreference 를 MongoDB 8.0 문서 기준으로 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 읽기 연산은 쿼리로 데이터를 돌려주는 핵심 기능이고, 하나의 쿼리는 하나의 컬렉션에서 도큐먼트를 고릅니다. 어떤 도큐먼트를 돌려줄지 가리는 기준(criteria) 또는 조건(conditions)을 쿼리에 지정할 수 있고, 돌려받을 필드를 고르는 프로젝션(projection)도 함께 쓸 수 있습니다. 프로젝션으로 필요한 필드만 남기면 서버가 네트워크로 내보내는 데이터가 줄어듭니다.

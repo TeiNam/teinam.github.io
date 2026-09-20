@@ -3,7 +3,7 @@ date: 2019-06-06 23:22:31 +0900
 title: "MariaDB의 InnoDB 엔진, XtraDB엔진"
 category: mysql
 excerpt: "MariaDB 는 10.1 까지 XtraDB 를 기본 엔진으로 썼고 10.2 부터 InnoDB 로 돌아왔습니다. 그 배경과 InnoDB 설정들이 현행 MariaDB 에서 어떻게 바뀌었는지 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MariaDB 는 5.5 부터 10.1 까지 Percona 의 XtraDB 를 기본 스토리지 엔진으로 썼고, 10.2 부터 다시 InnoDB 로 돌아왔습니다. 지금은 XtraDB 가 표준 배포에 포함되지 않습니다. 이 글은 InnoDB 가 MySQL 5.5 에서 5.6 으로 넘어가며 얻은 기능들을 정리하고, 그 기능들이 현행 MariaDB 에서 어떤 설정으로 남았는지, XtraDB 가 왜 물러났는지를 짚습니다.

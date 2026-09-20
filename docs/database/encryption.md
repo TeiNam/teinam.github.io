@@ -3,7 +3,7 @@ title: "데이터 암호화"
 permalink: /docs/database/encryption/
 breadcrumb: "Docs / Database"
 description: "개인정보 암호화 법정 의무와 DB 적용 방식. 기준 시점 안전성 확보조치 기준 고시 제2026-9호"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 > **INFO** — 조문 좌표와 기술 선택지를 정리한 참조 문서다

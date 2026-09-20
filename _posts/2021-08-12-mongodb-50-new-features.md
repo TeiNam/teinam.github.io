@@ -3,7 +3,7 @@ date: 2021-08-12 15:07:59 +0900
 title: "[번역] MongoDB 5.0 New Features"
 category: mongodb
 excerpt: "MongoDB 5.0이 2021년 7월 MongoDB.live 이벤트에서 출시됐습니다. 네이티브 시계열 컬렉션, 라이브 리샤딩, Versioned API, 윈도 함수 등이 추가됐습니다. 5.0은 2024년 10월 지원이 종료됐고, 2026년 9월 기준 현행 버전은 8.0입니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 2021년 7월 MongoDB.live 이벤트에서 MongoDB 5.0이 출시됐습니다. 네이티브 시계열 컬렉션, MongoDB Atlas Serverless 데이터베이스, Atlas Search 개선, Atlas Data Lake 통합, 모바일 데이터 솔루션 Realm 개선이 포함됐습니다. 5.0은 개발자 생산성 향상과 하이브리드 환경 배포, 보안 및 개인정보 보호 관리 기능을 강화했습니다.

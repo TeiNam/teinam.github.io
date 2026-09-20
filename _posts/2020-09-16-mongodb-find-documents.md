@@ -3,7 +3,7 @@ date: 2020-09-16 15:12:17 +0900
 title: "MongoDB Document 조회하기"
 category: mongodb
 excerpt: "컬렉션에 넣은 도큐먼트를 꺼내오는 find() 명령을 mongosh 기준으로 살펴봅니다. 쿼리 연산자, 프로젝션, 커서까지 순서대로 다룹니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 컬렉션에 도큐먼트를 넣었다면 필요할 때 다시 꺼내올 수 있어야 합니다. 조회에 쓰는 명령이 `find()` 입니다.

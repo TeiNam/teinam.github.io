@@ -3,7 +3,7 @@ date: 2021-03-30 10:02:09 +0900
 title: "MongoDB 보안 인증을 설정 했을때 Key 파일 생성 및 적용 방법"
 category: mongodb
 excerpt: "MongoDB 레플리카 셋과 샤드 클러스터에서 멤버 간 내부 인증에 사용하는 keyfile을 생성하고 적용하는 방법을 정리합니다. openssl로 키를 생성하고 권한을 설정한 뒤 각 노드에 배포하는 절차를 다룹니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## 개요

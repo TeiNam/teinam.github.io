@@ -3,7 +3,7 @@ title: "데이터베이스 네이밍 규칙"
 permalink: /docs/database/naming/
 breadcrumb: "Docs / Database"
 description: "MySQL 8.4·9.7 과 PostgreSQL 18 기준 식별자·제약·인덱스 네이밍 규칙과 데이터 타입 정의"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 0
 nav_title: "개요"

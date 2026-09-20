@@ -3,7 +3,7 @@ date: 2021-02-02 02:54:27 +0900
 title: "MongoDB의 데이터베이스, 컬렉션, 도큐먼트"
 category: mongodb
 excerpt: "MongoDB의 데이터베이스 > 컬렉션 > 도큐먼트 구조와 mongosh 기준 생성·조회 방법, 이름과 크기 제약을 MongoDB 8.0 문서 기준으로 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 데이터베이스는 컬렉션과 인덱스의 모음이며, 동시에 네임스페이스입니다.

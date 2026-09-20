@@ -3,7 +3,7 @@ title: "버전과 현황을 확인하는 경로"
 permalink: /docs/database/choosing-a-database/checking-versions/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 버전·현황 확인 경로"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 9
 nav_title: "현황 확인 경로"

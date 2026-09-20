@@ -3,6 +3,10 @@ layout: page
 title: About
 permalink: /about/
 subtitle: Database와 A.I 그리고 그 사이의 Data Pipeline 을 다루는 teinam 의 기술 노트입니다.
+# jekyll-seo-tag 의 homepage_or_about? 는 about 을 홈과 같이 묶어 WebSite 로 찍는다.
+# 그러면 WebSite 엔터티가 두 URL 에 생겨 어느 쪽이 사이트인지 흐려진다.
+seo:
+  type: AboutPage
 ---
 
 <!-- 소개 한두 문단을 여기에 채우세요. 하는 일, 다뤄 온 스택, 이 블로그를 쓰는 이유. -->

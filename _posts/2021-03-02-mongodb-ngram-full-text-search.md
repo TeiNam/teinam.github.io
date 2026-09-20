@@ -3,7 +3,7 @@ date: 2021-03-02 10:18:01 +0900
 title: "MongoDB에서 n-gram Full text Search 이용하기"
 category: mongodb
 excerpt: "MongoDB Community Edition의 text 인덱스는 한국어를 지원하지 않습니다. Percona Server for MongoDB는 n-gram 기반 전문 검색을 추가 기능으로 제공하여 한국어 검색을 지원합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## MongoDB의 한국어 전문 검색 문제

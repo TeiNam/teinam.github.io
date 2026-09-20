@@ -3,7 +3,7 @@ title: "1. 공통 규칙"
 permalink: /docs/database/naming/common-rules/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 공통 규칙"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 2
 nav_title: "공통 규칙"

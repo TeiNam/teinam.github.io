@@ -3,7 +3,7 @@ date: 2020-09-04 09:33:55 +0900
 title: "MongoDB Document 생성하기"
 category: mongodb
 excerpt: "MongoDB의 도큐먼트와 생성 방법을 알아보는 포스팅입니다. 도큐먼트는 속성의 이름과 값으로 이루어진 쌍의 집합이며, MongoDB는 이러한 도큐먼트를 컬렉션에 저장합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MongoDB의 도큐먼트와 생성 방법을 알아보는 포스팅입니다. 이 글의 예제는 MongoDB 8.0 기준이며, mongosh 셸에서 실행합니다.

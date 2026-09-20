@@ -3,7 +3,7 @@ date: 2019-02-18 21:14:00 +0900
 title: "주기적인 유지관리 Vacuuming #.2 배큠이 dead tuple 을 지우지 못할 때"
 category: postgresql
 excerpt: "운영에서 배큠이 문제가 되는 순간은 \"배큠이 아예 안 돌았다\"보다 \"배큠이 돌았는데 아무것도 지우지 못했다\" 또는 \"배큠이 시작됐는데 끝나지 않는다\"인 경우가 많습니다. 세 경우를 구분하려면 autovacuum 이 무엇을 보고 테이블을 고르는지부터 봐야 합니다. PostgreSQL 1…"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "2 / 4"
 ---

@@ -3,7 +3,7 @@ title: "2. 데이터 타입 선택"
 permalink: /docs/database/mysql-for-developers/data-types/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 정수·문자열·날짜 타입 선택과 저장 크기"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 2
 nav_title: "데이터 타입"

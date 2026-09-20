@@ -13,6 +13,15 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ '/apple-touch-icon.png' | relative_url }}">
 <link rel="manifest" href="{{ '/site.webmanifest' | relative_url }}">
 <meta name="application-name" content="{{ site.title }}">
+{%- comment %} seo-tag 는 article:published_time 까지만 내보낸다. 갱신 시각과 섹션은
+     따로 붙인다 — published_time 을 여기서 다시 쓰면 같은 태그가 두 번 나온다 {% endcomment %}
+{%- if page.layout == 'post' %}
+{%- if page.last_modified_at %}
+<meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}">
+{%- endif %}
+{%- if page.category %}<meta property="article:section" content="{{ page.category }}">{% endif %}
+{%- endif %}
+{%- include structured-data.html -%}
 {%- feed_meta -%}
 <script>
   (function () {

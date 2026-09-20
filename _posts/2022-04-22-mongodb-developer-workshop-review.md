@@ -3,7 +3,7 @@ date: 2022-04-22 23:29:18 +0900
 title: "MongoDB Developer Workshop 후기 (with Google Cloud)"
 category: mongodb
 excerpt: "MongoDB Korea의 오프라인 핸즈온 세미나 후기입니다. 게임업계 MongoDB 레퍼런스와 BigQuery 데이터 파이프라인, Atlas 핸즈온을 경험했습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 오랜만에 포스팅입니다. 정말 오랜만이네요. 이직하고 나서 딱히 쓸 글이 없었습니다. 다들 저보다 잘하시고, 연차는 쌓여가는데 초급 포스팅만 계속 하기도 좀 그랬습니다.

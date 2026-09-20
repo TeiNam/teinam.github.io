@@ -3,7 +3,7 @@ date: 2021-07-04 10:53:37 +0900
 title: "WiredTiger의 Hazard Pointer"
 category: mongodb
 excerpt: "WiredTiger 가 캐시 페이지를 이빅션 대상에서 빼는 판단에 쓰는 Hazard Pointer 의 자료 구조와 통계 이름을 현행 소스 기준으로 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 WiredTiger 는 캐시에 올라온 페이지를 지금 내려도 되는지 판단하는 데 Hazard Pointer 를 씁니다. 어떤 스레드가 그 페이지를 아직 보고 있으면 이빅션 스레드는 그 페이지를 건너뜁니다. 이 글에서는 그 판단이 어떤 자료 구조로 이뤄지는지, 그리고 결과를 어떤 통계로 볼 수 있는지 정리합니다.

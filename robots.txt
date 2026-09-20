@@ -1,0 +1,60 @@
+---
+permalink: /robots.txt
+layout: null
+sitemap: false
+---
+# {{ site.title }} — {{ site.url }}
+#
+# 검색 크롤러와 AI 크롤러 모두 허용한다. User-agent: * 만으로도 결과는 같지만,
+# 개별 봇을 적어 두면 의도가 드러나고 나중에 어느 한 곳만 막을 지점이 생긴다.
+# 봇 이름을 따로 선언하면 그 봇에게는 * 그룹이 아니라 이 그룹이 적용된다.
+
+User-agent: *
+Allow: /
+
+# 검색 색인
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Yeti
+Allow: /
+
+# AI 검색·인용·학습. Google-Extended 는 Googlebot 과 별개로 Gemini 학습 여부를
+# 가르는 토큰이라 따로 적어야 한다.
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: {{ '/sitemap.xml' | absolute_url }}

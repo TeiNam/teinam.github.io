@@ -3,7 +3,7 @@ date: 2024-07-29 21:00:01 +0900
 title: "MySQL의 TLS/SSL: 내부 네트워크에서 정말 필요할까?"
 category: mysql
 excerpt: "AWS VPC나 사내 내부망처럼 접근이 통제된 구간에서도 MySQL 연결에 TLS를 걸어야 하는지를 법령 조문, 위협모델, 실제 설정값으로 나눠 판단합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## MySQL의 암호화 통신

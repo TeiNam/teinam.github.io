@@ -3,7 +3,7 @@ date: 2019-06-10 01:03:48 +0900
 title: "MySQL 아키텍쳐"
 category: mysql
 excerpt: "MySQL 서버를 MySQL 엔진과 플러그인 스토리지 엔진으로 나눠, 현행 8.4 LTS 기준으로 각 계층의 구성요소와 스레드·메모리 구조를 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MySQL 서버는 크게 MySQL 엔진과 스토리지 엔진으로 구성됩니다. 아래 구성요소 이름과 설정값은 현행 LTS 인 MySQL 8.4 기준이고, 8.0 은 2026년 4월부터 Oracle Sustaining Support 단계라 새 시스템의 기준으로 삼기 어렵습니다.

@@ -3,7 +3,7 @@ date: 2019-08-09 00:30:17 +0900
 title: "Sysbench : MariaDB, MySQL, PostgreSQL Benchmark Tool."
 category: database
 excerpt: "sysbench 는 MySQL·MariaDB·PostgreSQL 과 CPU·메모리·파일 I/O 성능을 함께 측정하는 벤치마크 도구이고, 최신 릴리스는 2020년 4월에 나온 1.0.20 입니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## Sysbench란?

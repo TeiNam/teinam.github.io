@@ -3,7 +3,7 @@ title: "MySQL for Developers"
 permalink: /docs/database/mysql-for-developers/
 breadcrumb: "Docs / Database"
 description: "MySQL 개발에서 지킬 핵심 원칙과 안티패턴 — 정규화·데이터 타입·콜레이션·인덱스·트랜잭션과 락·드라이버 선택·릴리스 정책"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 0
 nav_title: "개요"

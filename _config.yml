@@ -55,6 +55,12 @@ giscus:
   category_id: ''
 
 defaults:
+  # 공유 카드 기본 이미지. jekyll-seo-tag 의 ImageDrop 은 page["image"] 만 읽으므로
+  # 최상위 site.image 가 아니라 defaults 로 넣어야 모든 페이지에 붙는다. 이미지가
+  # 생기면 twitter:card 도 summary → summary_large_image 로 자동 승급된다.
+  # 글마다 다른 카드를 쓰려면 그 글 프런트매터에 image: 를 적으면 이 값을 덮는다.
+  - scope: { path: "" }
+    values: { image: /assets/img/og-default.png }
   - scope: { path: "", type: posts }
     values: { layout: post }
   - scope: { path: "docs" }

@@ -3,7 +3,7 @@ title: "1. 데이터 정규화 필수"
 permalink: /docs/database/mysql-for-developers/normalization/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 정규화 수준과 반정규화 판단"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 1
 nav_title: "정규화"

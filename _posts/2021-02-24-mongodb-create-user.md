@@ -3,7 +3,7 @@ date: 2021-02-24 11:43:16 +0900
 title: "MongoDB의 일반 계정 생성"
 category: mongodb
 excerpt: "admin 계정을 활성화한 MongoDB에서 용도에 맞는 일반 계정과 사용자 정의 역할을 mongosh로 만드는 방법을 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 > **전제조건:** MongoDB 8.0 이상 설치 완료, mongod 구동 중, admin 사용자 생성과 접근 제어 활성화 완료. 접근 제어를 켜는 절차는 공식 문서의 [Enable Access Control](https://www.mongodb.com/docs/manual/tutorial/enable-authentication/ "Enable Access Control on Self-Managed Deployments")에 있습니다. 아래 예제는 모두 `mongosh`에서 실행합니다.

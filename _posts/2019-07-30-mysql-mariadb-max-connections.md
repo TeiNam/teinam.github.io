@@ -3,7 +3,7 @@ date: 2019-07-30 11:58:33 +0900
 title: "MariaDB, MySQL max_connections 값 변경"
 category: mysql
 excerpt: "MySQL/MariaDB의 동시 접속 상한인 max_connections를 올리려면 데이터베이스 설정뿐 아니라 OS의 파일 디스크립터 한도도 함께 조정해야 합니다. systemd 환경에서는 서비스 유닛의 LimitNOFILE를 설정합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 > **NOTE** — 이 글은 MySQL 8.4 LTS 및 MariaDB 기준으로 작성되었습니다. systemd로 관리되는 환경(대부분의 최신 Linux 배포판)을 기준으로 합니다.

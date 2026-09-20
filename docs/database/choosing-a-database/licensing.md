@@ -3,7 +3,7 @@ title: "라이선스가 선택을 뒤집을 때"
 permalink: /docs/database/choosing-a-database/licensing/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 라이선스 지형과 규모 상한"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 5
 nav_title: "라이선스"

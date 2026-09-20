@@ -3,7 +3,7 @@ date: 2019-06-10 13:57:42 +0900
 title: "MySQL 쿼리 실행 구조"
 category: mysql
 excerpt: "MySQL 쿼리는 파서 → 전처리기 → 옵티마이저 → 실행 엔진 → 스토리지 엔진 순서로 처리됩니다. 옵티마이저는 비용 기반으로 최적의 실행 계획을 선택하며, MySQL 8.0 이후 히스토그램과 해시 조인 같은 기능이 추가되었습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 > **NOTE** — 이 글은 MySQL 8.4 LTS 및 9.7 LTS 기준으로 작성되었습니다. MySQL 8.0은 2026년 4월 21일부로 Oracle Sustaining Support로 전환되었습니다. **쿼리 캐시는 MySQL 8.0에서 제거되었으므로** 이 문서에서 다루지 않습니다.

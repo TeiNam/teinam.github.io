@@ -3,7 +3,7 @@ date: 2021-11-23 14:54:56 +0900
 title: "Redis 요약 정리"
 category: redis
 excerpt: "Redis 시리즈를 마무리하며 라이선스와 자료형 변화, Sentinel과 Cluster의 차이, 영속성 메커니즘, 운영 시 주의할 점을 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 Redis 시리즈를 마무리하며 핵심 내용을 정리합니다. 라이선스와 자료형의 변화, Sentinel과 Cluster의 차이, 데이터 영속성 메커니즘, 그리고 운영 시 주의할 포인트들을 빠르게 훑을 수 있도록 구성했습니다.

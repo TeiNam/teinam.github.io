@@ -3,7 +3,7 @@ date: 2019-09-22 22:17:59 +0900
 title: "Redis #.5 Publish & Subscribe"
 category: redis
 excerpt: "Redis의 Pub/Sub는 채널 기반 메시징 시스템입니다. 구독자가 채널을 구독하면, 발행자가 메시지를 보낼 때마다 실시간으로 받습니다. 메시지는 영속되지 않으므로 알림이나 이벤트 전파에 적합합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## Publish & Subscribe

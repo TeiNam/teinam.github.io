@@ -3,7 +3,7 @@ title: "데이터 모델별 선택지"
 permalink: /docs/database/choosing-a-database/data-models/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 데이터 모델별 선택지"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 3
 nav_title: "데이터 모델"

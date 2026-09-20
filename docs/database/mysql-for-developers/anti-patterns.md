@@ -3,7 +3,7 @@ title: "6. MySQL 안티패턴 (하지 말아야 할 것들)"
 permalink: /docs/database/mysql-for-developers/anti-patterns/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 자주 쓰이지만 피해야 하는 설계"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 6
 nav_title: "안티패턴"

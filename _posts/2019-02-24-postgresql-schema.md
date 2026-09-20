@@ -3,7 +3,7 @@ date: 2019-02-24 16:05:35 +0900
 title: "PostgreSQL 스키마"
 category: postgresql
 excerpt: "PostgreSQL 스키마는 테이블·뷰·시퀀스·함수 등 데이터베이스 오브젝트를 논리적으로 그룹화하는 네임스페이스입니다. 여러 사용자가 이름 충돌 없이 작업할 수 있도록 합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## 스키마 개념

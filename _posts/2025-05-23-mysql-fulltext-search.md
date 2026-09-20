@@ -3,7 +3,7 @@ date: 2025-05-23 11:08:25 +0900
 title: "MySQL 전문 검색"
 category: mysql
 excerpt: "MySQL 8.4의 FULLTEXT와 ngram 검색을 재현하고, 검색 모드·한 글자 검색·불용어·인덱스 재구축·트랜잭션 가시성의 차이를 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MySQL의 FULLTEXT는 텍스트를 토큰으로 나누고, 토큰이 등장하는 문서와 위치를 역색인(inverted index)에 저장하는 전문 검색 기능입니다. 검색어와 문서에 등장하는 토큰을 바탕으로 관련성 점수를 계산합니다. **문장의 의미를 이해하는 검색이나 임베딩 기반 의미 검색은 아닙니다.**[^overview][^innodb]

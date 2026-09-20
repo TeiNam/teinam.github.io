@@ -3,7 +3,7 @@ date: 2020-03-24 12:26:02 +0900
 title: "MariaDB의 XA Transactions"
 category: mysql
 excerpt: "여러 리소스에 걸친 트랜잭션을 하나로 묶는 분산 트랜잭션과 그 표준 인터페이스인 XA, 그리고 MariaDB 가 XA 를 어떻게 구현하고 어떤 제약을 두는지 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## 분산 트랜잭션이란

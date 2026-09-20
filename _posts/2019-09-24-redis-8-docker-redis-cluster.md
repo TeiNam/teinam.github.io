@@ -3,7 +3,7 @@ date: 2019-09-24 23:01:29 +0900
 title: "Redis #.8 Docker를 이용한 Redis cluster 구축 (ver. 8.10.1-trixie)"
 category: redis
 excerpt: "Docker로 노드 3대에 컨테이너 6개(마스터 3 + 레플리카 3)를 띄워 Redis 클러스터를 만들고, redis-cli --cluster 로 생성·점검·리샤딩까지 진행하는 실습 절차입니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 패키지로 Redis 클러스터를 세우는 절차는 세 단계입니다. 각 노드에 Redis를 설치하고, 설정에서 클러스터 파라미터를 켠 뒤, `redis-cli --cluster create` 명령으로 클러스터를 생성합니다. 이 글에서는 Docker를 사용해 노드 3대에 컨테이너 6개(마스터 3 + 레플리카 3)로 구성된 클러스터를 구축합니다.

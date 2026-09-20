@@ -3,7 +3,7 @@ date: 2019-02-18 21:15:00 +0900
 title: "주기적인 유지관리 Vacuuming #.3 배큠 시간이 늘어나 장애가 될 때"
 category: postgresql
 excerpt: "배큠이 오래 걸리는 이유를 dead tuple 개수로 설명하는 것은 대개 틀립니다. 2편에서 본 Percona 벤치마크에서 dead 개수는 같고 분포만 다르게 두었을 때의 결과가 이를 보여줍니다(인덱스 0개, 1000만 행 × 128B ≈ 172,414 힙 페이지 ≈ 1.3GB, VA…"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "3 / 4"
 ---

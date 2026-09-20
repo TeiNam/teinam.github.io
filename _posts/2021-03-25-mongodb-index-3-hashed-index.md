@@ -3,7 +3,7 @@ date: 2021-03-25 21:51:08 +0900
 title: "MongoDB Index#.3 Hash Index"
 category: mongodb
 excerpt: "해시 인덱스는 필드 값의 해시를 저장하여 균등한 데이터 분산을 제공하는 인덱스입니다. 주로 해시 샤딩에 사용되며, MongoDB 4.4부터는 복합 인덱스에도 해시 필드를 포함할 수 있습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## 이전 포스팅

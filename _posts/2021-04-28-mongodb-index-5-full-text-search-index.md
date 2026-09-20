@@ -3,7 +3,7 @@ date: 2021-04-28 17:51:13 +0900
 title: "MongoDB Index #.5 Full Text Search Index"
 category: mongodb
 excerpt: "전문 검색 색인 알고리즘인 형태소 분석과 N-Gram을 비교하고, 한국어를 지원하지 않는 MongoDB text 인덱스의 제약과 대안을 정리했습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 전문 검색 엔진의 색인 알고리즘은 크게 형태소 분석(어근 분석, stemming)과 N-Gram 두 가지로 나뉩니다. 명사와 조사 사이를 띄어쓰기로 구분하는 서구권 언어에는 형태소 분석이 잘 맞습니다. 반면 한국어, 일본어, 중국어처럼 명사와 조사가 구분 문자 없이 붙는 언어는 어근 분석이 까다로워서 N-Gram을 주로 씁니다.

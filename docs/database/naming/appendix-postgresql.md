@@ -3,7 +3,7 @@ title: "부록 B. PostgreSQL 18 전용"
 permalink: /docs/database/naming/appendix-postgresql/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — PostgreSQL 전용 부록"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 9
 nav_title: "부록 B. PostgreSQL"

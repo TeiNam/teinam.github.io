@@ -1,0 +1,51 @@
+{%- comment %}
+  jekyll-seo-tag 가 내보내는 BlogPosting 위에 얹는 구조화 데이터.
+
+  - 홈: 저자 Person 만 넣는다. WebSite 는 jekyll-seo-tag 가 이미 내보내므로 겹쳐 쓰면
+    같은 @type 이 두 번 나온다. seo-tag 의 author 에는 이름만 있어서, sameAs 로
+    GitHub·LinkedIn 을 묶고 knowsAbout 으로 다루는 주제를 적는 것이 이쪽의 몫이다.
+    SearchAction 은 넣지 않는다 — 이 사이트의 검색은 헤더 안에서 끝나는 클라이언트
+    검색이고 `?q=` 로 받는 결과 페이지가 없다. 없는 엔드포인트는 거짓 신호가 된다.
+  - docs·career: BreadcrumbList. 실제로 존재하는 URL 만 단계로 쓴다(홈 → 섹션 → 현재 쪽).
+    breadcrumb 프런트매터는 "Docs / Database / 가이드명" 같은 표시용 문자열이라
+    중간 단계의 URL 을 만들어 낼 수 없다. 그래서 이름만 그쪽에서 가져온다.
+{% endcomment -%}
+{%- if page.url == '/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": {{ site.author | jsonify }},
+  "url": {{ '/about/' | absolute_url | jsonify }},
+  "email": {{ site.email | jsonify }},
+  "sameAs": [
+    "https://github.com/{{ site.social.github }}",
+    "https://www.linkedin.com/in/{{ site.social.linkedin }}"
+  ],
+  {%- comment %} category_order 를 재사용하면 "mysql" 같은 소문자 슬러그가 그대로 들어간다.
+       그쪽은 /writing/ 필터 버튼 순서용이고, 엔터티 주제는 제품 표기를 써야 한다 {% endcomment %}
+  "knowsAbout": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Redis", "Data Pipeline", "Database Administration"],
+  "mainEntityOfPage": {{ site.url | append: site.baseurl | append: '/' | jsonify }}
+}
+</script>
+{%- endif -%}
+{%- assign section = nil -%}
+{%- if page.url contains '/docs/' -%}{%- assign section = 'Docs' -%}{%- assign section_url = '/docs/' -%}
+{%- elsif page.url contains '/career/' -%}{%- assign section = 'Career' -%}{%- assign section_url = '/career/' -%}
+{%- endif -%}
+{%- if section and page.url != section_url -%}
+{%- assign section_name = page.breadcrumb | split: ' / ' | first | default: section -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": {{ site.title | jsonify }},
+      "item": {{ site.url | append: site.baseurl | append: '/' | jsonify }} },
+    { "@type": "ListItem", "position": 2, "name": {{ section_name | jsonify }},
+      "item": {{ section_url | absolute_url | jsonify }} },
+    { "@type": "ListItem", "position": 3, "name": {{ page.title | jsonify }} }
+  ]
+}
+</script>
+{%- endif -%}

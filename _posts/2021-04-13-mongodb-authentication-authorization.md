@@ -3,7 +3,7 @@ date: 2021-04-13 11:30:49 +0900
 title: "MongoDB의 인증과 권한"
 category: mongodb
 excerpt: "MongoDB 클러스터에서 권한을 활성화하면 인증이 적용되고 사용자는 역할에 따라 권한이 부여된 작업만 가능합니다. Community 버전은 SCRAM과 x.509를 지원하고, Enterprise 버전은 LDAP, Kerberos, OIDC를 추가로 지원합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MongoDB 클러스터에서 권한을 활성화하면 인증이 적용되고 사용자는 역할에 따라 권한이 부여된 작업만 가능합니다.

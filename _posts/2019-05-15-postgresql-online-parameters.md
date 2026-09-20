@@ -3,7 +3,7 @@ date: 2019-05-15 15:01:29 +0900
 title: "PostgreSQL 온라인 적용 가능 파라미터 확인"
 category: postgresql
 excerpt: "PostgreSQL 파라미터는 재시작이 필요한 것과 reload만으로 적용 가능한 것으로 나뉩니다. pg_settings.context로 확인할 수 있습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 PostgreSQL 파라미터(postgresql.conf)는 재시작이 필요한 것과 reload만으로 적용 가능한 것으로 나뉩니다.

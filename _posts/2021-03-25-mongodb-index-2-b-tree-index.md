@@ -3,7 +3,7 @@ date: 2021-03-25 19:16:56 +0900
 title: "MongoDB Index#.2 B-Tree Index"
 category: mongodb
 excerpt: "MongoDB 인덱스의 기본 구조인 B-tree를 레인지 스캔, 정규식 접두 표현식, 커버드 쿼리, 인덱스 풀 스캔, 컴파운드 인덱스의 필드 순서 규칙으로 나누어 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## B-Tree Index

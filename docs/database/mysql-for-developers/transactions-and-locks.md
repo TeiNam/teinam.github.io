@@ -3,7 +3,7 @@ title: "5. 트랜잭션과 락"
 permalink: /docs/database/mysql-for-developers/transactions-and-locks/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 격리 수준과 락 범위, 데드락 회피"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 5
 nav_title: "트랜잭션과 락"

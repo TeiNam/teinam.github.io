@@ -3,7 +3,7 @@ date: 2019-02-18 21:13:43 +0900
 title: "주기적인 유지관리 Vacuuming #.1 배큠의 기초와 VACUUM FULL"
 category: postgresql
 excerpt: "PostgreSQL 문서는 배큠을 각 테이블마다 정기적으로 실행해야 하는 이유를 네 가지로 정리합니다. 네 번째는 성질이 다른 카운터 두 개를 묶은 것이라 나눠 봅니다. 서술 기준은 PostgreSQL 18(2025-09-25 릴리스, 최신 GA)입니다. UPDATE 나 DELETE…"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "1 / 4"
 ---

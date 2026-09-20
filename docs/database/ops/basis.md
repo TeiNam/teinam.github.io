@@ -3,7 +3,7 @@ title: "근거 기준"
 permalink: /docs/database/ops/basis/
 breadcrumb: "Docs / Database / 표준 데이터베이스 운영관리 지침서"
 description: "운영관리 지침서 — 근거 기준"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: ops
 order: 1
 nav_title: "근거 기준"

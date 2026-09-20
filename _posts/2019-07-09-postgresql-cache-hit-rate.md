@@ -3,7 +3,7 @@ date: 2019-07-09 13:49:58 +0900
 title: "PostgreSQL Cache Hit Rate"
 category: postgresql
 excerpt: "PostgreSQL 공유 버퍼 캐시 히트율을 조회하는 방법입니다. 이 지표는 PostgreSQL 공유 버퍼의 효율만 측정하며, OS 페이지 캐시는 포함하지 않습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 PostgreSQL 캐시 히트율은 공유 버퍼(shared buffer)에서 데이터를 찾은 비율을 나타냅니다.

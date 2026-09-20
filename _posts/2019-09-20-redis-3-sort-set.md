@@ -3,7 +3,7 @@ date: 2019-09-20 01:14:59 +0900
 title: "Redis #.3 Sort Set"
 category: redis
 excerpt: "Sort SET은 Redis가 가진 각 데이터 타입의 특성을 고루 갖습니다. List처럼 정렬되며, Set처럼 고유한 값을 갖고, Hash처럼 키-값 쌍 구조를 가지되 값에 순서를 매기는 지수(score)를 사용합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## Sort SET

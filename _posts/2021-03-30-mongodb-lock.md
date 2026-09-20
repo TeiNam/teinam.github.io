@@ -3,7 +3,7 @@ date: 2021-03-30 01:50:54 +0900
 title: "MongoDB Lock (잠금)"
 category: mongodb
 excerpt: "다른 DBMS와 마찬가지로 MongoDB도 여러 스레드가 같은 데이터를 동시에 건드릴 때 생기는 충돌을 막기 위해 락을 사용합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 다른 DBMS와 마찬가지로 MongoDB도 여러 스레드가 같은 데이터를 동시에 건드릴 때 생기는 충돌을 막기 위해 락을 사용합니다. 락은 MongoDB 서버가 잡는 것과 스토리지 엔진이 잡는 것으로 나뉩니다. 기본 스토리지 엔진인 WiredTiger는 쓰기 작업에 문서 수준 동시성 제어를 적용하고, 그보다 위 계층에는 의도 락(intention lock)만 잡습니다. 그래서 MongoDB는 여러 계층을 함께 다루는 다중 레벨 잠금(multi-granularity locking)을 사용합니다.

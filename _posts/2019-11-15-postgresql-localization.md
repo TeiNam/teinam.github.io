@@ -3,7 +3,7 @@ date: 2019-11-15 03:36:59 +0900
 title: "PostgreSQL Localization"
 category: postgresql
 excerpt: "PostgreSQL 로케일 지원은 initdb를 이용해 클러스터를 구성하면 자동으로 초기화됩니다. 옵션을 지정하지 않으면 환경 변수에서 상속되며, 환경 변수가 없으면 C 로케일로 설정됩니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 로케일 지원은 `initdb`를 이용해 클러스터를 구성하면 자동으로 초기화됩니다. `initdb`는 실행 환경의 로케일 설정을 기본으로 사용합니다. 환경 변수(`LC_ALL`, `LC_COLLATE`, `LANG` 등)가 설정되지 않았다면 `C` 로케일로 기본값이 설정됩니다.

@@ -3,7 +3,7 @@ date: 2019-09-19 20:58:55 +0900
 title: "Redis #.2 트랜잭션과 데이터 타입"
 category: redis
 excerpt: "문자열 키를 읽고 쓰는 SET·GET 부터 MULTI·EXEC·DISCARD·WATCH 트랜잭션, Hash·List·Set 자료형의 주요 명령까지 redis-cli 예제로 정리합니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 ## SET 과 GET

@@ -3,7 +3,7 @@ title: "제1조 ~ 제14조"
 permalink: /docs/database/ops/articles/
 breadcrumb: "Docs / Database / 표준 데이터베이스 운영관리 지침서"
 description: "운영관리 지침서 — 제1조부터 제14조까지"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: ops
 order: 2
 nav_title: "조문"

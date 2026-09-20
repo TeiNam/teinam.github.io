@@ -3,7 +3,7 @@ date: 2022-05-21 01:20:29 +0900
 title: "MERN Stack 이란?"
 category: mongodb
 excerpt: "MERN은 MongoDB, Express, React, Node.js로 구성된 JavaScript 기반 풀스택 개발 스택입니다. 프론트엔드부터 백엔드, 데이터베이스까지 JavaScript와 JSON으로 일관되게 구축할 수 있습니다."
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 MongoDB 자료를 찾아보면 해외 사이트에서 자주 등장하는 단어입니다. Udemy 같은 온라인 교육 사이트에는 MERN Stack 통합 교육과정도 업로드되고 있습니다.
