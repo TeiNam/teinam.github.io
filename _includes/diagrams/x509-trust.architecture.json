@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "복제 셋 x.509 인증의 신뢰 계층",
+    "output": "_workspace/diagrams/x509-trust.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "security": {
+          "label": "인증기관·인증서"
+        },
+        "database": {
+          "label": "복제 셋 멤버"
+        },
+        "frontend": {
+          "label": "클라이언트"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "ca",
+      "type": "security",
+      "label": "인증기관(CA)",
+      "sublabel": "루트 인증서",
+      "pos": [
+        40,
+        185
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "복제 셋에 하나"
+    },
+    {
+      "id": "membercert",
+      "type": "security",
+      "label": "멤버 인증서",
+      "sublabel": "O · OU · DC 가 모두 같음",
+      "pos": [
+        280,
+        60
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "clientcert",
+      "type": "security",
+      "label": "클라이언트 인증서",
+      "sublabel": "subject 가 멤버와 다름",
+      "pos": [
+        280,
+        310
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "tag": "사용자마다 하나"
+    },
+    {
+      "id": "rs",
+      "type": "database",
+      "label": "복제 셋",
+      "sublabel": "mongod 멤버",
+      "pos": [
+        560,
+        185
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "app",
+      "type": "frontend",
+      "label": "애플리케이션",
+      "sublabel": "드라이버",
+      "pos": [
+        40,
+        310
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "멤버 자격 — 같은 CA 가 서명하고 O · OU · DC 조합이 일치해야 한다",
+      "wraps": [
+        "membercert",
+        "rs"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "ca",
+      "to": "membercert",
+      "label": "서명",
+      "variant": "security"
+    },
+    {
+      "from": "ca",
+      "to": "clientcert",
+      "label": "서명",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "app",
+      "to": "clientcert",
+      "label": "제시"
+    },
+    {
+      "from": "membercert",
+      "to": "rs",
+      "label": "멤버 인증"
+    },
+    {
+      "from": "clientcert",
+      "to": "rs",
+      "label": "클라이언트 인증",
+      "variant": "emphasis"
+    }
+  ]
+}

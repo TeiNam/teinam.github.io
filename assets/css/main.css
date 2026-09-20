@@ -173,6 +173,11 @@ p { text-wrap: pretty; }
 .diagram svg .c-cloud { fill: var(--cloud-fill); stroke: var(--cloud-stroke); }
 .diagram svg .c-database { fill: var(--database-fill); stroke: var(--database-stroke); }
 .diagram svg .c-security { fill: var(--security-fill); stroke: var(--security-stroke); }
+/* 경계 박스. architecture 의 region·security-group 과 workflow·lifecycle 의 lane 이 쓴다.
+   lane 은 archify 가 rgba 로 하드코딩해 두었으므로 사이트 변수로 갈아 준다. */
+.diagram svg .c-region { fill: transparent; stroke: var(--warn-ink); stroke-dasharray: 4,4; }
+.diagram svg .c-security-group { fill: transparent; stroke: var(--security-stroke); stroke-dasharray: 4,4; }
+.diagram svg .c-lane { fill: var(--line2); stroke: var(--line); }
 .diagram svg .a-default { stroke: var(--arrow); fill: none; }
 .diagram svg .a-emphasis { stroke: var(--arrow-emphasis); fill: none; }
 .diagram svg .a-security { stroke: var(--security-stroke); fill: none; stroke-dasharray: 5,5; }

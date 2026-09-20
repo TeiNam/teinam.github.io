@@ -60,9 +60,7 @@ $ mongosh -u "dba" --authenticationDatabase "admin" --port 27018
 
 ## 멤버와 클라이언트를 인증하기 위한 x.509 인증서 사용
 
-![x.509 인증서 기반 인증](https://webassets.mongodb.com/_com_assets/cms/image00-ff4b83ec8f.png)
-
-복제 셋의 x.509 인증을 위한 신뢰 계층
+{% include diagram.html src="x509-trust.svg" caption="복제 셋의 x.509 인증을 위한 신뢰 계층. 한 CA 가 멤버 인증서와 클라이언트 인증서를 모두 서명하고, 둘은 O·OU·DC 조합으로 구분됩니다." %}
 
 운영 환경이라면 하나의 인증기관이 발급하고 서명한 유효한 인증서를 써야 합니다. 인증기관을 직접 만들어 운영하거나 외부 TLS 공급업체의 인증서를 받습니다. 하나의 복제 셋 또는 샤드 클러스터에 속한 모든 멤버의 인증서는 같은 CA 가 발급해야 합니다.
 
