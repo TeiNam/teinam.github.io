@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "MySQL 복제 경로와 측정 지점",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "내부 전달"
+        },
+        "emphasis": {
+          "label": "복제 주 경로"
+        },
+        "dashed": {
+          "label": "백그라운드 플러시"
+        },
+        "database": {
+          "label": "저장 계층"
+        }
+      }
+    },
+    "viewBox": [
+      940,
+      420
+    ]
+  },
+  "stages": [
+    {
+      "label": "소스"
+    },
+    {
+      "label": "수신"
+    },
+    {
+      "label": "적용"
+    },
+    {
+      "label": "저장"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "binlog",
+      "type": "database",
+      "label": "소스 binlog",
+      "sublabel": "소스 서버",
+      "tag": "File + Position",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "receiver",
+      "type": "backend",
+      "label": "수신 스레드",
+      "sublabel": "Replica_IO_Running",
+      "tag": "Read_Source_Log_Pos",
+      "stage": 1,
+      "row": 0
+    },
+    {
+      "id": "relay",
+      "type": "messagebus",
+      "label": "릴레이 로그",
+      "sublabel": "relay_log_space_limit",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "coordinator",
+      "type": "backend",
+      "label": "코디네이터",
+      "sublabel": "트랜잭션 순서 배분",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "workers",
+      "type": "backend",
+      "label": "워커 스레드",
+      "sublabel": "replica_parallel_workers",
+      "tag": "Exec_Source_Log_Pos",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "bufferpool",
+      "type": "database",
+      "label": "InnoDB 버퍼 풀",
+      "sublabel": "innodb_buffer_pool_size",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "disk",
+      "type": "database",
+      "label": "디스크",
+      "sublabel": "innodb_io_capacity",
+      "stage": 3,
+      "row": 1
+    }
+  ],
+  "flows": [
+    {
+      "from": "binlog",
+      "to": "receiver",
+      "label": "binlog 이벤트",
+      "variant": "emphasis"
+    },
+    {
+      "from": "receiver",
+      "to": "relay",
+      "label": "릴레이 로그 기록",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "from": "relay",
+      "to": "coordinator",
+      "label": "트랜잭션 순서",
+      "variant": "default"
+    },
+    {
+      "from": "coordinator",
+      "to": "workers",
+      "label": "워커 배분",
+      "variant": "default",
+      "labelDy": 24
+    },
+    {
+      "from": "workers",
+      "to": "bufferpool",
+      "label": "행 변경 적용",
+      "variant": "emphasis"
+    },
+    {
+      "from": "bufferpool",
+      "to": "disk",
+      "label": "더티 페이지 플러시",
+      "variant": "dashed",
+      "labelDy": 24
+    }
+  ]
+}
