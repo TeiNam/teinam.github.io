@@ -86,13 +86,31 @@ AWS RDS 라면 볼륨이 낼 수 있는 IOPS 가 상한입니다. IOPS 는 초�
 
 #### gp2
 
-![RDS gp2 — DB 엔진과 스토리지 크기별 기준 IOPS, 기준 처리량, 버스트 IOPS 표](/assets/img/ebs-gp2-iops.png)
+gp2 는 IOPS 를 직접 지정할 수 없습니다. 1 GiB 당 3 IOPS 로 스토리지 크기가 성능을 결정하고, 최소값은 100 IOPS 입니다. MariaDB·MySQL·PostgreSQL 기준입니다.
+
+| 스토리지 크기 | 기준 IOPS | 기준 처리량 | 버스트 IOPS |
+| --- | --- | --- | --- |
+| 5–399 GiB | 100–1,197 | 128–250 MiB/s | 3,000 |
+| 400–1,335 GiB | 1,200–4,005 | 512–1,000 MiB/s | 12,000 |
+| 1,336–3,999 GiB | 4,008–11,997 | 1,000 MiB/s | 12,000 |
+| 4,000–65,536 GiB | 12,000–64,000 | 1,000 MiB/s | 해당 없음 |
+
+1,000 GiB 미만 볼륨은 I/O 크레딧이 남아 있는 동안 버스트할 수 있습니다. 4,000 GiB 이상에서는 기준 성능이 버스트 성능을 넘어서므로 버스트가 의미를 잃습니다. 400 GiB 이상이면 볼륨 네 개로 스트라이핑되어 기준 처리량과 버스트 IOPS 가 네 배가 됩니다.
 
 #### gp3
 
-![RDS gp3 — DB 엔진과 스토리지 크기별 프로비저닝 IOPS 범위와 최대 처리량 표](/assets/img/ebs-gp3-iops.png)
+gp3 는 크기와 성능을 따로 정합니다. 기준 성능은 3,000 IOPS·125 MiB/s 이고, 400 GiB 를 넘으면 스트라이핑이 적용되어 기준선 자체가 올라갑니다. Db2·MariaDB·MySQL·PostgreSQL 기준입니다.
 
-스토리지 크기가 최대 IOPS 를 결정하므로, 볼륨이 낼 수 없는 값을 `innodb_io_capacity` 에 적어도 의미가 없습니다. 실제 WriteIOPS 를 먼저 관측하고 그 범위 안에서 정합니다.
+| 스토리지 크기 | 기준 성능 | 프로비저닝 IOPS | 프로비저닝 처리량 |
+| --- | --- | --- | --- |
+| 20–399 GiB | 3,000 IOPS · 125 MiB/s | 지정 불가 | 지정 불가 |
+| 400–65,536 GiB | 12,000 IOPS · 500 MiB/s | 12,000–64,000 | 500–4,000 MiB/s |
+
+추가 성능은 400 GiB 이상에서만 지정할 수 있습니다. MariaDB 와 MySQL 에서 IOPS 를 32,000 위로 올리면 처리량 값이 500 MiB/s 에서 자동으로 함께 올라갑니다. 예를 들어 IOPS 를 40,000 으로 두면 처리량이 최소 625 MiB/s 가 됩니다. 처리량과 IOPS 의 비율은 최대 0.25 입니다.
+
+스토리지 크기가 최대 IOPS 를 결정하므로, 볼륨이 낼 수 없는 값을 `innodb_io_capacity` 에 적어도 의미가 없습니다. 실제 WriteIOPS 를 먼저 관측하고 그 범위 안에서 정합니다. 인스턴스 클래스에도 EBS 대역폭 상한이 있어, 볼륨에 지정한 값을 인스턴스가 못 받아 줄 수 있습니다.
+
+> **NOTE** — 위 수치는 [Amazon RDS DB 인스턴스 스토리지](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html) 문서 기준입니다. gp2·gp3 는 범용 SSD 이고, 프로비저닝 IOPS 계열인 io1·io2 Block Express 는 상한이 더 높습니다(io2 는 최대 256,000 IOPS). 스토리지 타입을 혼동하면 낼 수 없는 IOPS 를 기대하게 됩니다.
 
 ### replica_parallel_workers
 

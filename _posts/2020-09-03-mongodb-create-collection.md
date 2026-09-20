@@ -8,9 +8,12 @@ updated: 2026-09-20
 
 데이터베이스를 만들려면 컬렉션을 만들어야 한다고 했습니다. 그럼 컬렉션이란 무엇일까요? RDBMS를 주로 다루던 분들은 테이블처럼 받아들이면 출발점으로는 충분합니다.
 
-![RDBMS와 MongoDB 매핑 관계](/assets/img/wp/2020/09/RDBMS_MongoDB_Mapping.jpg)
-
-출처: Beginersbook.com
+| RDBMS | MongoDB |
+| --- | --- |
+| Database | Database |
+| Table | Collection |
+| Row | Document |
+| Column | Field |
 
 RDBMS를 먼저 접한 사람에게 설명할 때 이런 대응표를 자주 씁니다. 하지만 둘 사이에는 분명한 차이가 있고 사용법과 접근 방법도 다릅니다.
 
