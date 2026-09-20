@@ -82,13 +82,20 @@
     w.appendChild(t);
   });
 
-  // 코드 복사
-  document.querySelectorAll('.prose div.highlight, .prose pre').forEach(function (block) {
-    if (block.querySelector('.copy-code')) return;
+  // 코드 복사. rouge 는 div.highlight > pre.highlight > code 로 세 겹을 만든다.
+  // 선택자가 바깥 div 와 안쪽 pre 를 둘 다 잡는데, 중복 가드는 자손만 보므로 안쪽 pre 는
+  // 부모에 붙은 버튼을 못 보고 하나 더 만든다. 그래서 가장 바깥 블록만 남긴다.
+  var codeBlocks = Array.prototype.slice.call(
+    document.querySelectorAll('.prose div.highlight, .prose pre'));
+  codeBlocks.filter(function (b) {
+    return !codeBlocks.some(function (other) { return other !== b && other.contains(b); });
+  }).forEach(function (block) {
     var b = document.createElement('button');
     b.className = 'copy-code'; b.type = 'button'; b.textContent = 'copy';
     b.addEventListener('click', function () {
-      navigator.clipboard.writeText(block.innerText.replace(/^copy\n/, ''));
+      // 버튼이 블록 안에 있어서 컨테이너의 innerText 를 쓰면 'copy' 가 같이 복사된다.
+      var src = block.querySelector('code') || block.querySelector('pre') || block;
+      navigator.clipboard.writeText(src.innerText);
       b.textContent = 'copied'; setTimeout(function () { b.textContent = 'copy'; }, 1400);
     });
     block.appendChild(b);

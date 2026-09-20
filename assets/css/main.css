@@ -254,7 +254,10 @@ p { text-wrap: pretty; }
 .prose ul, .prose ol { margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.85; color: var(--ink2); }
 .prose li + li { margin-top: 6px; }
 .prose img { max-width: 100%; height: auto; border: 1px solid var(--line); }
+/* 인라인 코드용이다. 블록 안의 code 까지 걸리면 블록 배경 위에 회색 배경과 패딩이
+   한 겹 더 깔려 글자마다 음영이 생긴다. 아래에서 되돌린다. */
 .prose code { font-family: var(--mono); font-size: 0.88em; background: var(--line2); padding: 1px 5px; }
+.prose pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
 .prose blockquote {
   margin: 0; border-left: 3px solid var(--accent); background: var(--note-bg);
   padding: 16px 20px; font-size: 15.5px; line-height: 1.7; color: var(--ink);
