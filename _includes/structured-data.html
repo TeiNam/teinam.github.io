@@ -25,6 +25,22 @@
   {%- comment %} category_order 를 재사용하면 "mysql" 같은 소문자 슬러그가 그대로 들어간다.
        그쪽은 /writing/ 필터 버튼 순서용이고, 엔터티 주제는 제품 표기를 써야 한다 {% endcomment %}
   "knowsAbout": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Redis", "Data Pipeline", "Database Administration"],
+  {%- comment %} 유효한 자격만. _data/badges.yml 은 만료된 배지를 담지 않는다 {% endcomment %}
+  {%- if site.data.badges %}
+  "hasCredential": [
+    {%- for b in site.data.badges %}
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": {{ b.name | jsonify }},
+      "url": {{ b.url | jsonify }},
+      "credentialCategory": "certificate",
+      "recognizedBy": { "@type": "Organization", "name": {{ b.issuer | jsonify }} },
+      "dateCreated": {{ b.issued | jsonify }}{% if b.expires %},
+      "expires": {{ b.expires | jsonify }}{% endif %}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ],
+  {%- endif %}
   "mainEntityOfPage": {{ site.url | append: site.baseurl | append: '/' | jsonify }}
 }
 </script>

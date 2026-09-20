@@ -1,0 +1,35 @@
+# Credly 공개 프로필에서 생성한다 — 손으로 고치지 마라.
+#   python3 _workspace/fetch_credly.py
+# 만료된 배지는 빠진다. 갱신·추가가 있으면 다시 실행한다.
+# 생성 2026-09-20 · 유효 5개 · 만료 제외 3개
+
+- name: "AWS AI-Driven Development Lifecycle (AI-DLC) Ambassador Foundational (L100)"
+  issuer: "AWS Worldwide Field Enablement"
+  issued: "2026-06-12"
+  expires: ~
+  url: "https://www.credly.com/badges/3f1093b8-f343-4311-821b-64acee0860df"
+  image: "/assets/img/badges/aws-ai-driven-development-lifecycle-ai-dlc-ambassador-foundational-l100.png"
+- name: "AWS Certified Machine Learning Engineer – Associate"
+  issuer: "Amazon Web Services Training and Certification"
+  issued: "2026-04-20"
+  expires: "2029-04-20"
+  url: "https://www.credly.com/badges/b372b29e-2e2c-421e-8515-58a6a6298b3b"
+  image: "/assets/img/badges/aws-certified-machine-learning-engineer-associate.png"
+- name: "AWS AI Foundational (L100) Accreditation"
+  issuer: "AWS Worldwide Field Enablement"
+  issued: "2025-12-03"
+  expires: ~
+  url: "https://www.credly.com/badges/a19446a2-419f-49a4-baea-0bba8af33567"
+  image: "/assets/img/badges/aws-ai-foundational-l100-accreditation.png"
+- name: "AWS Certified AI Practitioner"
+  issuer: "Amazon Web Services Training and Certification"
+  issued: "2025-08-14"
+  expires: "2029-04-20"
+  url: "https://www.credly.com/badges/3e675349-7da7-48a9-badd-ca8ffa0a5043"
+  image: "/assets/img/badges/aws-certified-ai-practitioner.png"
+- name: "AWS Certified Solutions Architect – Associate"
+  issuer: "Amazon Web Services Training and Certification"
+  issued: "2025-08-01"
+  expires: "2028-08-01"
+  url: "https://www.credly.com/badges/f8255cdb-a061-405c-86d0-07a7198c6fb4"
+  image: "/assets/img/badges/aws-certified-solutions-architect-associate.png"
