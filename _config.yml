@@ -3,7 +3,11 @@ tagline: Database와 A.I 그리고 그 사이의 Data Pipeline
 author: teinam
 email: career@rastalion.me
 description: Database와 A.I 그리고 그 사이의 Data Pipeline 을 다루는 teinam 의 기술 노트.
-url: "https://teinam.github.io"
+# 커스텀 도메인. rastalion.dev 가 GitHub Pages 를 가리키고 teinam.github.io 는 여기로
+# 301 된다. 이 값이 canonical·og:url·sitemap·llms.txt·JSON-LD 의 호스트를 전부 정하므로
+# teinam.github.io 로 두면 canonical 이 301 되는 주소를 가리키게 된다.
+# 아래 giscus.repo 는 GitHub 저장소 경로이므로 도메인과 무관하다 — 바꾸지 않는다.
+url: "https://rastalion.dev"
 baseurl: ""
 lang: ko
 
