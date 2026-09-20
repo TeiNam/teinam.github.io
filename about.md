@@ -3,7 +3,7 @@ layout: page
 title: About
 permalink: /about/
 subtitle: 데이터베이스 신뢰성과 데이터 모델링을 다룹니다.
-description: DBRE 를 지향하는 teinam(RastaLion) 의 소개. 시스템·네트워크에서 데이터베이스로 옮겨 온 경로, 일하는 방식, 이 블로그를 읽을 때의 전제.
+description: AWS ProServe 에서 Database Architect 로 일하는 teinam(RastaLion) 의 소개. 시스템·네트워크에서 데이터베이스로 옮겨 온 경로, 보유 자격, 일하는 방식.
 # jekyll-seo-tag 의 homepage_or_about? 는 about 을 홈과 같이 묶어 WebSite 로 찍는다.
 # 그러면 WebSite 엔터티가 두 URL 에 생겨 어느 쪽이 사이트인지 흐려진다.
 seo:
@@ -24,15 +24,19 @@ DBA 로 시작했지만 지향하는 쪽은 DBRE(Database Reliability Engineer, 
 
 ## 지금 하는 일
 
-데이터 모델링이 주 업무입니다. 스키마를 그리기 전에 그 서비스의 비즈니스 로직을 이해하는 일이 먼저라고 보고, 데이터 보호와 데이터 품질을 같은 무게로 다룹니다.
+AWS ProServe 에서 Database Architect 로 일합니다. 데이터베이스 모더나이제이션과 마이그레이션 프로젝트를 맡고, CDC 를 포함한 데이터베이스 과제를 다룹니다.
+
+스키마를 그리기 전에 그 서비스의 비즈니스 로직을 이해하는 일이 먼저라고 보고, 데이터 보호와 데이터 품질을 같은 무게로 다룹니다.
 
 거쳐 온 회사와 직무, 만든 것들은 [Work]({{ '/work/' | relative_url }}) 에 정리해 두었습니다.
 
 ## 지나온 길
 
-시스템 엔지니어로 시작했습니다. 네트워크를 공부하며 CCNA·CCNP·CCDP 를 취득하고 CCIE 를 준비했고, OpenStack 으로 사설 클라우드를 다뤘습니다.
+시스템 엔지니어로 시작했습니다. 네트워크를 공부하며 CCNA·CCNP·CCDP 를 취득하고 CCIE 를 준비했고, 그 뒤 Oracle DB 엔지니어로 데이터베이스 업무를 시작했습니다.
 
-그 뒤 데이터베이스로 옮겨 Oracle, MySQL, PostgreSQL, MongoDB 를 차례로 맡았습니다. 지금은 그 경험을 클라우드 위에서 다시 쓰고 있습니다. 관심은 데이터 분석과 Kafka 기반 데이터 처리 쪽으로 이어져 있습니다.
+2018년, 오라클 엔지니어 생활을 거쳐 오픈소스 데이터베이스를 해야겠다고 판단해 MySQL·PostgreSQL·MongoDB 를 차례로 맡았습니다. 그 시기에 OpenStack 으로 사설 클라우드를 다뤘고, 그것이 계기가 되어 AWS 를 본격적으로 쓰기 시작했습니다.
+
+지금은 클라우드 위에서 다룰 수 있는 데이터베이스 리소스 전반을 맡습니다. 관심은 데이터 분석과 Kafka 기반 데이터 처리로 이어지고, AI·ML·Vector DB 를 데이터베이스에 접목하는 쪽을 보고 있습니다.
 
 ## 자격
 
