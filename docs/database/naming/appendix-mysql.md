@@ -3,7 +3,7 @@ title: "부록 A. MySQL 8.4 · 9.7 전용"
 permalink: /docs/database/naming/appendix-mysql/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — MySQL 전용 부록"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 8
 nav_title: "부록 A. MySQL"

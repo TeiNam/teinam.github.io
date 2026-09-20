@@ -3,7 +3,7 @@ title: "처음엔 손대지 않아도 되는 파라미터"
 permalink: /docs/database/mysql-install-checklist/leave-defaults/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 기본값으로 두는 파라미터"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 10
 nav_title: "손대지 않을 것"

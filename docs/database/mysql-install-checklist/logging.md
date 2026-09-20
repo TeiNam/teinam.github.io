@@ -3,7 +3,7 @@ title: "로깅"
 permalink: /docs/database/mysql-install-checklist/logging/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 로그 설정"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 9
 nav_title: "로깅"

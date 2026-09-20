@@ -3,7 +3,7 @@ title: "3. 문자셋과 콜레이션"
 permalink: /docs/database/mysql-for-developers/charset-collation/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — coercibility 규칙과 콜레이션 충돌"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 3
 nav_title: "문자셋과 콜레이션"

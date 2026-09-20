@@ -3,7 +3,7 @@ title: "4. 인덱스"
 permalink: /docs/database/mysql-for-developers/indexes/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 인덱스 설계와 실행계획 확인"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 4
 nav_title: "인덱스"

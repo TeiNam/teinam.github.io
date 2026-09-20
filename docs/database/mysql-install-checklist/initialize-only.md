@@ -3,7 +3,7 @@ title: "초기화할 때만 정할 수 있는 값"
 permalink: /docs/database/mysql-install-checklist/initialize-only/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 데이터 디렉터리 초기화 시점에만 정할 수 있는 값"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 1
 nav_title: "초기화 전용 값"

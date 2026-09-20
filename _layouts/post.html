@@ -14,7 +14,7 @@ layout: default
     <div class="meta-rule">
       <span>{{ site.author }}</span>
       <span>{{ page.date | date: '%Y-%m-%d' }}</span>
-      {%- if page.updated %}<span>updated {{ page.updated | date: '%m-%d' }}</span>{% endif %}
+      {%- if page.last_modified_at %}<span>updated {{ page.last_modified_at | date: '%m-%d' }}</span>{% endif %}
       <span>{{ content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>
     </div>
 
@@ -29,6 +29,8 @@ layout: default
     {%- endif %}
 
     {% include share.html %}
+
+    {% include comments.html %}
   </article>
 
   <aside class="side-rail">

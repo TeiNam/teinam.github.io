@@ -3,7 +3,7 @@ title: "5. 데이터 타입 정의 (공통)"
 permalink: /docs/database/naming/data-types/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 데이터 타입 정의"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 6
 nav_title: "데이터 타입"

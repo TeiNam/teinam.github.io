@@ -13,6 +13,11 @@
     - { name: "마지막 질문", url: /career/lastquestion/ }
     - { name: "연봉 협상하기", url: /career/nego/ }
 
+- group: 직무 이해
+  items:
+    - { name: "DBRE 와 DBA 의 차이", url: /career/dbre/ }
+    - { name: "DBA·DB팀의 R&R 정의하기", url: /career/dba-rnr/ }
+
 - group: AWS Leadership Principles
   items:
     - { name: "개요", url: /career/aws-lp/ }

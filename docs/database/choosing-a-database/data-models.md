@@ -3,7 +3,7 @@ title: "데이터 모델별 선택지"
 permalink: /docs/database/choosing-a-database/data-models/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 데이터 모델별 선택지"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 3
 nav_title: "데이터 모델"
@@ -11,7 +11,17 @@ nav_title: "데이터 모델"
 
 요구가 정리됐으면 데이터 모델을 본다. 이 절의 표는 **2026-09 기준으로 릴리스와 라이선스 상태를 확인한 제품만** 담았다. 확인되지 않은 제품을 후보로 나열하면 3년 넘게 릴리스가 없는 제품을 권하는 사고가 난다.
 
-![데이터베이스 유형별 비교 — RDBMS, Key Value, Document, Graph, Wide Column 의 대표 제품과 용도](/assets/img/database-selection-matrix.png)
+| 데이터 모델 | 확인한 대표 제품 | 이런 요구에 쓴다 |
+| --- | --- | --- |
+| 관계형 | PostgreSQL, MySQL, SQLite | 트랜잭션 무결성, 스키마로 지키는 제약, JOIN 으로 하는 관계 탐색 |
+| 분산 SQL·HTAP | TiDB, YugabyteDB, Vitess, CockroachDB | 관계형을 유지한 수평 확장 |
+| 문서 | MongoDB, Couchbase Server | 유연한 필드 스키마, 속성이 제각각인 데이터, 원자성 단위가 레코드 하나인 경우 |
+| 키-값 | Redis Open Source, Valkey | 데이터 캐싱, 세션 스토어, 짧은 단건 조회 경로 |
+| 와이드 칼럼 | Apache Cassandra, Apache HBase, ScyllaDB | 대량의 쓰기, 지리적으로 분산된 데이터센터 |
+| 그래프 | Neo4j, OrientDB | 여러 홉에 걸친 관계 탐색, 최단 경로, 패턴 매칭 |
+| 검색 | Elasticsearch, OpenSearch | 전문 검색, 검색 기반 분석 |
+
+각 절에 확인 버전과 라이선스를 적었다. 라이선스가 선택을 바꾸는 제품이 여럿 있으므로 제품 이름만 보고 후보를 확정하면 안 된다.
 
 ### 관계형
 

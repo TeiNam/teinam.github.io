@@ -1,0 +1,20 @@
+{%- comment -%}
+  giscus 댓글. GitHub Discussions 를 저장소로 쓰므로 서버가 필요 없다.
+
+  _config.yml 의 giscus.repo_id·category_id 가 비어 있으면 아무것도 렌더하지 않는다 —
+  설정 전에 붙여 두면 빈 상자만 보인다.
+
+  script 태그를 여기서 직접 쓰지 않고 data 속성만 심는다. theme.js 가 현재 테마를 읽어
+  주입해야 다크 모드에서 흰 위젯이 번쩍이지 않는다.
+{%- endcomment -%}
+{%- if site.giscus.repo_id != '' and site.giscus.category_id != '' -%}
+<section class="comments">
+  <span class="label">Comments</span>
+  <div data-giscus
+       data-repo="{{ site.giscus.repo }}"
+       data-repo-id="{{ site.giscus.repo_id }}"
+       data-category="{{ site.giscus.category }}"
+       data-category-id="{{ site.giscus.category_id }}"></div>
+  <noscript>댓글을 보려면 JavaScript 를 켜야 합니다. <a href="https://github.com/{{ site.giscus.repo }}/discussions">GitHub Discussions</a> 에서 직접 볼 수도 있습니다.</noscript>
+</section>
+{%- endif -%}

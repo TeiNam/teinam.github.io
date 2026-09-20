@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "X/Open DTP 아키텍처",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "애플리케이션" },
+        "backend": { "label": "트랜잭션 관리" },
+        "database": { "label": "리소스 관리" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 120,
+    "gapY": 100
+  },
+  "components": [
+    {
+      "id": "ap",
+      "type": "frontend",
+      "label": "AP",
+      "sublabel": "Application Program",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "tm",
+      "type": "backend",
+      "label": "TM",
+      "sublabel": "Transaction Manager",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "rm1",
+      "type": "database",
+      "label": "RM",
+      "sublabel": "Resource Manager",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "rm2",
+      "type": "database",
+      "label": "RM",
+      "sublabel": "Resource Manager",
+      "row": 1,
+      "col": 2
+    }
+  ],
+  "connections": [
+    {
+      "from": "ap",
+      "to": "tm",
+      "label": "트랜잭션 요청"
+    },
+    {
+      "from": "tm",
+      "to": "rm1",
+      "label": "XA",
+      "variant": "emphasis"
+    },
+    {
+      "from": "tm",
+      "to": "rm2",
+      "label": "XA",
+      "variant": "emphasis"
+    }
+  ]
+}

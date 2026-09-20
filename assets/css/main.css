@@ -5,9 +5,20 @@
   --accent: oklch(0.55 0.11 225); --accent-line: oklch(0.55 0.11 225 / 0.35);
   --note-bg: oklch(0.97 0.02 225); --code-bg: oklch(0.985 0.002 250); --code-ink: oklch(0.30 0.01 250);
   --warn-bg: oklch(0.97 0.03 80); --warn-line: oklch(0.60 0.10 70 / 0.4); --warn-ink: oklch(0.48 0.10 70);
+  /* 구문 강조. 본문이 두 색조로 절제돼 있으므로 코드도 세 색조까지만 쓴다.
+     이름·구두점·연산자는 색을 주지 않고 --code-ink 로 둔다 — 토큰의 80% 가 거기 속해
+     색을 주면 블록 전체가 알록달록해진다. */
+  --code-key: oklch(0.45 0.14 290); --code-str: oklch(0.44 0.11 150);
+  --code-num: oklch(0.48 0.11 65); --code-cmt: oklch(0.56 0.015 250);
   --sans: "IBM Plex Sans KR", system-ui, sans-serif;
   --mono: "Spline Sans Mono", ui-monospace, monospace;
-  --shell: 1280px;
+  /* 본문 읽기 폭은 50rem(800px, 한글 한 줄 50자). 한국어 본문이 편한 범위(35~50자)의
+     상한이라 더 늘리지 않는다. shell 을 넓혀 남는 폭은 다이어그램·표·코드블록이 받는다.
+
+     `ch` 를 쓰면 안 된다 — 요소 자기 font-size 기준이라 같은 80ch 가 h1(42px)에서는
+     2115px, p(16px)에서는 806px 이 된다. 그러면 제목만 칼럼 전체를 쓰고 본문은 좁아
+     오른쪽 끝이 들쭉날쭉해진다. rem 은 루트 기준이라 모든 블록이 같은 폭을 받는다. */
+  --shell: 1600px;
 }
 [data-theme="dark"] {
   --bg: oklch(0.145 0.012 250); --surface: oklch(0.195 0.012 250);
@@ -16,6 +27,8 @@
   --accent: oklch(0.74 0.11 215); --accent-line: oklch(0.74 0.11 215 / 0.4);
   --note-bg: oklch(0.235 0.03 225); --code-bg: oklch(0.135 0.012 250); --code-ink: oklch(0.87 0.01 250);
   --warn-bg: oklch(0.24 0.035 80); --warn-line: oklch(0.70 0.10 75 / 0.45); --warn-ink: oklch(0.82 0.11 75);
+  --code-key: oklch(0.78 0.13 290); --code-str: oklch(0.76 0.11 150);
+  --code-num: oklch(0.80 0.10 65); --code-cmt: oklch(0.60 0.015 250);
 }
 
 * { box-sizing: border-box; }
@@ -100,9 +113,103 @@ p { text-wrap: pretty; }
 .meta-rule > * { padding: 0 16px; border-right: 1px solid var(--line); }
 .meta-rule > *:first-child { padding-left: 0; }
 .meta-rule > *:last-child { border-right: 0; }
+/* 대표 이미지가 없는 글이 히어로에 오면 2단을 풀고 한 칼럼을 쓴다. 그대로 두면
+   오른쪽 1fr 이 빈 채 남아 제목이 폭의 절반만 쓴다. home.html 이 클래스를 붙인다.
+   `.hero h1` 과 특정도가 같으므로 반드시 그 뒤에 와야 한다 — 앞에 두면 덮이지 않는다. */
+.hero--solo { grid-template-columns: minmax(0, 1fr); padding-bottom: 44px; }
+.hero--solo h1 { font-size: clamp(34px, 4.8vw, 60px); max-width: 30ch; }
+.hero--solo .lede { font-size: 18px; max-width: 64ch; }
 .hero-fig { margin: 0; display: flex; flex-direction: column; gap: 9px; }
 .hero-fig img { width: 100%; height: auto; border: 1px solid var(--line); }
 .hero-fig figcaption, .prose figcaption { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+
+/* archify 다이어그램. 생성된 SVG 는 색을 하드코딩하지 않고 CSS 변수로만 칠하므로,
+   archify 변수를 사이트 변수에 이어 주면 사이트의 테마 토글이 그대로 먹는다.
+   그래서 SVG 파일은 손대지 않는다 — 다시 렌더하면 덮인다.
+
+   팔레트는 사이트에 이미 있는 두 색조만 쓴다(accent 파랑 · warn 호박). 상태 다이어그램에
+   색을 더 들이면 이 사이트의 담백한 톤이 깨진다. 상태 이름과 부제는 archify 가 언제나
+   `t-primary`/`t-muted` 로 찍으므로 어떤 매핑을 줘도 가독성은 유지된다. */
+/* 다이어그램 viewBox 는 980×566 이고, shell 1600 에서 본문 칼럼이 992px 이라 축소 없이
+   들어간다(1.01배). 그래서 음수 마진으로 빼내지 않는다 — side-rail 에는 Related 목록과
+   광고가 들어 있어 빼내면 그 위를 덮는다.
+
+   viewBox 를 좁히면 안 된다. 폭을 줄이면 종횡비가 세로로 길어져 archify 의 표준 뷰어가
+   1440×900 에서 세로로 넘치고 `visual-check` 가 실패한다. 980×566 이 양쪽을 만족하는 값이다.
+
+   창이 1600 보다 좁으면 칼럼도 같이 줄어드니 캔버스만 가로로 스크롤한다. min-width 는
+   칼럼이 그보다 좁을 때만 작동하므로 넓은 화면에서는 스크롤이 생기지 않는다.
+   figure 가 아니라 캔버스에 overflow 를 주는 이유 — figure 에 주면 캡션까지 끌려간다. */
+.diagram { margin: 0; max-width: 100% !important; display: flex; flex-direction: column; gap: 10px; }
+.diagram-canvas { min-width: 0; overflow-x: auto; }
+.diagram-canvas svg { min-width: 820px; }
+.diagram svg {
+  width: 100%; height: auto; font-family: var(--mono);
+  --mask: var(--surface);
+  --grid: var(--line2);
+  --text: var(--ink); --text-muted: var(--ink2); --text-dim: var(--ink3);
+  --arrow: var(--ink3); --arrow-emphasis: var(--accent);
+  /* start — 아직 트랜잭션이 없는 상태 */
+  --frontend-fill: transparent; --frontend-stroke: var(--ink3);
+  /* active — 세션에 묶인 비영속 상태 */
+  --backend-fill: var(--line2); --backend-stroke: var(--ink2);
+  /* waiting — PREPARED. 영속이라 눈에 걸려야 한다 */
+  --cloud-fill: var(--warn-bg); --cloud-stroke: var(--warn-ink);
+  /* success — 커밋 확정 */
+  --database-fill: var(--note-bg); --database-stroke: var(--accent);
+  /* failure + 점선 화살표 */
+  --security-fill: transparent; --security-stroke: var(--ink3);
+  --external-fill: transparent; --external-stroke: var(--ink3);
+  /* archify 가 쓰는 나머지 계열도 비워 두지 않는다 */
+  --messagebus-fill: var(--line2); --messagebus-stroke: var(--ink2);
+}
+/* archify 는 이 클래스 정의를 생성 HTML 의 <head> 에 넣는다. SVG 만 떼어 오면 정의가
+   따라오지 않아 전부 기본 검정으로 칠해진다. 그래서 여기로 옮겨 둔다.
+   SVG 가 실제로 쓰는 22개만 가져왔다. */
+.diagram svg .c-mask { fill: var(--mask); stroke: none; }
+.diagram svg .c-grid { stroke: var(--grid); fill: none; }
+.diagram svg .c-frontend { fill: var(--frontend-fill); stroke: var(--frontend-stroke); }
+.diagram svg .c-backend { fill: var(--backend-fill); stroke: var(--backend-stroke); }
+.diagram svg .c-cloud { fill: var(--cloud-fill); stroke: var(--cloud-stroke); }
+.diagram svg .c-database { fill: var(--database-fill); stroke: var(--database-stroke); }
+.diagram svg .c-security { fill: var(--security-fill); stroke: var(--security-stroke); }
+.diagram svg .c-external { fill: var(--external-fill); stroke: var(--external-stroke); }
+.diagram svg .c-messagebus { fill: var(--messagebus-fill); stroke: var(--messagebus-stroke); }
+/* 경계 박스. architecture 의 region·security-group 과 workflow·lifecycle 의 lane 이 쓴다.
+   lane 은 archify 가 rgba 로 하드코딩해 두었으므로 사이트 변수로 갈아 준다. */
+.diagram svg .c-region { fill: transparent; stroke: var(--warn-ink); stroke-dasharray: 4,4; }
+.diagram svg .c-security-group { fill: transparent; stroke: var(--security-stroke); stroke-dasharray: 4,4; }
+.diagram svg .c-lane { fill: var(--line2); stroke: var(--line); }
+.diagram svg .a-default { stroke: var(--arrow); fill: none; }
+.diagram svg .a-emphasis { stroke: var(--arrow-emphasis); fill: none; }
+.diagram svg .a-security { stroke: var(--security-stroke); fill: none; stroke-dasharray: 5,5; }
+.diagram svg .m-default { fill: var(--arrow); }
+.diagram svg .m-emphasis { fill: var(--arrow-emphasis); }
+.diagram svg .m-security { fill: var(--security-stroke); }
+.diagram svg .m-dashed { fill: var(--database-stroke); }
+.diagram svg .t-primary { fill: var(--text); }
+.diagram svg .t-muted { fill: var(--text-muted); }
+.diagram svg .t-dim { fill: var(--text-dim); }
+.diagram svg .t-frontend { fill: var(--frontend-stroke); }
+.diagram svg .t-backend { fill: var(--backend-stroke); }
+.diagram svg .t-cloud { fill: var(--cloud-stroke); }
+.diagram svg .t-database { fill: var(--database-stroke); }
+.diagram svg .t-security { fill: var(--security-stroke); }
+.diagram svg .t-messagebus { fill: var(--messagebus-stroke); }
+.diagram svg .t-external { fill: var(--external-stroke); }
+.diagram svg .a-dashed { stroke: var(--database-stroke); fill: none; stroke-dasharray: 4,4; }
+/* archify 2.17 이 상태 박스에 semantic sigil(작은 기호)을 넣는다. `currentColor` 로 칠하므로
+   `s-*` 가 color 를 정하고 sigil 이 그것을 따른다. */
+.diagram svg .semantic-sigil { fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; opacity: 0.76; pointer-events: none; }
+.diagram svg .semantic-sigil > * { vector-effect: non-scaling-stroke; }
+.diagram svg .semantic-sigil .sigil-fill { fill: currentColor; stroke: none; }
+.diagram svg .s-frontend { color: var(--frontend-stroke); }
+.diagram svg .s-backend { color: var(--backend-stroke); }
+.diagram svg .s-cloud { color: var(--cloud-stroke); }
+.diagram svg .s-database { color: var(--database-stroke); }
+.diagram svg .s-security { color: var(--security-stroke); }
+.diagram svg .s-external { color: var(--external-stroke); }
+.diagram svg .s-messagebus { color: var(--messagebus-stroke); }
 .ph {
   aspect-ratio: 4/3; border: 1px solid var(--line); display: grid; place-items: center;
   font-family: var(--mono); font-size: 11px; color: var(--ink3);
@@ -146,10 +253,16 @@ p { text-wrap: pretty; }
 .toc a:hover { text-decoration: none; color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--accent); }
 /* 읽기 폭 제한은 .prose 가 아니라 자식에 둔다. 표만 가운데 칼럼 전체를 쓰게
-   하려면 부모가 70ch 로 묶고 있으면 안 된다. */
+   하려면 부모가 읽기 폭으로 묶고 있으면 안 된다. */
 .prose { display: flex; flex-direction: column; gap: 22px; }
-.prose > * { max-width: 70ch; min-width: 0; }
-.prose > table, .prose > .table-scroll { max-width: 100%; }
+.prose > * { max-width: 50rem; min-width: 0; }
+/* 산문만 읽기 폭으로 묶는다. 표·코드·다이어그램은 칼럼 전체를 쓴다 — 긴 SQL 이나 `mysql`
+   클라이언트 출력을 800px 안에 접어 넣을 이유가 없다.
+   코드블록의 `.prose` 직계 자식은 rouge 가 감싼 `div.language-<lang>.highlighter-rouge` 다.
+   `.highlight` 는 그 안에 한 겹 더 들어 있어서 직계 선택자로는 안 잡힌다. */
+.prose > table, .prose > .table-scroll, .prose > figure,
+.prose > .highlighter-rouge, .prose > [class*="language-"],
+.prose > div.highlight, .prose > pre { max-width: 100%; }
 .prose > h1 { font-size: clamp(28px, 3.4vw, 42px); line-height: 1.18; }
 .prose h2 { font-size: 26px; margin-top: 12px; scroll-margin-top: 96px; }
 .prose h3 { font-size: 20px; margin-top: 8px; scroll-margin-top: 96px; }
@@ -158,7 +271,10 @@ p { text-wrap: pretty; }
 .prose ul, .prose ol { margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.85; color: var(--ink2); }
 .prose li + li { margin-top: 6px; }
 .prose img { max-width: 100%; height: auto; border: 1px solid var(--line); }
+/* 인라인 코드용이다. 블록 안의 code 까지 걸리면 블록 배경 위에 회색 배경과 패딩이
+   한 겹 더 깔려 글자마다 음영이 생긴다. 아래에서 되돌린다. */
 .prose code { font-family: var(--mono); font-size: 0.88em; background: var(--line2); padding: 1px 5px; }
+.prose pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
 .prose blockquote {
   margin: 0; border-left: 3px solid var(--accent); background: var(--note-bg);
   padding: 16px 20px; font-size: 15.5px; line-height: 1.7; color: var(--ink);
@@ -176,6 +292,34 @@ p { text-wrap: pretty; }
    스크롤 컨테이너가 되어 가로 스크롤바가 코드 위에 겹쳐 그려진다.
    스크롤은 패딩을 가진 바깥 div.highlight 가 맡는다. */
 .prose div.highlight pre { border: 0; padding: 0; background: transparent; overflow: visible; }
+/* rouge 토큰. 언어별 클래스가 아니라 언어 공통 토큰이라 이 한 벌로 sql·bash·javascript·
+   rust·python·json·yaml 이 모두 커버된다. `text`/`plaintext` 는 rouge 가 토큰을 만들지
+   않으므로 터미널 출력과 설정 덤프는 단색으로 남는다 — 의도한 동작이다.
+   여기 없는 토큰은 --code-ink 를 물려받는다. 특히 .n·.p·.o·.nx 가 전체의 80% 라
+   색을 주지 않는 편이 낫다. .err 는 rouge 가 렉싱에 실패한 조각이므로 붉게 칠하지 않는다. */
+.prose .highlight .k,  .prose .highlight .kc, .prose .highlight .kd,
+.prose .highlight .kn, .prose .highlight .kp, .prose .highlight .kr,
+.prose .highlight .kt, .prose .highlight .nb, .prose .highlight .no,
+.prose .highlight .bp, .prose .highlight .ow, .prose .highlight .nd
+  { color: var(--code-key); }
+.prose .highlight .s,  .prose .highlight .s1, .prose .highlight .s2,
+.prose .highlight .sb, .prose .highlight .sc, .prose .highlight .sd,
+.prose .highlight .sh, .prose .highlight .si, .prose .highlight .sx,
+.prose .highlight .sr, .prose .highlight .ss, .prose .highlight .se,
+.prose .highlight .dl { color: var(--code-str); }
+.prose .highlight .m,  .prose .highlight .mi, .prose .highlight .mf,
+.prose .highlight .mb, .prose .highlight .mh, .prose .highlight .mo,
+.prose .highlight .il { color: var(--code-num); }
+.prose .highlight .c,  .prose .highlight .c1, .prose .highlight .cm,
+.prose .highlight .cs, .prose .highlight .cp, .prose .highlight .cd,
+.prose .highlight .ch { color: var(--code-cmt); }
+/* 설정·직렬화 형식의 키. ini·yaml·json 에서 키가 구분되면 읽기가 크게 나아진다. */
+.prose .highlight .na, .prose .highlight .nt, .prose .highlight .py,
+.prose .highlight .nl { color: var(--code-key); }
+/* 함수·클래스·네임스페이스는 굵기로만 구분한다 — 네 번째 색조를 들이지 않는다. */
+.prose .highlight .nf, .prose .highlight .nc, .prose .highlight .nn,
+.prose .highlight .fm { font-weight: 500; }
+
 .copy-code {
   position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 10.5px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink3);
@@ -195,8 +339,42 @@ p { text-wrap: pretty; }
 .prose th code, .prose td code { overflow-wrap: anywhere; }
 .table-scroll { overflow-x: auto; }
 .table-scroll table { min-width: 100%; }
+/* 이름 · 한 일 · 스택 3칼럼 표. 마크다운 표에 `{: .col-table}` 을 붙여 쓴다.
+
+   아무 제약 없이 두면 긴 산문 칼럼이 폭을 다 먹고 나머지가 짓눌려
+   `Rust · MySQL 5.7+` 같은 값이 토큰 중간에서 줄바꿈된다. 그래서 세 칼럼의 폭을
+   명시한다 — 다만 이름 칼럼만은 숫자로 못 박지 않는다(아래 참조).
+
+   전체 폭은 문서 영역의 70% (1184px → 829px). `.prose table` 의 width:100% 와
+   `.table-scroll table` 의 min-width:100% 를 둘 다 눌러야 한다 — CSS 에서 min-width 가
+   max-width 보다 우선하므로 max-width 만 주면 안 먹는다. 그래서 선택자를
+   `.prose .col-table` 로 한 단계 올린다.
+
+   이름 칼럼은 퍼센트로 어림하지 않는다. `white-space: nowrap` 을 주면 줄바꿈 기회가
+   사라져 브라우저가 가장 긴 이름의 실측 폭을 그대로 배정한다 — 글꼴이 바뀌어도 한 줄이
+   유지된다. 퍼센트나 `ch` 로 재려 하면 안 된다: `ch` 는 셀 자기 글꼴로 계산되는데
+   th(mono 10.5px)와 td(sans 14.5px)의 글꼴이 달라 값이 어긋난다.
+
+   그래서 table-layout 을 auto 로 둔다. 표 폭이 확정돼 있으므로, 양 끝 칼럼의 요구 폭을
+   먼저 채우고 남는 폭은 auto 인 산문 칼럼이 전부 받는다. 전체 폭을 조절하면 이름·스택은
+   그대로 있고 한 일 칼럼만 늘거나 줄어든다 — 비율을 다시 계산할 일이 없다.
+     이름  nowrap + width:1% → 가장 긴 `oracle-migration-analyzer` 의 실측 폭
+     한 일 auto → 남는 폭 전부
+     스택  11rem(176px) → mono 12px 로 약 24자. 긴 값은 ` / ` 공백에서 두 줄로 갈린다
+   퍼센트를 섞지 않는다 — 합이 100% 를 넘으면 브라우저가 비율대로 눌러 버려서
+   어느 칼럼이 얼마를 받는지 예측이 안 된다. */
+.prose .col-table { table-layout: auto; width: 70%; min-width: 0; }
+.col-table th:nth-child(1), .col-table td:nth-child(1) { white-space: nowrap; width: 1%; }
+.col-table th:nth-child(2), .col-table td:nth-child(2) { width: auto; }
+.col-table th:nth-child(3), .col-table td:nth-child(3) { width: 11rem; }
+.col-table td:nth-child(3) { font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); padding: 5px 10px; color: var(--ink2); }
+/* 댓글. giscus iframe 은 스스로 높이를 잡으므로 폭만 열어 주면 된다 —
+   .prose > * 의 읽기 폭 제한을 그대로 두면 댓글창이 본문보다 좁아 답답하다. */
+.comments { max-width: 100% !important; display: flex; flex-direction: column; gap: 14px; padding-top: 26px; border-top: 1px solid var(--line); }
+.comments .giscus, .comments .giscus-frame { width: 100%; }
+.comments noscript { font-size: 14px; color: var(--ink3); }
 .share { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--line); }
 .share-links { display: flex; gap: 6px; }
 .share-links a, .share-links button {
@@ -219,7 +397,12 @@ p { text-wrap: pretty; }
 .ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
 /* page (about / work) — 단독 산문 페이지 */
-.page-body { padding: 52px 48px 72px; max-width: 72ch; }
+/* 읽기 폭 제한은 컨테이너가 아니라 자식에 둔다 — .prose·.docs-body 와 같은 규칙이다.
+   컨테이너를 읽기 폭으로 묶으면 표가 그 안에 갇혀 칼럼이 짓눌린다. */
+.page-body { padding: 52px 48px 72px; }
+.page-body > * { max-width: 52rem; min-width: 0; }
+.page-body > table, .page-body > .table-scroll, .page-body > figure,
+.page-body > .highlighter-rouge, .page-body > [class*="language-"] { max-width: 100%; }
 
 /* archive */
 .archive-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding: 44px 48px 22px; border-bottom: 1px solid var(--line); }
@@ -245,8 +428,10 @@ p { text-wrap: pretty; }
 .nav-group a.is-current { color: var(--ink); border-left-color: var(--accent); }
 /* .prose 와 같은 이유로 폭 제한을 자식에 둔다 (표만 본문보다 넓게). */
 .docs-body { padding: 36px 40px 64px; }
-.docs-body > * { max-width: 72ch; min-width: 0; }
-.docs-body > table, .docs-body > .table-scroll { max-width: 100%; }
+.docs-body > * { max-width: 52rem; min-width: 0; }
+.docs-body > table, .docs-body > .table-scroll, .docs-body > figure,
+.docs-body > .highlighter-rouge, .docs-body > [class*="language-"],
+.docs-body > div.highlight, .docs-body > pre { max-width: 100%; }
 .breadcrumb { font-size: 11px; }
 .docs-toc { border-left: 1px solid var(--line); padding: 36px 20px; }
 .doc-pager { display: flex; justify-content: space-between; gap: 12px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; }
@@ -270,6 +455,9 @@ p { text-wrap: pretty; }
   .site-search { flex: 1 1 150px; }
   .site-search input, .search-results { width: 100%; }
   .hero, .pillars, .newsletter, .archive-head, .site-foot { grid-template-columns: 1fr; display: grid; }
+  /* 3칸 밴드가 세로로 쌓이면 칼럼 구분선(오른쪽 선)이 의미를 잃는다. 아래 선으로 바꾼다. */
+  .pillar { border-right: 0; border-bottom: 1px solid var(--line); padding: 26px 24px; }
+  .pillar:last-child { border-bottom: 0; }
   .article-grid, .docs-shell { grid-template-columns: 1fr; padding: 32px 24px 56px; }
   .page-body { padding: 32px 24px 56px; }
   .toc-rail, .docs-nav { position: static; border: 0; padding: 0 0 16px; }
@@ -277,6 +465,13 @@ p { text-wrap: pretty; }
   .post-row { grid-template-columns: 1fr; gap: 6px; }
   .post-row .mono:last-child { text-align: left; }
   .ad--leaderboard { padding: 0 24px 32px; }
+  /* 좁은 화면에서는 최소 폭을 낮춰 스크롤 거리를 줄인다. */
+  .diagram-canvas svg { min-width: 660px; }
+  /* 좁은 화면에서는 폭 제한을 풀고 최소 폭을 줘서 theme.js 가 감싼 .table-scroll 이 가로
+     스크롤을 내준다. 안 그러면 칼럼마다 두세 글자만 남는다.
+     선택자는 위의 `.prose .col-table` 과 같은 단계여야 min-width 가 덮인다.
+     이름 칼럼의 nowrap 은 그대로 둔다 — 스크롤되므로 한 줄을 유지하는 편이 낫다. */
+  .prose .col-table { width: auto; min-width: 560px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

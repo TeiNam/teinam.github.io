@@ -3,7 +3,7 @@ title: "커넥션과 격리 수준"
 permalink: /docs/database/mysql-install-checklist/connections-isolation/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 커넥션과 격리 수준"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 8
 nav_title: "커넥션과 격리"

@@ -1,0 +1,197 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "MongoDB 임베딩과 참조 결정 흐름",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": {
+          "label": "판단",
+          "visible": true
+        },
+        "database": {
+          "label": "결론",
+          "visible": true
+        },
+        "external": {
+          "label": "시작",
+          "visible": true
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "decision",
+      "label": "판단 과정"
+    },
+    {
+      "id": "embed_lane",
+      "label": "임베딩 선택"
+    },
+    {
+      "id": "ref_lane",
+      "label": "참조 선택"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "lane": "decision",
+      "col": 0,
+      "type": "external",
+      "label": "데이터 관계 분석",
+      "width": 120
+    },
+    {
+      "id": "strength",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "관계 강도",
+      "sublabel": "has-a / contains?",
+      "width": 120
+    },
+    {
+      "id": "ref_weak",
+      "lane": "ref_lane",
+      "col": 1,
+      "type": "database",
+      "label": "참조",
+      "sublabel": "약한 관계",
+      "width": 100
+    },
+    {
+      "id": "consistency",
+      "lane": "decision",
+      "col": 2,
+      "type": "backend",
+      "label": "일관성 요구",
+      "sublabel": "함께 갱신?",
+      "width": 120
+    },
+    {
+      "id": "embed_consistent",
+      "lane": "embed_lane",
+      "col": 2,
+      "type": "database",
+      "label": "임베딩",
+      "sublabel": "일관성 보장",
+      "width": 100
+    },
+    {
+      "id": "size",
+      "lane": "decision",
+      "col": 3,
+      "type": "backend",
+      "label": "크기 제약",
+      "sublabel": "16MiB 이내?",
+      "width": 120
+    },
+    {
+      "id": "ref_large",
+      "lane": "ref_lane",
+      "col": 3,
+      "type": "database",
+      "label": "참조",
+      "sublabel": "큰 크기",
+      "width": 100
+    },
+    {
+      "id": "growth",
+      "lane": "decision",
+      "col": 4,
+      "type": "backend",
+      "label": "증가 패턴",
+      "sublabel": "상한 없이 증가?",
+      "width": 120
+    },
+    {
+      "id": "ref_growing",
+      "lane": "ref_lane",
+      "col": 4,
+      "type": "database",
+      "label": "참조",
+      "sublabel": "상한 없는 증가",
+      "width": 100
+    },
+    {
+      "id": "embed_bounded",
+      "lane": "embed_lane",
+      "col": 4,
+      "type": "database",
+      "label": "임베딩",
+      "sublabel": "제한적 증가",
+      "width": 100
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "strength",
+      "variant": "default"
+    },
+    {
+      "from": "strength",
+      "to": "consistency",
+      "label": "강함",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "from": "strength",
+      "to": "ref_weak",
+      "label": "약함",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "from": "consistency",
+      "to": "embed_consistent",
+      "label": "예",
+      "variant": "emphasis"
+    },
+    {
+      "from": "consistency",
+      "to": "size",
+      "label": "아니오",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "from": "size",
+      "to": "ref_large",
+      "label": "크다",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "from": "size",
+      "to": "growth",
+      "label": "작다",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "from": "growth",
+      "to": "ref_growing",
+      "label": "예",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "from": "growth",
+      "to": "embed_bounded",
+      "label": "아니오",
+      "variant": "emphasis"
+    }
+  ]
+}

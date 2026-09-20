@@ -3,11 +3,46 @@
   var btn = document.getElementById('theme-toggle');
   function label() { if (btn) btn.textContent = root.dataset.theme === 'dark' ? 'light mode' : 'dark mode'; }
   label();
+  function currentTheme() { return root.dataset.theme === 'dark' ? 'dark' : 'light'; }
+
   if (btn) btn.addEventListener('click', function () {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', root.dataset.theme);
     label();
+    // giscus 는 iframe 안에 있어 CSS 가 닿지 않는다. postMessage 로 테마를 따로 알려야
+    // 다크 모드에서 흰 댓글창이 남지 않는다.
+    var frame = document.querySelector('iframe.giscus-frame');
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: currentTheme() } } }, 'https://giscus.app');
+    }
   });
+
+  // 댓글 스크립트는 JS 에서 주입한다. data-theme 를 빌드 시점에 박으면 다크 모드로
+  // 들어온 사람에게 흰 위젯이 한 번 번쩍인다.
+  var gis = document.querySelector('[data-giscus]');
+  if (gis) {
+    var s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    var conf = {
+      'repo': gis.dataset.repo,
+      'repo-id': gis.dataset.repoId,
+      'category': gis.dataset.category,
+      'category-id': gis.dataset.categoryId,
+      'mapping': 'pathname',
+      'strict': '1',
+      'reactions-enabled': '1',
+      'emit-metadata': '0',
+      'input-position': 'top',
+      'theme': currentTheme(),
+      'lang': 'ko',
+      'loading': 'lazy'
+    };
+    Object.keys(conf).forEach(function (k) { s.setAttribute('data-' + k, conf[k]); });
+    gis.appendChild(s);
+  }
 
   // 목차 자동 생성 + 현재 위치 하이라이트
   var rail = document.querySelector('[data-toc] .toc');
@@ -47,13 +82,20 @@
     w.appendChild(t);
   });
 
-  // 코드 복사
-  document.querySelectorAll('.prose div.highlight, .prose pre').forEach(function (block) {
-    if (block.querySelector('.copy-code')) return;
+  // 코드 복사. rouge 는 div.highlight > pre.highlight > code 로 세 겹을 만든다.
+  // 선택자가 바깥 div 와 안쪽 pre 를 둘 다 잡는데, 중복 가드는 자손만 보므로 안쪽 pre 는
+  // 부모에 붙은 버튼을 못 보고 하나 더 만든다. 그래서 가장 바깥 블록만 남긴다.
+  var codeBlocks = Array.prototype.slice.call(
+    document.querySelectorAll('.prose div.highlight, .prose pre'));
+  codeBlocks.filter(function (b) {
+    return !codeBlocks.some(function (other) { return other !== b && other.contains(b); });
+  }).forEach(function (block) {
     var b = document.createElement('button');
     b.className = 'copy-code'; b.type = 'button'; b.textContent = 'copy';
     b.addEventListener('click', function () {
-      navigator.clipboard.writeText(block.innerText.replace(/^copy\n/, ''));
+      // 버튼이 블록 안에 있어서 컨테이너의 innerText 를 쓰면 'copy' 가 같이 복사된다.
+      var src = block.querySelector('code') || block.querySelector('pre') || block;
+      navigator.clipboard.writeText(src.innerText);
       b.textContent = 'copied'; setTimeout(function () { b.textContent = 'copy'; }, 1400);
     });
     block.appendChild(b);

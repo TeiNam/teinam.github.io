@@ -1,0 +1,37 @@
+---
+permalink: /llms.txt
+layout: null
+sitemap: false
+---
+# {{ site.title }}
+
+> {{ site.description }}
+
+- 언어: 한국어. 제품명·파라미터·SQL 식별자는 영어 원형을 유지합니다.
+- 저자: {{ site.author }} ({{ site.email }})
+- 사이트맵: {{ '/sitemap.xml' | absolute_url }}
+- 피드: {{ '/feed.xml' | absolute_url }}
+
+구성은 셋으로 나뉩니다. **Docs** 는 기준으로 삼고 반복해서 들춰 보는 문서, **Writing** 은 시점이 있는 기록, **Career** 는 일과 경력 기록입니다. 각 문서의 `last_modified_at` 이 마지막 검증 시점이고, 본문에 적힌 버전·수치는 그 시점의 공식 문서를 대조한 값입니다.
+
+## Docs — 기준 문서
+{% for group in site.data.docs_nav %}
+### {{ group.group }}
+{% for item in group.items %}- [{{ item.name }}]({{ item.url | absolute_url }})
+{% endfor %}{% endfor %}
+가이드는 여러 쪽으로 나뉘어 있습니다. 쪽 목록은 각 가이드 첫 쪽에 있습니다.
+
+## Writing — 포스트
+{% assign cats = site.categories | sort %}{% for cat in cats %}
+### {{ cat[0] }}
+{% assign posts = cat[1] | sort: "date" | reverse %}{% for post in posts %}- [{{ post.title }}]({{ post.url | absolute_url }}){% if post.excerpt %} — {{ post.excerpt | strip_newlines | strip }}{% endif %}
+{% endfor %}{% endfor %}
+## Career
+{% for group in site.data.career_nav %}
+### {{ group.group }}
+{% for item in group.items %}- [{{ item.name }}]({{ item.url | absolute_url }})
+{% endfor %}{% endfor %}
+## 그 밖에
+
+- [소개]({{ '/about/' | absolute_url }})
+- [오픈소스 프로젝트와 경력]({{ '/work/' | absolute_url }})

@@ -3,7 +3,7 @@ title: "MySQL 8.4 로 갈 때 깨지는 것"
 permalink: /docs/database/mysql-install-checklist/upgrade-to-8-4/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 8.4 업그레이드 시 깨지는 것"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 11
 nav_title: "8.4 업그레이드"

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "MySQL 쿼리 실행 흐름",
+    "viewBox": [920, 580],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "default": { "label": "처리 단계" },
+        "emphasis": { "label": "핵심 전달" },
+        "return": { "label": "반환" }
+      }
+    }
+  },
+  "participants": [
+    { "id": "client", "type": "external", "label": "클라이언트", "sublabel": "애플리케이션" },
+    { "id": "parser", "type": "backend", "label": "파서", "sublabel": "구문 분석" },
+    { "id": "preprocessor", "type": "backend", "label": "전처리기", "sublabel": "구조·권한 확인" },
+    { "id": "optimizer", "type": "backend", "label": "옵티마이저", "sublabel": "실행 계획 수립" },
+    { "id": "executor", "type": "backend", "label": "실행 엔진", "sublabel": "핸들러 호출" },
+    { "id": "storage", "type": "database", "label": "스토리지 엔진", "sublabel": "InnoDB/MyISAM" }
+  ],
+  "messages": [
+    { "from": "client", "to": "parser", "y": 180, "label": "쿼리 전송", "variant": "emphasis" },
+    { "from": "parser", "to": "preprocessor", "y": 230, "label": "파서 트리 전달", "variant": "default" },
+    { "from": "preprocessor", "to": "optimizer", "y": 280, "label": "전처리 완료", "variant": "default" },
+    { "from": "optimizer", "to": "executor", "y": 330, "label": "실행 계획 전달", "variant": "emphasis" },
+    { "from": "executor", "to": "storage", "y": 380, "label": "핸들러 API 호출", "variant": "default" },
+    { "from": "storage", "to": "executor", "y": 430, "label": "레코드 반환", "variant": "return" },
+    { "from": "executor", "to": "client", "y": 480, "label": "결과 반환", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "parser", "from": 174, "to": 236, "type": "backend" },
+    { "participant": "preprocessor", "from": 224, "to": 286, "type": "backend" },
+    { "participant": "optimizer", "from": 274, "to": 336, "type": "backend" },
+    { "participant": "executor", "from": 324, "to": 486, "type": "backend" },
+    { "participant": "storage", "from": 374, "to": 436, "type": "database" }
+  ]
+}

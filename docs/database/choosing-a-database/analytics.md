@@ -3,7 +3,7 @@ title: "분석 계층"
 permalink: /docs/database/choosing-a-database/analytics/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 분석 계층과 오픈 테이블 포맷"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 6
 nav_title: "분석 계층"

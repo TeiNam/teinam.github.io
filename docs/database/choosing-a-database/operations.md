@@ -3,7 +3,7 @@ title: "운영 부담과 팀 역량"
 permalink: /docs/database/choosing-a-database/operations/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 운영 부담과 팀 역량"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 8
 nav_title: "운영 부담"

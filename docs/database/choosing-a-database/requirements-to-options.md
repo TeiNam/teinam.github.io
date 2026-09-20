@@ -3,7 +3,7 @@ title: "요구에서 선택지로"
 permalink: /docs/database/choosing-a-database/requirements-to-options/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 요구별 선택 표"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 2
 nav_title: "요구에서 선택지로"

@@ -3,7 +3,7 @@ title: "문자셋 · 콜레이션 · 시간대"
 permalink: /docs/database/mysql-install-checklist/charset-timezone/
 breadcrumb: "Docs / Database / MySQL 초기 설치 체크리스트"
 description: "MySQL 초기 설치 — 문자셋·콜레이션·시간대"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 3
 nav_title: "문자셋·시간대"

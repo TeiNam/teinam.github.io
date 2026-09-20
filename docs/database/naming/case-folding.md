@@ -3,7 +3,7 @@ title: "0. 핵심 원칙 — 식별자 케이스 폴딩(Case Folding)"
 permalink: /docs/database/naming/case-folding/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 식별자 케이스 폴딩"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 1
 nav_title: "케이스 폴딩"

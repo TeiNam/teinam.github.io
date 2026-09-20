@@ -3,7 +3,11 @@ tagline: Database와 A.I 그리고 그 사이의 Data Pipeline
 author: teinam
 email: career@rastalion.me
 description: Database와 A.I 그리고 그 사이의 Data Pipeline 을 다루는 teinam 의 기술 노트.
-url: "https://teinam.github.io"
+# 커스텀 도메인. rastalion.dev 가 GitHub Pages 를 가리키고 teinam.github.io 는 여기로
+# 301 된다. 이 값이 canonical·og:url·sitemap·llms.txt·JSON-LD 의 호스트를 전부 정하므로
+# teinam.github.io 로 두면 canonical 이 301 되는 주소를 가리키게 된다.
+# 아래 giscus.repo 는 GitHub 저장소 경로이므로 도메인과 무관하다 — 바꾸지 않는다.
+url: "https://rastalion.dev"
 baseurl: ""
 lang: ko
 
@@ -36,7 +40,31 @@ nav:
   - { name: work, url: /work/ }
   - { name: about, url: /about/ }
 
+# /writing/ 필터 버튼 순서. 여기 없는 카테고리는 뒤에 붙는다(필터에서 누락되지 않도록).
+category_order: [database, mysql, postgresql, mongodb, redis]
+
+# 포스트 댓글 (giscus — GitHub Discussions 를 저장소로 쓴다).
+# repo_id·category_id 가 비어 있으면 댓글 영역이 아예 렌더되지 않는다.
+#
+# 켜려면 순서대로:
+#   1. 저장소 Settings → General → Features → Discussions 체크
+#   2. Discussions 에 Announcements 형식으로 "Comments" 카테고리 생성
+#      (Announcements 여야 관리자만 글을 열 수 있어 아무나 빈 스레드를 못 만든다)
+#   3. https://github.com/apps/giscus 에서 이 저장소에 앱 설치
+#   4. https://giscus.app 에 저장소를 넣으면 나오는 두 ID 를 아래에 붙인다
+giscus:
+  repo: TeiNam/teinam.github.io
+  repo_id: ''
+  category: Comments
+  category_id: ''
+
 defaults:
+  # 공유 카드 기본 이미지. jekyll-seo-tag 의 ImageDrop 은 page["image"] 만 읽으므로
+  # 최상위 site.image 가 아니라 defaults 로 넣어야 모든 페이지에 붙는다. 이미지가
+  # 생기면 twitter:card 도 summary → summary_large_image 로 자동 승급된다.
+  # 글마다 다른 카드를 쓰려면 그 글 프런트매터에 image: 를 적으면 이 값을 덮는다.
+  - scope: { path: "" }
+    values: { image: /assets/img/og-default.png }
   - scope: { path: "", type: posts }
     values: { layout: post }
   - scope: { path: "docs" }

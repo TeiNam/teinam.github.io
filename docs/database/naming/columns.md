@@ -3,7 +3,7 @@ title: "3. 컬럼 네이밍 규칙"
 permalink: /docs/database/naming/columns/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 컬럼 명명"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 4
 nav_title: "컬럼"

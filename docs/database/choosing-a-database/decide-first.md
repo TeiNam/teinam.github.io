@@ -3,7 +3,7 @@ title: "먼저 정할 세 가지"
 permalink: /docs/database/choosing-a-database/decide-first/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 제품을 보기 전에 정할 세 가지"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 1
 nav_title: "먼저 정할 세 가지"

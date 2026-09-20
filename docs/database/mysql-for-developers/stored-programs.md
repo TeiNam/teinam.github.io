@@ -3,7 +3,7 @@ title: "7. Stored Procedure · Trigger · Event Scheduler 사용 자제"
 permalink: /docs/database/mysql-for-developers/stored-programs/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 스토어드 프로그램을 피하는 근거"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 7
 nav_title: "Stored Program"

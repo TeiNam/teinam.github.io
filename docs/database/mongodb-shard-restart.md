@@ -3,7 +3,7 @@ title: "MongoDB 샤드 클러스터 재구동 순서"
 permalink: /docs/database/mongodb-shard-restart/
 breadcrumb: "Docs / Database"
 description: "MongoDB 8.0 기준 클러스터 전체 정지·기동 런북. 밸런서·mongos·샤드·config 서버의 순서와 단계별 확인"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 redirect_from:
   - /writing/mongodb-shard-cluster-restart-order/
 ---

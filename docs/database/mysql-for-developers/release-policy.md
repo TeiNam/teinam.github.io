@@ -3,7 +3,7 @@ title: "9. MySQL 릴리스 정책"
 permalink: /docs/database/mysql-for-developers/release-policy/
 breadcrumb: "Docs / Database / MySQL for Developers"
 description: "MySQL 개발 가이드 — 릴리스 트랙과 업그레이드 시 깨지는 것"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: mysql-for-developers
 order: 9
 nav_title: "릴리스 정책"

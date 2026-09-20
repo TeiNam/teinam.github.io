@@ -1,7 +1,22 @@
 ---
 layout: default
 ---
-{%- assign cats = site.posts | map: "category" | compact | uniq -%}
+{%- comment -%}
+  필터 순서는 _config.yml 의 category_order 를 따른다. 거기 없는 카테고리는
+  뒤에 붙여서, 새 카테고리를 만들었을 때 필터에서 조용히 빠지지 않게 한다.
+{%- endcomment -%}
+{%- assign present = site.posts | map: "category" | compact | uniq -%}
+{%- assign cats = "" | split: "," -%}
+{%- for c in site.category_order -%}
+  {%- if present contains c -%}
+    {%- assign one = c | split: "," -%}{%- assign cats = cats | concat: one -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- for c in present -%}
+  {%- unless site.category_order contains c -%}
+    {%- assign one = c | split: "," -%}{%- assign cats = cats | concat: one -%}
+  {%- endunless -%}
+{%- endfor -%}
 <section class="archive-head">
   <div>
     <h1>{{ page.title }}</h1>

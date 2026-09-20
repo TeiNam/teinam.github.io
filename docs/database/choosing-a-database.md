@@ -3,7 +3,7 @@ title: "데이터베이스 선택 가이드"
 permalink: /docs/database/choosing-a-database/
 breadcrumb: "Docs / Database"
 description: "요구를 먼저 정하고 선택지를 고르는 순서. 데이터 모델·일관성·라이선스·분석 계층·로그 저장소. 기준 시점 2026-09"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 0
 nav_title: "개요"

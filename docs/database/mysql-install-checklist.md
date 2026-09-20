@@ -3,7 +3,7 @@ title: "MySQL 초기 설치 체크리스트"
 permalink: /docs/database/mysql-install-checklist/
 breadcrumb: "Docs / Database"
 description: "MySQL 을 처음 설치할 때 기본값으로 두면 안 되는 파라미터"
-updated: 2026-09-19
+last_modified_at: 2026-09-19
 guide: mysql-install-checklist
 order: 0
 nav_title: "개요"

@@ -3,7 +3,7 @@ title: "로그 저장소"
 permalink: /docs/database/choosing-a-database/log-storage/
 breadcrumb: "Docs / Database / 데이터베이스 선택 가이드"
 description: "DB 선택 — 로그 저장소 선택"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: choosing-a-database
 order: 7
 nav_title: "로그 저장소"

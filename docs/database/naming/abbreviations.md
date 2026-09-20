@@ -3,7 +3,7 @@ title: "6. 약어 정의서"
 permalink: /docs/database/naming/abbreviations/
 breadcrumb: "Docs / Database / 데이터베이스 네이밍 규칙"
 description: "네이밍 규칙 — 약어 정의서"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 guide: naming
 order: 7
 nav_title: "약어 정의서"

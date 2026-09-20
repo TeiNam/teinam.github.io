@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "MERN Stack 아키텍처",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "프론트엔드" },
+        "backend": { "label": "백엔드" },
+        "database": { "label": "데이터베이스" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 140,
+    "gapY": 100
+  },
+  "components": [
+    {
+      "id": "react",
+      "type": "frontend",
+      "label": "React",
+      "sublabel": "JavaScript 라이브러리",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "express-nodejs",
+      "type": "backend",
+      "label": "Express + Node.js",
+      "sublabel": "애플리케이션 계층",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "mongodb",
+      "type": "database",
+      "label": "MongoDB",
+      "sublabel": "Document Database",
+      "row": 0,
+      "col": 2
+    }
+  ],
+  "connections": [
+    {
+      "from": "react",
+      "to": "express-nodejs",
+      "label": "HTTP/XHR"
+    },
+    {
+      "from": "express-nodejs",
+      "to": "mongodb",
+      "label": "MongoDB 드라이버"
+    }
+  ]
+}

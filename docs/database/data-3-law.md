@@ -3,7 +3,7 @@ title: "데이터 3법"
 permalink: /docs/database/data-3-law/
 breadcrumb: "Docs / Database"
 description: "데이터 3법과 개인정보 보호법을 데이터베이스 설계·운영 관점에서 정리. 기준 시점 2026-09-11 시행 현행 법령"
-updated: 2026-09-20
+last_modified_at: 2026-09-20
 ---
 
 > **INFO** — 이 문서는 법률 자문이 아니라 조문 좌표다

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "MySQL 서버 아키텍처",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": { "label": "클라이언트" },
+        "backend": { "label": "서버 계층" },
+        "database": { "label": "스토리지" },
+        "cloud": { "label": "파일 시스템" }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "클라이언트",
+      "sublabel": "C API / Connector",
+      "pos": [100, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "connection-manager",
+      "type": "backend",
+      "label": "커넥션 매니저",
+      "sublabel": "스레드 캐시",
+      "pos": [280, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "parser",
+      "type": "backend",
+      "label": "파서",
+      "pos": [460, 140],
+      "size": [120, 60]
+    },
+    {
+      "id": "optimizer",
+      "type": "backend",
+      "label": "옵티마이저",
+      "pos": [460, 240],
+      "size": [120, 60]
+    },
+    {
+      "id": "execution",
+      "type": "backend",
+      "label": "실행 엔진",
+      "pos": [460, 340],
+      "size": [120, 60]
+    },
+    {
+      "id": "data-dict",
+      "type": "database",
+      "label": "데이터 딕셔너리",
+      "sublabel": "mysql.ibd",
+      "pos": [660, 180],
+      "size": [140, 60]
+    },
+    {
+      "id": "handler",
+      "type": "backend",
+      "label": "핸들러 API",
+      "pos": [660, 340],
+      "size": [140, 60]
+    },
+    {
+      "id": "innodb",
+      "type": "database",
+      "label": "InnoDB",
+      "sublabel": "버퍼 풀",
+      "pos": [860, 280],
+      "size": [120, 60]
+    },
+    {
+      "id": "myisam",
+      "type": "database",
+      "label": "MyISAM",
+      "sublabel": "키 캐시",
+      "pos": [860, 400],
+      "size": [120, 60]
+    },
+    {
+      "id": "filesystem",
+      "type": "cloud",
+      "label": "파일 시스템",
+      "pos": [1040, 340],
+      "size": [120, 60]
+    }
+  ],
+  "connections": [
+    {
+      "from": "clients",
+      "to": "connection-manager",
+      "label": "TCP/IP"
+    },
+    {
+      "from": "connection-manager",
+      "to": "parser",
+      "label": "쿼리"
+    },
+    {
+      "from": "parser",
+      "to": "optimizer"
+    },
+    {
+      "from": "optimizer",
+      "to": "data-dict",
+      "label": "메타데이터",
+      "variant": "dashed"
+    },
+    {
+      "from": "optimizer",
+      "to": "execution",
+      "label": "실행 계획",
+      "labelDy": 24
+    },
+    {
+      "from": "execution",
+      "to": "handler",
+      "label": "핸들러 호출"
+    },
+    {
+      "from": "handler",
+      "to": "innodb"
+    },
+    {
+      "from": "handler",
+      "to": "myisam"
+    },
+    {
+      "from": "innodb",
+      "to": "filesystem",
+      "label": "I/O"
+    },
+    {
+      "from": "myisam",
+      "to": "filesystem",
+      "label": "I/O"
+    }
+  ]
+}

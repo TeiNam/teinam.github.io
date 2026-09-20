@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "MariaDB XA 트랜잭션 상태 전이",
+    "output": "_workspace/diagrams/xa-states.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      980,
+      566
+    ],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "start": {
+          "label": "시작"
+        },
+        "active": {
+          "label": "진행 중"
+        },
+        "waiting": {
+          "label": "영속 · 대기"
+        },
+        "success": {
+          "label": "커밋 확정"
+        },
+        "failure": {
+          "label": "되돌림 확정"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "상태"
+    },
+    {
+      "id": "rollback",
+      "label": "되돌림"
+    },
+    {
+      "id": "terminal",
+      "label": "종료"
+    }
+  ],
+  "states": [
+    {
+      "id": "nonexisting",
+      "type": "start",
+      "label": "NON-EXISTING",
+      "sublabel": "트랜잭션 없음",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "시작"
+    },
+    {
+      "id": "active",
+      "type": "active",
+      "label": "ACTIVE",
+      "sublabel": "문장 실행 중",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "세션 보유"
+    },
+    {
+      "id": "idle",
+      "type": "active",
+      "label": "IDLE",
+      "sublabel": "실행 끝",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "분기"
+    },
+    {
+      "id": "prepared",
+      "type": "waiting",
+      "label": "PREPARED",
+      "sublabel": "영속 · 크래시에도 남음",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "10.5+"
+    },
+    {
+      "id": "committed",
+      "type": "success",
+      "label": "COMMITTED",
+      "sublabel": "커밋 확정",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "종료"
+    },
+    {
+      "id": "rolledback",
+      "type": "failure",
+      "label": "ROLLED BACK",
+      "sublabel": "되돌림 확정",
+      "lane": "rollback",
+      "col": 1,
+      "tag": "종료"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "nonexisting",
+      "to": "active",
+      "label": "XA START",
+      "variant": "emphasis",
+      "labelDy": -29
+    },
+    {
+      "from": "active",
+      "to": "idle",
+      "label": "XA END",
+      "variant": "emphasis",
+      "labelDy": -29
+    },
+    {
+      "from": "idle",
+      "to": "prepared",
+      "label": "XA PREPARE",
+      "variant": "emphasis",
+      "labelDy": -29,
+      "route": "straight",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "from": "prepared",
+      "to": "committed",
+      "label": "XA COMMIT",
+      "variant": "emphasis",
+      "labelDy": -33
+    },
+    {
+      "from": "idle",
+      "to": "committed",
+      "label": "XA COMMIT ONE PHASE",
+      "variant": "dashed",
+      "route": "top-channel",
+      "fromSide": "top",
+      "toSide": "top",
+      "channelY": 96
+    },
+    {
+      "from": "prepared",
+      "to": "rolledback",
+      "label": "XA ROLLBACK",
+      "variant": "security",
+      "route": "straight",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 25
+    },
+    {
+      "from": "idle",
+      "to": "rolledback",
+      "label": "XA ROLLBACK",
+      "variant": "security"
+    }
+  ]
+}
