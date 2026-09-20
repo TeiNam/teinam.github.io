@@ -100,6 +100,12 @@ p { text-wrap: pretty; }
 .meta-rule > * { padding: 0 16px; border-right: 1px solid var(--line); }
 .meta-rule > *:first-child { padding-left: 0; }
 .meta-rule > *:last-child { border-right: 0; }
+/* 대표 이미지가 없는 글이 히어로에 오면 2단을 풀고 한 칼럼을 쓴다. 그대로 두면
+   오른쪽 1fr 이 빈 채 남아 제목이 폭의 절반만 쓴다. home.html 이 클래스를 붙인다.
+   `.hero h1` 과 특정도가 같으므로 반드시 그 뒤에 와야 한다 — 앞에 두면 덮이지 않는다. */
+.hero--solo { grid-template-columns: minmax(0, 1fr); padding-bottom: 44px; }
+.hero--solo h1 { font-size: clamp(34px, 4.8vw, 60px); max-width: 30ch; }
+.hero--solo .lede { font-size: 18px; max-width: 64ch; }
 .hero-fig { margin: 0; display: flex; flex-direction: column; gap: 9px; }
 .hero-fig img { width: 100%; height: auto; border: 1px solid var(--line); }
 .hero-fig figcaption, .prose figcaption { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
@@ -308,6 +314,9 @@ p { text-wrap: pretty; }
   .site-search { flex: 1 1 150px; }
   .site-search input, .search-results { width: 100%; }
   .hero, .pillars, .newsletter, .archive-head, .site-foot { grid-template-columns: 1fr; display: grid; }
+  /* 3칸 밴드가 세로로 쌓이면 칼럼 구분선(오른쪽 선)이 의미를 잃는다. 아래 선으로 바꾼다. */
+  .pillar { border-right: 0; border-bottom: 1px solid var(--line); padding: 26px 24px; }
+  .pillar:last-child { border-bottom: 0; }
   .article-grid, .docs-shell { grid-template-columns: 1fr; padding: 32px 24px 56px; }
   .page-body { padding: 32px 24px 56px; }
   .toc-rail, .docs-nav { position: static; border: 0; padding: 0 0 16px; }

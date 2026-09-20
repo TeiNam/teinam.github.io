@@ -1,9 +1,23 @@
-# 홈 히어로 아래 3칸. 디자인 01-HOME 의 SERIES / TOOL NOTES / WORK WITH ME 밴드.
-# 비워두면 섹션이 통째로 렌더되지 않는다 (_layouts/home.html 이 size 로 검사).
+# 홈 히어로 아래 3칸 밴드. _layouts/home.html 이 size 로 검사하므로
+# 비워두면 섹션이 통째로 렌더되지 않는다.
 #
 # label 은 칸의 성격, title 은 굵은 한 줄, body 는 설명 한 줄, url 은 선택.
-# 예:
-#   - label: Series
-#     title: 연재 이름
-#     body: 한 줄 설명.
-#     url: /writing/
+#
+# body 의 숫자는 손으로 갱신한다. Liquid 로 세면 docs 는 가이드 하위 쪽까지,
+# career 는 AWS LP 16쪽까지 같이 잡혀 실제 문서 수와 어긋난다.
+# 기준 (2026-09-20): docs 문서 8편 · career 27쪽 · work 저장소 9개
+
+- label: Docs
+  title: 기준 문서
+  body: 한 편짜리 글로 흩어지면 찾기 어려운 것들. 반복해서 들춰 보는 8편의 가이드.
+  url: /docs/
+
+- label: Career
+  title: 이직 준비
+  body: 주니어를 위한 A to Z. 이력서·기술 면접·연봉 협상과 DB 직무 이해까지 27쪽.
+  url: /career/
+
+- label: Work
+  title: 만든 것
+  body: 데이터베이스 설계·모니터링·비용 산정을 다루는 오픈소스 도구 9개와 다뤄 온 것.
+  url: /work/
