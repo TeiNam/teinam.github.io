@@ -412,6 +412,18 @@ p { text-wrap: pretty; }
 /* docs·handbook 하단. 좌우 여백은 .docs-body 가 이미 갖고 있다 */
 .ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
+/* Credly 배지. 이미지는 로컬 사본이고 링크가 검증을 맡는다 — _data/badges.yml 은
+   _workspace/fetch_credly.py 가 만들고 만료된 배지는 애초에 들어오지 않는다.
+   96px 자리에 192px 원본을 쓰므로 width·height 를 적어 로드 전 자리를 잡는다. */
+.badges { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px 20px;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+.badges a { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; color: inherit; }
+.badges a:hover { text-decoration: none; }
+.badges a:hover .b-name { color: var(--accent); }
+.badges img { width: 96px; height: 96px; }
+.badges .b-name { font-size: 12.5px; line-height: 1.4; letter-spacing: -0.01em; }
+.badges .b-meta { font-family: var(--mono); font-size: 10.5px; color: var(--ink3); }
+
 /* page (about / work) — 단독 산문 페이지 */
 /* 읽기 폭 제한은 컨테이너가 아니라 자식에 둔다 — .prose·.docs-body 와 같은 규칙이다.
    컨테이너를 읽기 폭으로 묶으면 표가 그 안에 갇혀 칼럼이 짓눌린다. */

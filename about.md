@@ -9,8 +9,16 @@ description: DBRE 를 지향하는 teinam(RastaLion) 의 소개. 시스템·네�
 seo:
   type: AboutPage
 ---
+{%- comment %} URL 을 Liquid 변수로 먼저 조립한다. 마크다운 본문에 도메인과 Liquid 여는
+   괄호가 붙어 있으면 마크다운 포매터가 그것을 벌거벗은 URL 로 보고 자동 링크로 감싸
+   버려 Liquid 가 깨진다 — 실제로 한 번 깨졌다. 주석 안에도 여는 괄호를 쓰면 안 된다.
+{% endcomment -%}
+{%- capture mail_url %}mailto:{{ site.email }}{% endcapture -%}
+{%- capture gh_url %}https://github.com/{{ site.social.github }}{% endcapture -%}
+{%- capture li_url %}https://www.linkedin.com/in/{{ site.social.linkedin }}{% endcapture -%}
+{%- assign rss_url = '/feed.xml' | relative_url -%}
 
-RastaLion 이라는 이름으로 씁니다. 본명은 Tei 입니다.
+RastaLion 이라는 닉네임을 씁니다.
 
 DBA 로 시작했지만 지향하는 쪽은 DBRE(Database Reliability Engineer, 데이터베이스 신뢰성 엔지니어)입니다. 두 이름을 가르는 것은 다루는 제품이 아니라 책임의 범위라고 봅니다. 쿼리와 파라미터를 보는 일에서 멈추지 않고, 데이터가 서비스 안에서 어떻게 흐르고 어디서 깨지는지까지 따라가는 쪽입니다.
 
@@ -25,6 +33,22 @@ DBA 로 시작했지만 지향하는 쪽은 DBRE(Database Reliability Engineer, 
 시스템 엔지니어로 시작했습니다. 네트워크를 공부하며 CCNA·CCNP·CCDP 를 취득하고 CCIE 를 준비했고, OpenStack 으로 사설 클라우드를 다뤘습니다.
 
 그 뒤 데이터베이스로 옮겨 Oracle, MySQL, PostgreSQL, MongoDB 를 차례로 맡았습니다. 지금은 그 경험을 클라우드 위에서 다시 쓰고 있습니다. 관심은 데이터 분석과 Kafka 기반 데이터 처리 쪽으로 이어져 있습니다.
+
+## 자격
+
+<ul class="badges">
+{%- for b in site.data.badges %}
+  <li>
+    <a href="{{ b.url }}" rel="noopener">
+      <img src="{{ b.image | relative_url }}" alt="{{ b.name }}" width="96" height="96" loading="lazy">
+      <span class="b-name">{{ b.name }}</span>
+      <span class="b-meta">{{ b.issued }}{% if b.expires %} → {{ b.expires }}{% else %} · 만료 없음{% endif %}</span>
+    </a>
+  </li>
+{%- endfor %}
+</ul>
+
+유효한 것만 싣습니다. 각 배지는 [Credly](https://www.credly.com/users/rastalion/badges) 검증 페이지로 연결됩니다.
 
 ## 일하는 방식
 
@@ -52,7 +76,8 @@ DBA 로 시작했지만 지향하는 쪽은 DBRE(Database Reliability Engineer, 
 
 ## 연락
 
-- 메일 — [{{ site.email }}](mailto:{{ site.email }})
-- GitHub — [@{{ site.social.github }}](https://github.com/{{ site.social.github }})
-- LinkedIn — [{{ site.social.linkedin }}](https://www.linkedin.com/in/{{ site.social.linkedin }})
-- 새 글 알림 — [RSS]({{ '/feed.xml' | relative_url }})
+- 메일 — [{{ site.email }}]({{ mail_url }})
+- GitHub — [@{{ site.social.github }}]({{ gh_url }})
+- LinkedIn — [{{ site.social.linkedin }}]({{ li_url }})
+- 새 글 알림 — [RSS]({{ rss_url }})
+
