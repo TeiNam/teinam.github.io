@@ -25,7 +25,7 @@ Express.js 및 Node.js는 중간(애플리케이션) 계층을 구성합니다. 
 
 MERN 아키텍처를 사용하면 JavaScript 및 JSON으로 3-tier 아키텍처(프론트엔드, 백엔드, 데이터베이스)를 구성할 수 있습니다.
 
-![MERN Stack 아키텍처 다이어그램](/assets/img/wp/2022/05/mern-stack-b9q1kbudz0.jpg)
+{% include diagram.html src="mern-stack.svg" caption="MERN Stack 3-tier 아키텍처 — React · Express + Node.js · MongoDB" %}
 
 ### React.js Frontend
 

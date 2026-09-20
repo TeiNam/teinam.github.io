@@ -8,7 +8,7 @@ updated: 2026-09-20
 
 > **NOTE** — 이 글은 MySQL 8.4 LTS 및 9.7 LTS 기준으로 작성되었습니다. MySQL 8.0은 2026년 4월 21일부로 Oracle Sustaining Support로 전환되었습니다. **쿼리 캐시는 MySQL 8.0에서 제거되었으므로** 이 문서에서 다루지 않습니다.
 
-![MySQL 쿼리 실행 아키텍처 다이어그램](/assets/img/wp/2019/06/수정됨_mysql-architecture.png)
+{% include diagram.html src="mysql-query-path.svg" caption="MySQL 쿼리 실행 흐름 — 클라이언트 요청부터 결과 반환까지 단계별 처리 과정" %}
 
 ## 쿼리 실행 구조 구성 요소
 

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "MongoDB 복제 아키텍처",
+    "viewBox": [1080, 520],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "default": { "label": "데이터 흐름" },
+        "emphasis": { "label": "주요 경로" }
+      }
+    }
+  },
+  "stages": [
+    { "label": "Primary" },
+    { "label": "수집" },
+    { "label": "적용" }
+  ],
+  "nodes": [
+    { "id": "primary", "type": "database", "label": "Primary", "sublabel": "oplog.rs에 기록", "stage": 0, "row": 0 },
+    { "id": "observer", "type": "backend", "label": "Observer", "sublabel": "백그라운드 스레드", "stage": 1, "row": 0 },
+    { "id": "queue", "type": "messagebus", "label": "OpLog 큐", "stage": 1, "row": 1 },
+    { "id": "batcher", "type": "backend", "label": "Batcher", "sublabel": "배치 스레드", "stage": 2, "row": 0 },
+    { "id": "applier", "type": "backend", "label": "Applier", "sublabel": "적용 스레드", "stage": 2, "row": 1 },
+    { "id": "secondary", "type": "database", "label": "Secondary", "sublabel": "복제된 데이터", "stage": 2, "row": 2 }
+  ],
+  "flows": [
+    { "from": "primary", "to": "observer", "label": "테일러블 커서", "variant": "emphasis" },
+    { "from": "observer", "to": "queue", "label": "OpLog 항목", "variant": "emphasis", "labelDy": 24 },
+    { "from": "queue", "to": "batcher", "label": "OpLog 배치", "variant": "default" },
+    { "from": "batcher", "to": "applier", "label": "작업 분배", "variant": "default", "labelDy": 24 },
+    { "from": "applier", "to": "secondary", "label": "OpLog 재생", "variant": "emphasis", "labelDy": 24 }
+  ]
+}

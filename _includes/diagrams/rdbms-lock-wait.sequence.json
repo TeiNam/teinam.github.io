@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "RDBMS 쓰기 경합 — Lock Wait",
+    "viewBox": [
+      800,
+      480
+    ],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "emphasis": {
+          "label": "업데이트 요청"
+        },
+        "return": {
+          "label": "응답"
+        },
+        "default": {
+          "label": "대기 요청"
+        }
+      }
+    }
+  },
+  "participants": [
+    {
+      "id": "session1",
+      "type": "frontend",
+      "label": "세션 1",
+      "sublabel": "클라이언트"
+    },
+    {
+      "id": "session2",
+      "type": "frontend",
+      "label": "세션 2",
+      "sublabel": "클라이언트"
+    },
+    {
+      "id": "rdbms",
+      "type": "database",
+      "label": "RDBMS",
+      "sublabel": "MySQL/PostgreSQL"
+    }
+  ],
+  "messages": [
+    {
+      "from": "session1",
+      "to": "rdbms",
+      "y": 180,
+      "label": "UPDATE record",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session2",
+      "to": "rdbms",
+      "y": 240,
+      "label": "UPDATE record",
+      "variant": "default",
+      "note": "같은 레코드 — Lock wait 상태 대기"
+    },
+    {
+      "from": "rdbms",
+      "to": "session1",
+      "y": 300,
+      "label": "OK",
+      "variant": "return"
+    },
+    {
+      "from": "rdbms",
+      "to": "session2",
+      "y": 360,
+      "label": "OK",
+      "variant": "return",
+      "note": "세션 1 완료 후 진행"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "session1",
+      "from": 174,
+      "to": 306,
+      "type": "frontend"
+    },
+    {
+      "participant": "session2",
+      "from": 234,
+      "to": 366,
+      "type": "frontend"
+    },
+    {
+      "participant": "rdbms",
+      "from": 174,
+      "to": 366,
+      "type": "database"
+    }
+  ]
+}

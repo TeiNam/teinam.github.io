@@ -16,7 +16,7 @@ Distributed Transaction Processing(DTP) 아키텍처는 여러 애플리케이�
 
 XA 는 2PC(2 phase commit)로 분산 트랜잭션을 처리하기 위해 X/Open 이 명시한 표준입니다. 분산 트랜잭션 환경에서 트랜잭션 매니저와 리소스 매니저 사이의 통신을 담당하는 표준화된 인터페이스를 가리킵니다. Oracle, Tibero, DB2 같은 벤더가 이 인터페이스에 맞는 구현을 제공합니다.
 
-![XA 아키텍처 다이어그램](/assets/img/wp/2020/03/xa.png)
+{% include diagram.html src="xa-architecture.svg" caption="X/Open DTP 아키텍처. 애플리케이션이 트랜잭션 매니저를 거쳐 여러 리소스 매니저와 XA 인터페이스로 통신합니다." %}
 
 글로벌 트랜잭션을 사용하는 응용 프로그램은 하나 혹은 그 이상의 리소스 매니저(Resource Manager)와 트랜잭션 매니저(Transaction Manager)를 포함합니다.
 

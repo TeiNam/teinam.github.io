@@ -43,9 +43,7 @@ MongoDB는 비동기 복제를 사용하므로 Secondary에서 읽은 데이터�
 
 MongoDB의 복제 아키텍처를 그림으로 그리면 아래와 같습니다.
 
-![MongoDB의 복제 아키텍처 다이어그램](/assets/img/wp/2021/01/2021-01-21__3.22.41.png)
-
-MongoDB의 복제 아키텍처
+{% include diagram.html src="mongodb-replication-flow.svg" caption="MongoDB의 복제 아키텍처" %}
 
 1. MongoDB가 처리한 모든 데이터 변경 내용을 capped 컬렉션 구조의 'oplog.rs' 컬렉션에 저장합니다.
 2. **테일러블 커서**[1]로 최신 데이터를 전송합니다.

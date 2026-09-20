@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "MongoDB 쓰기 경합 — Write Conflict",
+    "viewBox": [
+      800,
+      480
+    ],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "emphasis": {
+          "label": "업데이트 요청"
+        },
+        "return": {
+          "label": "응답"
+        },
+        "default": {
+          "label": "경합 요청"
+        }
+      }
+    }
+  },
+  "participants": [
+    {
+      "id": "session1",
+      "type": "frontend",
+      "label": "세션 1",
+      "sublabel": "클라이언트"
+    },
+    {
+      "id": "session2",
+      "type": "frontend",
+      "label": "세션 2",
+      "sublabel": "클라이언트"
+    },
+    {
+      "id": "mongod",
+      "type": "database",
+      "label": "mongod",
+      "sublabel": "WiredTiger"
+    }
+  ],
+  "messages": [
+    {
+      "from": "session1",
+      "to": "mongod",
+      "y": 180,
+      "label": "update(doc)",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session2",
+      "to": "mongod",
+      "y": 240,
+      "label": "update(doc)",
+      "variant": "default",
+      "note": "WriteConflict 감지 — 서버 내부 재시도"
+    },
+    {
+      "from": "mongod",
+      "to": "session1",
+      "y": 300,
+      "label": "OK",
+      "variant": "return"
+    },
+    {
+      "from": "mongod",
+      "to": "session2",
+      "y": 360,
+      "label": "OK",
+      "variant": "return",
+      "note": "재시도 성공"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "session1",
+      "from": 174,
+      "to": 306,
+      "type": "frontend"
+    },
+    {
+      "participant": "session2",
+      "from": 234,
+      "to": 366,
+      "type": "frontend"
+    },
+    {
+      "participant": "mongod",
+      "from": 174,
+      "to": 366,
+      "type": "database"
+    }
+  ]
+}

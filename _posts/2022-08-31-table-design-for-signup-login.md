@@ -39,9 +39,9 @@ updated: 2026-09-20
 
 회원 테이블은 회원 가입과 로그인에 가장 먼저 쓰이고, 이후 서비스가 돌아가면 정산이나 통계, 서비스 이용 목록을 조회할 때 계속 쓰입니다.
 
-![](/assets/img/wp/2022/08/table-design-inline-3.png)
+{% include diagram.html src="signup-flow.svg" caption="일반적인 앱 서비스의 회원 가입 프로세스" %}
 
-![](/assets/img/wp/2022/08/table-design-inline-4.png)
+{% include diagram.html src="login-flow.svg" caption="일반적인 앱 서비스의 로그인 프로세스" %}
 
 모든 서비스가 이런 비즈니스 로직을 가진다는 뜻은 아니고, 일반적이고 단순한 앱 서비스를 기준으로 그려 본 것입니다. 회원 가입과 로그인은 대부분 이 로직으로 동작합니다. 그에 따라 테이블 설계도 이 로직을 커버할 수 있어야 합니다.
 

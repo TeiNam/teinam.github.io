@@ -22,13 +22,13 @@ MariaDB 는 Spider 엔진을 탑재하면서 이 분할을 DB 안에서 처리�
 
 > **NOTE** — Spider 는 지금도 MariaDB 서버와 함께 설치되는 엔진이고, 공식 문서의 버전 표는 Spider 3.3.15(MariaDB 10.5.7)를 Stable 로 적습니다. 다만 Spider 자체의 고가용성 기능은 MariaDB 10.7.5 부터 deprecated 되어 삭제됐으므로(MDEV-28479) 복제나 Galera Cluster 로 대체해야 합니다. 조건 푸시다운(condition pushdown)은 아직 구현되지 않아, 샤드로 흩어지는 질의는 네트워크 왕복이 쌓이는 만큼 느려집니다. 커뮤니티 지원이 남아 있는 LTS 는 10.11 · 11.4 · 11.8 · 12.3 이고, 최신 LTS 는 2026년 5월에 나온 12.3 입니다.
 
-![MariaDB Spider 아키텍처 다이어그램](/assets/img/wp/2020/03/mariadb-pres-at-lemug-10-638.jpg)
+{% include diagram.html src="spider-architecture.svg" caption="Spider 엔진의 동작 원리: 로컬 Spider 테이블이 원격 서버의 테이블에 연결" %}
 
 ## Spider 엔진으로 샤딩 구현 실습
 
 Spider 노드 1대와 데이터 노드 2대로 구성했습니다.
 
-![Spider 샤딩 구성도: Spider 노드 1대 + 데이터 노드 2대](/assets/img/wp/2020/03/Spider8.png)
+{% include diagram.html src="spider-sharding.svg" caption="Spider 샤딩 구성: Spider 노드 1대와 데이터 노드 2대" %}
 
 ### 데이터 노드 구성
 

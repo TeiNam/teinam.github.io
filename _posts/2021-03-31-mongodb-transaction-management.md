@@ -31,17 +31,13 @@ MongoDB는 RDBMS처럼 READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIAL
 
 일반적으로 RDBMS에서는 두 개의 세션이 하나의 레코드에 변경 작업이 발생하는 경우 아래와 같이 동작합니다.
 
-![RDBMS에서 같은 레코드를 변경하기 위한 경합: 세션1이 업데이트 중 세션2는 Lock wait](/assets/img/wp/2021/03/rdbms.png)
-
-RDBMS에서 같은 레코드를 변경하기 위한 경합
+{% include diagram.html src="rdbms-lock-wait.svg" caption="RDBMS의 Lock wait — 두 번째 세션이 대기 상태로 머뭅니다." %}
 
 먼저 들어온 세션이 먼저 업데이트를 진행하고, 업데이트를 진행하는 동안 두 번째 세션은 명령 자체를 취소하지 않고 Lock wait에 걸려 있다가, 1번 세션의 작업이 끝난 후에 순차적으로 진행됩니다.
 
 반면 MongoDB의 경합 과정은 조금 다릅니다.
 
-![MongoDB에서 같은 도큐먼트 변경을 위한 경합: 세션1이 업데이트 중 세션2는 즉시 WriteConflictException 반환 후 재시도](/assets/img/wp/2021/03/mongo.png)
-
-MongoDB에서 같은 도큐먼트 변경을 위한 경합
+{% include diagram.html src="mongodb-write-conflict.svg" caption="MongoDB의 WriteConflict — 즉시 취소하고 서버 내부에서 재시도합니다." %}
 
 MongoDB는 변경하고자 하는 도큐먼트가 이미 다른 커넥션이 Lock을 건 상태라면, 즉시 업데이트 명령을 취소합니다. 이때 스토리지 엔진은 WriteConflictException이라는 에러를 반환합니다. 이러한 경우 업데이트를 실행했던 세션은 WriteConflictException을 받고 같은 업데이트 명령을 재시도합니다. 이러한 과정은 MongoDB 서버 프로세스 내부에서만 실행되며, 애플리케이션 단에서는 이런 재시도가 있었는지 알 수 없습니다.
 

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Spider 샤딩 구성: 1+2 노드",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "클라이언트"
+        },
+        "backend": {
+          "label": "Spider 노드"
+        },
+        "database": {
+          "label": "데이터 노드"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "클라이언트",
+      "sublabel": "애플리케이션",
+      "pos": [
+        80,
+        160
+      ]
+    },
+    {
+      "id": "spider",
+      "type": "backend",
+      "label": "Spider 노드",
+      "sublabel": "172.16.68.2",
+      "tag": "backend.sbtest1",
+      "pos": [
+        400,
+        160
+      ]
+    },
+    {
+      "id": "backend1",
+      "type": "database",
+      "label": "backend1",
+      "sublabel": "172.16.68.3",
+      "tag": "pt1 파티션",
+      "pos": [
+        720,
+        60
+      ]
+    },
+    {
+      "id": "backend2",
+      "type": "database",
+      "label": "backend2",
+      "sublabel": "172.16.68.4",
+      "tag": "pt2 파티션",
+      "pos": [
+        720,
+        260
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "client",
+      "to": "spider",
+      "label": "SQL 쿼리"
+    },
+    {
+      "from": "spider",
+      "to": "backend1",
+      "label": "샤드 쿼리",
+      "variant": "emphasis"
+    },
+    {
+      "from": "spider",
+      "to": "backend2",
+      "label": "샤드 분산",
+      "variant": "emphasis"
+    }
+  ]
+}

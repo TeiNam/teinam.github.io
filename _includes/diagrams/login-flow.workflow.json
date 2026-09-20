@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "로그인 프로세스",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "사용자 입력" },
+        "backend": { "label": "애플리케이션" },
+        "database": { "label": "데이터베이스" },
+        "external": { "label": "외부 서비스" }
+      }
+    },
+    "viewBox": [900, 530]
+  },
+  "lanes": [
+    { "id": "user", "label": "사용자" },
+    { "id": "app", "label": "애플리케이션" },
+    { "id": "db", "label": "데이터베이스" }
+  ],
+  "mainPath": ["method_choice", "input_credential", "query_user", "create_session", "login_done"],
+  "nodes": [
+    { "id": "method_choice", "lane": "user", "col": 0, "type": "frontend", "label": "로그인 방식 선택", "sublabel": "자체 / 소셜", "width": 120 },
+    { "id": "input_credential", "lane": "user", "col": 1, "type": "frontend", "label": "ID·비밀번호 입력", "width": 120 },
+    { "id": "social_auth", "lane": "app", "col": 1, "type": "external", "label": "소셜 인증", "sublabel": "OAuth 2.0" },
+    { "id": "query_user", "lane": "db", "col": 2, "type": "database", "label": "계정 조회", "sublabel": "member / dormant" },
+    { "id": "verify_password", "lane": "app", "col": 2, "type": "backend", "label": "비밀번호 검증" },
+    { "id": "create_session", "lane": "app", "col": 3, "type": "backend", "label": "세션 생성", "sublabel": "구독 정보 캐싱" },
+    { "id": "login_done", "lane": "user", "col": 4, "type": "frontend", "label": "로그인 완료" }
+  ],
+  "edges": [
+    { "from": "method_choice", "to": "input_credential", "label": "자체 ID", "variant": "emphasis" },
+    { "from": "method_choice", "to": "social_auth", "label": "소셜", "variant": "emphasis" },
+    { "from": "input_credential", "to": "query_user", "variant": "default" },
+    { "from": "social_auth", "to": "query_user", "variant": "default" },
+    { "from": "query_user", "to": "verify_password", "label": "자체만", "variant": "default" },
+    { "from": "query_user", "to": "create_session", "label": "소셜", "variant": "default" },
+    { "from": "verify_password", "to": "create_session", "variant": "default" },
+    { "from": "create_session", "to": "login_done", "variant": "emphasis" }
+  ]
+}

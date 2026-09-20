@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "회원 가입 프로세스",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "사용자 입력" },
+        "backend": { "label": "애플리케이션" },
+        "database": { "label": "데이터베이스" },
+        "external": { "label": "외부 서비스" }
+      }
+    },
+    "viewBox": [900, 530]
+  },
+  "lanes": [
+    { "id": "user", "label": "사용자" },
+    { "id": "app", "label": "애플리케이션" },
+    { "id": "db", "label": "데이터베이스" }
+  ],
+  "mainPath": ["method_choice", "input_id", "hash_password", "create_account", "signup_done"],
+  "nodes": [
+    { "id": "method_choice", "lane": "user", "col": 0, "type": "frontend", "label": "가입 방식 선택", "sublabel": "자체 / 소셜" },
+    { "id": "input_id", "lane": "user", "col": 1, "type": "frontend", "label": "ID·비밀번호 입력", "width": 120 },
+    { "id": "social_auth", "lane": "app", "col": 1, "type": "external", "label": "소셜 인증", "sublabel": "OAuth 2.0" },
+    { "id": "hash_password", "lane": "app", "col": 2, "type": "backend", "label": "비밀번호 해시", "sublabel": "키 유도 함수" },
+    { "id": "create_account", "lane": "db", "col": 3, "type": "database", "label": "계정 생성", "sublabel": "member + auth" },
+    { "id": "signup_done", "lane": "user", "col": 4, "type": "frontend", "label": "가입 완료" }
+  ],
+  "edges": [
+    { "from": "method_choice", "to": "input_id", "label": "자체 ID", "variant": "emphasis" },
+    { "from": "method_choice", "to": "social_auth", "label": "소셜", "variant": "emphasis" },
+    { "from": "input_id", "to": "hash_password", "variant": "default" },
+    { "from": "social_auth", "to": "create_account", "label": "랜덤 ID 생성", "variant": "default" },
+    { "from": "hash_password", "to": "create_account", "variant": "default" },
+    { "from": "create_account", "to": "signup_done", "variant": "emphasis" }
+  ]
+}
