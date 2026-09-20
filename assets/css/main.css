@@ -388,11 +388,27 @@ p { text-wrap: pretty; }
 .rail-list { display: flex; flex-direction: column; gap: 11px; }
 .rail-list a { font-size: 13.5px; line-height: 1.5; color: var(--ink); }
 
-/* ads */
+/* ads. AdSense 는 스크립트가 뜰 때 ins 의 폭을 읽어 규격을 고른다. 그래서 크기 조정은
+   ins 의 폭을 CSS 로 묶는 방식으로 한다 — data-ad-format 은 auto 로 둔다.
+
+   shell 을 1600 으로 넓히면서 컨테이너 폭이 이렇게 바뀌었다(1600 기준 실측):
+     in-article  800  ← .prose > * 의 읽기 폭(50rem). 본문 폭과 같아 그대로 둔다
+     docs 하단   832  ← .docs-body > * 의 52rem. 같은 이유로 그대로
+     sidebar     216  ← 표준 세로 규격이 120·160·300 이라 사이 값이다
+     leaderboard 1504 ← 가장 넓은 가로 규격이 970×90 이라 그 위는 재고가 얇다
+
+   min-height 는 채워지기 전 자리를 잡아 두는 값이다. 실제 렌더 높이와 어긋나면 광고가
+   뜰 때 본문이 밀려 CLS 가 올라간다. 실측한 높이(가로형 280 · 세로형 600)에 맞춘다. */
 .ad { display: flex; flex-direction: column; gap: 6px; }
+.ad ins { min-height: 280px; background: var(--line2); }
+
 .ad--leaderboard { padding: 0 48px 40px; }
-.ad ins { min-height: 110px; background: var(--line2); }
-.ad--sidebar ins { min-height: 250px; }
+/* .ad 가 column flex 라 cross 축 auto 마진은 stretch 를 끈다. 폭을 명시하지 않으면
+   비어 있는 ins 의 콘텐츠 폭(0)으로 붕괴한다 — width:100% 를 함께 줘야 한다 */
+.ad--leaderboard ins { width: 100%; max-width: 970px; margin: 0 auto; }
+
+/* 216px 그대로 두면 160×600 이 들어오고 56px 이 남는다. 160 으로 고정해 정확히 맞춘다 */
+.ad--sidebar ins { width: 160px; margin: 0 auto; min-height: 600px; }
 /* docs·handbook 하단. 좌우 여백은 .docs-body 가 이미 갖고 있다 */
 .ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
