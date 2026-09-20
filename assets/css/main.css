@@ -392,20 +392,34 @@ p { text-wrap: pretty; }
    ins 의 폭을 CSS 로 묶는 방식으로 한다 — data-ad-format 은 auto 로 둔다.
 
    shell 을 1600 으로 넓히면서 컨테이너 폭이 이렇게 바뀌었다(1600 기준 실측):
-     in-article  800  ← .prose > * 의 읽기 폭(50rem). 본문 폭과 같아 그대로 둔다
-     docs 하단   832  ← .docs-body > * 의 52rem. 같은 이유로 그대로
-     sidebar     216  ← 표준 세로 규격이 120·160·300 이라 사이 값이다
-     leaderboard 1504 ← 가장 넓은 가로 규격이 970×90 이라 그 위는 재고가 얇다
+     in-article   992 ← 본문 칼럼 전체(읽기 폭 제한에서 뺀다)
+     docs 하단   1144 ← docs 본문 칼럼 전체
+     sidebar      160 ← 고정 160×600. 표준 세로 규격이 120·160·300 이다
+     leaderboard 1504 ← 쉘 폭에서 좌우 여백만 뺀 값
+
+   가로형(data-ad-format=horizontal)으로 요청하면 AdSense 가 컨테이너 폭을 채우고
+   높이는 배너 비율로 잡는다 — 1504px 에서 99px 로 측정됐다. auto 로 두면 세로가 긴
+   덩어리(280px)를 고르므로 납작한 배너를 원하면 horizontal 을 준다.
 
    min-height 는 채워지기 전 자리를 잡아 두는 값이다. 실제 렌더 높이와 어긋나면 광고가
    뜰 때 본문이 밀려 CLS 가 올라간다. 실측한 높이(가로형 280 · 세로형 600)에 맞춘다. */
 .ad { display: flex; flex-direction: column; gap: 6px; }
-.ad ins { min-height: 280px; background: var(--line2); }
+.ad ins { min-height: 100px; background: var(--line2); }
 
 .ad--leaderboard { padding: 0 48px 40px; }
 /* .ad 가 column flex 라 cross 축 auto 마진은 stretch 를 끈다. 폭을 명시하지 않으면
    비어 있는 ins 의 콘텐츠 폭(0)으로 붕괴한다 — width:100% 를 함께 줘야 한다 */
-.ad--leaderboard ins { width: 100%; max-width: 970px; margin: 0 auto; }
+.ad--leaderboard ins { width: 100%; margin: 0 auto; }
+
+/* 광고 폭은 그 페이지에서 표·그림이 쓰는 폭에 맞춘다. 본문 산문(50rem·52rem)보다
+   넓지만 칼럼을 넘지는 않아서, 이미 칼럼 전체를 쓰는 표·다이어그램과 같은 선에 선다.
+   포스트 992 · docs 1064 로 측정됐다.
+
+   about·work 는 제외한다. 그 페이지에는 기준이 될 표나 그림이 없어서 본문 832px 옆에
+   1504px 광고를 놓으면 혼자 튀어나온다 — 읽기 폭에 맞춘다. 컨테이너가
+   class="page-body prose" 로 두 클래스를 함께 갖기 때문에 `.prose > .ad` 로 쓰면
+   거기까지 걸린다. variant 로 가른다. */
+.prose > .ad--in-article, .docs-body > .ad--docs { max-width: 100%; }
 
 /* 사이드 레일은 160×600 고정 규격을 요청한다(ad.html 이 width·height 를 inline 으로
    넣는다). 반응형으로 두면 216px 폭에 맞춰 높이를 스스로 정하는데, 예약해 둔 높이보다
@@ -418,7 +432,7 @@ p { text-wrap: pretty; }
 .ad:has(ins[data-ad-status="unfilled"]) { display: none; }
 .ad ins[data-ad-status="unfilled"] { display: none !important; }
 /* docs·handbook 하단. 좌우 여백은 .docs-body 가 이미 갖고 있다 */
-.ad--docs { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
+.ad--docs, .ad--page { margin-top: 12px; padding-top: 28px; border-top: 1px solid var(--line); }
 
 /* Credly 배지. 이미지는 로컬 사본이고 링크가 검증을 맡는다 — _data/badges.yml 은
    _workspace/fetch_credly.py 가 만들고 만료된 배지는 애초에 들어오지 않는다.

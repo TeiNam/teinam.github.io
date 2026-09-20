@@ -66,7 +66,7 @@ layout: default
 </section>
 {%- endif %}
 
-{% include ad.html slot=site.adsense.leaderboard variant="leaderboard" %}
+{% include ad.html slot=site.adsense.leaderboard variant="leaderboard" format="horizontal" %}
 
 {%- comment %} action 이 비면 폼이 현재 URL로 submit 되므로 섹션을 숨긴다.
      Liquid 는 빈 문자열도 truthy, nil != "" 도 true 라 두 조건이 모두 필요하다 {% endcomment %}
