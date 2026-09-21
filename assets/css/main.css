@@ -32,7 +32,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+/* 페이지 이동·카테고리 필터로 글 길이가 바뀌어도 스크롤바 자리만큼 폭을 유지한다. */
+html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: var(--sans); font-size: 16px; line-height: 1.6;
