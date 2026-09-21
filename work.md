@@ -26,11 +26,9 @@ subtitle: 만든 것과 다뤄 온 것.
 ## 경력
 
 - Amazon Web Services
-  - Database Architect
-- T-order
-  - DBRE
-- KT Mille
-  - DBA
+- 티오더
+- 밀리의 서재
+- 바이텍
 
-<!-- 회사 · 직무 · 기간 · 한 일 -->
+직무와 한 일은 [About]({{ '/about/' | relative_url }}) 에 정리해 두었습니다.
 

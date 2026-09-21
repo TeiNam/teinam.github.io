@@ -2,8 +2,8 @@
 layout: page
 title: About
 permalink: /about/
-subtitle: 데이터베이스 신뢰성과 데이터 모델링을 다룹니다.
-description: AWS ProServe 에서 Database Architect 로 일하는 teinam(RastaLion) 의 소개. 시스템·네트워크에서 데이터베이스로 옮겨 온 경로, 보유 자격, 일하는 방식.
+subtitle: AWS ProServe 에서 Database Architect 로 일합니다. 데이터베이스 신뢰성과 데이터 모델링을 다룹니다.
+description: AWS ProServe 의 Database Architect teinam(RastaLion) 의 소개. Oracle·오픈소스·클라우드를 거친 경로, 다뤄 온 일, 보유 자격, 일하는 방식.
 # jekyll-seo-tag 의 homepage_or_about? 는 about 을 홈과 같이 묶어 WebSite 로 찍는다.
 # 그러면 WebSite 엔터티가 두 URL 에 생겨 어느 쪽이 사이트인지 흐려진다.
 seo:
@@ -24,19 +24,30 @@ DBA 로 시작했지만 지향하는 쪽은 DBRE(Database Reliability Engineer, 
 
 ## 지금 하는 일
 
-AWS ProServe 에서 Database Architect 로 일합니다. 데이터베이스 모더나이제이션과 마이그레이션 프로젝트를 맡고, CDC 를 포함한 데이터베이스 과제를 다룹니다.
+AWS ProServe 에서 Database Architect 로 일합니다(2025년 7월~). 데이터베이스 모더나이제이션과 마이그레이션 프로젝트를 맡고, CDC 를 포함한 데이터베이스 과제를 다룹니다.
 
 스키마를 그리기 전에 그 서비스의 비즈니스 로직을 이해하는 일이 먼저라고 보고, 데이터 보호와 데이터 품질을 같은 무게로 다룹니다.
 
-거쳐 온 회사와 직무, 만든 것들은 [Work]({{ '/work/' | relative_url }}) 에 정리해 두었습니다.
-
 ## 지나온 길
 
-시스템 엔지니어로 시작했습니다. 네트워크를 공부하며 CCNA·CCNP·CCDP 를 취득하고 CCIE 를 준비했고, 그 뒤 Oracle DB 엔지니어로 데이터베이스 업무를 시작했습니다.
+시스템 엔지니어로 시작했습니다. 네트워크를 공부하며 CCNA·CCNP·CCDP 를 취득하고 CCIE 를 준비했고, 그 뒤 Oracle DB 엔지니어로 데이터베이스 업무를 시작했습니다. Exadata 와 ZDLRA 를 다루던 시기입니다.
 
-2018년, 오라클 엔지니어 생활을 거쳐 오픈소스 데이터베이스를 해야겠다고 판단해 MySQL·PostgreSQL·MongoDB 를 차례로 맡았습니다. 그 시기에 OpenStack 으로 사설 클라우드를 다뤘고, 그것이 계기가 되어 AWS 를 본격적으로 쓰기 시작했습니다.
+2018년, 오라클 엔지니어 생활을 거쳐 오픈소스 데이터베이스를 해야겠다고 판단했습니다. MariaDB·MySQL·PostgreSQL·MongoDB·Redis 를 차례로 맡았고, 같은 시기에 OpenStack 으로 사설 클라우드를 다뤘습니다. 그것이 계기가 되어 OCI 와 AWS 를 본격적으로 쓰기 시작했습니다.
 
-지금은 클라우드 위에서 다룰 수 있는 데이터베이스 리소스 전반을 맡습니다. 관심은 데이터 분석과 Kafka 기반 데이터 처리로 이어지고, AI·ML·Vector DB 를 데이터베이스에 접목하는 쪽을 보고 있습니다.
+그 뒤로는 Aurora MySQL 과 MongoDB 가 주 무대였고, GraphDB 도 함께 다뤘습니다.
+
+거쳐 온 회사와 만든 것들은 [Work]({{ '/work/' | relative_url }}) 에 정리해 두었습니다.
+
+## 다뤄 온 일
+
+- **운영과 신뢰성** — 성능 모니터링, 백업·복구, 버전 관리
+- **데이터 모델링** — 기존 로직을 리버스 엔지니어링해 개선 모델을 잡는 일부터, 신규 플랫폼의 장기 모델 설계까지
+- **데이터 플랫폼** — CDC, ETL/ELT 파이프라인, DW, 데이터 레이크 설계와 구축
+- **감사와 정책** — Lead DBA 로 IPO·ISMS 감사를 대응했고, DB 운영·보안 정책과 데이터 품질 표준·검증 규칙을 세웠습니다
+- **비용** — FinOps 관점에서 지속 가능한 DB 사용 비용 관리
+- **도구** — Python·Rust 로 자동화·연동 도구를 직접 만들어 씁니다
+
+관심은 데이터 분석과 Kafka 기반 데이터 처리로 이어지고, AI·ML·Vector DB 를 데이터베이스에 접목하는 쪽을 보고 있습니다.
 
 ## 자격
 
@@ -58,7 +69,9 @@ AWS ProServe 에서 Database Architect 로 일합니다. 데이터베이스 모�
 
 사람과 협업을 존중합니다. 직급으로 일을 밀어붙이는 방식은 쓰지 않습니다. 다만 잘못된 관행에는 단호하게 반응합니다 — 오래됐다는 것은 근거가 아닙니다.
 
-맡은 범위에만 머무르지 않습니다. 데이터베이스는 어느 팀이든 쓰는 것이라, 알고 있는 것을 팀 밖으로 꺼내 놓는 편이 전체에 이득이라고 봅니다. 이 블로그도 그 연장입니다.
+판단은 문서로 남깁니다. 명확한 커뮤니케이션과 구조화된 문서가 결정을 빠르게 만든다고 보고, 그렇게 일해 왔습니다.
+
+맡은 범위에만 머무르지 않습니다. 데이터베이스는 어느 팀이든 쓰는 것이라, 알고 있는 것을 팀 밖으로 꺼내 놓는 편이 전체에 이득이라고 봅니다. 운영과 고객 지원을 개선하는 전사 과제를 이끈 것도 같은 이유였습니다. 이 블로그도 그 연장입니다.
 
 ## 여기서 다루는 것
 
@@ -84,4 +97,3 @@ AWS ProServe 에서 Database Architect 로 일합니다. 데이터베이스 모�
 - GitHub — [@{{ site.social.github }}]({{ gh_url }})
 - LinkedIn — [{{ site.social.linkedin }}]({{ li_url }})
 - 새 글 알림 — [RSS]({{ rss_url }})
-
