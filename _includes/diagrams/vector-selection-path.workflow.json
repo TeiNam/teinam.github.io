@@ -1,0 +1,151 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "벡터 검색 후보를 고르는 순서",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": {
+          "label": "평가·비교"
+        },
+        "database": {
+          "label": "기존 스택"
+        },
+        "security": {
+          "label": "판정"
+        },
+        "cloud": {
+          "label": "추가 후보"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "existing_lane",
+      "label": "기존 스택부터"
+    },
+    {
+      "id": "dedicated_lane",
+      "label": "검색 부하 분리·전용 기능"
+    },
+    {
+      "id": "managed_lane",
+      "label": "운영 부담 축소"
+    }
+  ],
+  "mainPath": [
+    "prepare",
+    "measure",
+    "gate",
+    "adopt"
+  ],
+  "nodes": [
+    {
+      "id": "prepare",
+      "lane": "existing_lane",
+      "col": 0,
+      "type": "backend",
+      "label": "평가 세트 준비",
+      "sublabel": "질의·관련 문서·recall 목표",
+      "width": 136
+    },
+    {
+      "id": "measure",
+      "lane": "existing_lane",
+      "col": 1,
+      "type": "database",
+      "label": "기존 스택 측정",
+      "sublabel": "pgvector · 검색 엔진",
+      "width": 136
+    },
+    {
+      "id": "gate",
+      "lane": "existing_lane",
+      "col": 2,
+      "type": "security",
+      "label": "요구사항 충족?",
+      "sublabel": "품질·필터·갱신·지연·운영·비용",
+      "width": 136
+    },
+    {
+      "id": "adopt",
+      "lane": "existing_lane",
+      "col": 3,
+      "type": "database",
+      "label": "기존 스택으로 시작",
+      "width": 136
+    },
+    {
+      "id": "dedicated",
+      "lane": "dedicated_lane",
+      "col": 3,
+      "type": "cloud",
+      "label": "전용 벡터 DB",
+      "width": 136
+    },
+    {
+      "id": "managed",
+      "lane": "managed_lane",
+      "col": 3,
+      "type": "cloud",
+      "label": "관리형 서비스",
+      "width": 136
+    },
+    {
+      "id": "compare",
+      "lane": "dedicated_lane",
+      "col": 4,
+      "type": "backend",
+      "label": "같은 조건으로 비교",
+      "sublabel": "기존 스택 포함 · 같은 recall 목표",
+      "width": 136
+    }
+  ],
+  "edges": [
+    {
+      "from": "prepare",
+      "to": "measure",
+      "variant": "default",
+      "role": "main"
+    },
+    {
+      "from": "measure",
+      "to": "gate",
+      "variant": "default",
+      "role": "main"
+    },
+    {
+      "from": "gate",
+      "to": "adopt",
+      "label": "충족",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "from": "gate",
+      "to": "dedicated",
+      "label": "미충족",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "from": "gate",
+      "to": "managed",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "from": "dedicated",
+      "to": "compare",
+      "variant": "default"
+    },
+    {
+      "from": "managed",
+      "to": "compare",
+      "variant": "default"
+    }
+  ]
+}
