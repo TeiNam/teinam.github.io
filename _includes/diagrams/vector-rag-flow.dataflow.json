@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "RAG의 색인과 질의 흐름",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "색인"
+        },
+        "emphasis": {
+          "label": "질의"
+        },
+        "database": {
+          "label": "벡터 저장소"
+        }
+      }
+    },
+    "viewBox": [
+      940,
+      520
+    ]
+  },
+  "stages": [
+    {
+      "label": "입력"
+    },
+    {
+      "label": "임베딩"
+    },
+    {
+      "label": "검색"
+    },
+    {
+      "label": "결합·생성"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "docs",
+      "type": "external",
+      "label": "원본 문서",
+      "sublabel": "규정·설명서·장애 기록",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "chunk_embed",
+      "type": "backend",
+      "label": "분할·임베딩",
+      "sublabel": "조각마다 벡터 생성",
+      "stage": 1,
+      "row": 0
+    },
+    {
+      "id": "question",
+      "type": "frontend",
+      "label": "사용자 질문",
+      "stage": 0,
+      "row": 2
+    },
+    {
+      "id": "query_embed",
+      "type": "backend",
+      "label": "질문 임베딩",
+      "sublabel": "호환되는 인코더",
+      "stage": 1,
+      "row": 2
+    },
+    {
+      "id": "vector_db",
+      "type": "database",
+      "label": "벡터 DB",
+      "sublabel": "벡터·원본 ID·메타데이터",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "rerank",
+      "type": "backend",
+      "label": "결합·재순위화",
+      "sublabel": "키워드 결과 (필요시)",
+      "stage": 3,
+      "row": 1
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM",
+      "sublabel": "답변 생성",
+      "stage": 3,
+      "row": 2
+    }
+  ],
+  "flows": [
+    {
+      "from": "docs",
+      "to": "chunk_embed",
+      "label": "원문",
+      "variant": "default"
+    },
+    {
+      "from": "chunk_embed",
+      "to": "vector_db",
+      "label": "벡터 저장",
+      "variant": "default"
+    },
+    {
+      "from": "question",
+      "to": "query_embed",
+      "label": "질문",
+      "variant": "emphasis"
+    },
+    {
+      "from": "query_embed",
+      "to": "vector_db",
+      "label": "Top-k · 권한 필터",
+      "variant": "emphasis"
+    },
+    {
+      "from": "vector_db",
+      "to": "rerank",
+      "label": "후보 조각",
+      "variant": "emphasis"
+    },
+    {
+      "from": "rerank",
+      "to": "llm",
+      "label": "질문 + 관련 문서",
+      "variant": "emphasis",
+      "labelDy": 24
+    }
+  ]
+}
