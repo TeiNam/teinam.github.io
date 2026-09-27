@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "평가 문항을 만드는 흐름",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1076,
+      440
+    ],
+    "legend": {
+      "entries": {
+        "database": {
+          "label": "근거 · 확정 문항"
+        },
+        "security": {
+          "label": "전문가 검토"
+        },
+        "default": {
+          "label": "작성 흐름"
+        },
+        "emphasis": {
+          "label": "근거 제공"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "입력"
+    },
+    {
+      "label": "질문"
+    },
+    {
+      "label": "답변"
+    },
+    {
+      "label": "검토"
+    },
+    {
+      "label": "확정"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "real_q",
+      "type": "external",
+      "label": "실제 사용자 질문",
+      "sublabel": "Help Desk 등",
+      "stage": 0,
+      "row": 0,
+      "width": 140,
+      "yOffset": -7
+    },
+    {
+      "id": "q_gen",
+      "type": "backend",
+      "label": "질문 생성",
+      "sublabel": "빈 유형은 LLM 보충",
+      "stage": 1,
+      "row": 0,
+      "width": 140,
+      "yOffset": -7
+    },
+    {
+      "id": "evidence",
+      "type": "database",
+      "label": "승인된 근거",
+      "sublabel": "문서 버전 · 필요한 부분",
+      "stage": 1,
+      "row": 1,
+      "width": 150
+    },
+    {
+      "id": "a_gen",
+      "type": "backend",
+      "label": "답변 작성",
+      "sublabel": "참고 답변 · 필수 사실 · 형식",
+      "stage": 2,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "review",
+      "type": "security",
+      "label": "전문가 확인",
+      "sublabel": "원문 일치 · 누락 조건",
+      "stage": 3,
+      "row": 0,
+      "width": 140
+    },
+    {
+      "id": "final",
+      "type": "database",
+      "label": "평가 문항 확정",
+      "sublabel": "원본 · 모델 · 검토 상태",
+      "stage": 4,
+      "row": 0,
+      "width": 140
+    }
+  ],
+  "flows": [
+    {
+      "from": "real_q",
+      "to": "q_gen",
+      "label": "우선 활용",
+      "variant": "default"
+    },
+    {
+      "from": "q_gen",
+      "to": "a_gen",
+      "label": "질문",
+      "variant": "default"
+    },
+    {
+      "from": "evidence",
+      "to": "q_gen",
+      "label": "근거",
+      "variant": "emphasis"
+    },
+    {
+      "from": "evidence",
+      "to": "a_gen",
+      "label": "같은 근거",
+      "variant": "emphasis"
+    },
+    {
+      "from": "a_gen",
+      "to": "review",
+      "label": "QA 초안",
+      "variant": "default"
+    },
+    {
+      "from": "review",
+      "to": "final",
+      "label": "확인 완료",
+      "variant": "default"
+    }
+  ]
+}
