@@ -10,7 +10,8 @@
     "legend": {
       "entries": {
         "default": { "label": "데이터 흐름" },
-        "emphasis": { "label": "주요 경로" }
+        "emphasis": { "label": "주요 경로" },
+        "database": { "label": "데이터 저장소" }
       }
     }
   },
