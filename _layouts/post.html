@@ -18,7 +18,8 @@ layout: default
       <span>{{ content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>
     </div>
 
-    {{ content }}
+    {% comment %}맞붙은 각주 번호가 한 숫자(²⁴ → 24)로 읽히지 않게 사이에 쉼표를 넣는다{% endcomment %}
+    {{ content | replace: '</sup><sup id="fnref:', '</sup><sup>,</sup><sup id="fnref:' }}
 
     {% include ad.html slot=site.adsense.in_article variant="in-article" format="horizontal" %}
 
