@@ -275,6 +275,10 @@ p { text-wrap: pretty; }
 /* 인라인 코드용이다. 블록 안의 code 까지 걸리면 블록 배경 위에 회색 배경과 패딩이
    한 겹 더 깔려 글자마다 음영이 생긴다. 아래에서 되돌린다. */
 .prose code { font-family: var(--mono); font-size: 0.88em; background: var(--line2); padding: 1px 5px; }
+/* URL 이나 '·' 로 이은 영문 나열(DynamoDB·MemoryDB·…)은 끊을 자리가 없어 좁은 화면에서
+   본문 밖으로 나간다. anywhere 가 아니라 break-word 인 이유: 표의 최소 폭 계산은 그대로 둬서
+   표는 글자를 쪼개지 않고 .table-scroll 안에서 가로로 스크롤하게 한다. */
+.prose, .docs-body, .page-body { overflow-wrap: break-word; }
 .prose pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
 .prose blockquote {
   margin: 0; border-left: 3px solid var(--accent); background: var(--note-bg);
@@ -516,7 +520,9 @@ p { text-wrap: pretty; }
   /* 3칸 밴드가 세로로 쌓이면 칼럼 구분선(오른쪽 선)이 의미를 잃는다. 아래 선으로 바꾼다. */
   .pillar { border-right: 0; border-bottom: 1px solid var(--line); padding: 26px 24px; }
   .pillar:last-child { border-bottom: 0; }
-  .article-grid, .docs-shell { grid-template-columns: 1fr; padding: 32px 24px 56px; }
+  /* 1fr 은 minmax(auto, 1fr) 라 최소 폭 660px 인 다이어그램·표가 칼럼째 화면 밖으로 민다.
+     데스크톱처럼 0 을 최소로 둬야 넓은 요소가 자기 스크롤 안에서만 넘친다. */
+  .article-grid, .docs-shell { grid-template-columns: minmax(0, 1fr); padding: 32px 24px 56px; }
   .page-body { padding: 32px 24px 56px; }
   .toc-rail, .docs-nav { position: static; border: 0; padding: 0 0 16px; }
   .card-grid { grid-template-columns: 1fr; }

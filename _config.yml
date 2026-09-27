@@ -78,4 +78,4 @@ plugins:
   - jekyll-sitemap
   - jekyll-redirect-from   # /handbook/... 옛 주소를 /career/... 로 넘긴다
 
-exclude: [Gemfile, Gemfile.lock, README.md, vendor]
+exclude: [Gemfile, Gemfile.lock, README.md, vendor, data]

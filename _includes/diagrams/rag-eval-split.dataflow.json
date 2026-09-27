@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "검색 평가와 답변 평가를 나누는 구조",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1000,
+      520
+    ],
+    "legend": {
+      "entries": {
+        "database": {
+          "label": "평가 기준"
+        },
+        "security": {
+          "label": "평가"
+        },
+        "default": {
+          "label": "서비스 실행"
+        },
+        "emphasis": {
+          "label": "실행 결과"
+        },
+        "dashed": {
+          "label": "평가기 전용"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "평가 레코드"
+    },
+    {
+      "label": "검색"
+    },
+    {
+      "label": "답변 생성"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "evidence",
+      "type": "database",
+      "label": "정답 근거",
+      "sublabel": "문서 · 버전 · 절 · 구절",
+      "stage": 0,
+      "row": 0,
+      "width": 140
+    },
+    {
+      "id": "question",
+      "type": "frontend",
+      "label": "질문 · 사용자 조건",
+      "sublabel": "서비스에 넣는 값",
+      "stage": 0,
+      "row": 1,
+      "width": 146
+    },
+    {
+      "id": "reference",
+      "type": "database",
+      "label": "참고 답변 · 필수 사실",
+      "sublabel": "기대 동작 포함",
+      "stage": 0,
+      "row": 2,
+      "width": 146
+    },
+    {
+      "id": "retrieve",
+      "type": "backend",
+      "label": "검색",
+      "sublabel": "Top-k 결과",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "retrieval_eval",
+      "type": "security",
+      "label": "검색 평가",
+      "sublabel": "Precision@k · Recall@k · MRR · nDCG",
+      "stage": 1,
+      "row": 0,
+      "width": 160
+    },
+    {
+      "id": "generate",
+      "type": "cloud",
+      "label": "답변 생성",
+      "sublabel": "LLM",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "answer_eval",
+      "type": "security",
+      "label": "답변 평가",
+      "sublabel": "정확성 · 충실성 · 인용",
+      "stage": 2,
+      "row": 2,
+      "width": 150
+    }
+  ],
+  "flows": [
+    {
+      "from": "question",
+      "to": "retrieve",
+      "label": "질문",
+      "variant": "default"
+    },
+    {
+      "from": "retrieve",
+      "to": "generate",
+      "label": "컨텍스트",
+      "variant": "default"
+    },
+    {
+      "from": "retrieve",
+      "to": "retrieval_eval",
+      "label": "검색 결과",
+      "variant": "emphasis"
+    },
+    {
+      "from": "generate",
+      "to": "answer_eval",
+      "label": "답변 · 컨텍스트",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "from": "evidence",
+      "to": "retrieval_eval",
+      "label": "평가 전용",
+      "variant": "dashed"
+    },
+    {
+      "from": "reference",
+      "to": "answer_eval",
+      "label": "평가 전용",
+      "variant": "dashed"
+    }
+  ]
+}

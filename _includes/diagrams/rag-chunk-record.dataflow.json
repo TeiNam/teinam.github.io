@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "원본 문서가 청크 레코드가 되는 구조",
+    "quality_profile": "showcase",
+    "viewBox": [
+      940,
+      520
+    ],
+    "legend": {
+      "entries": {
+        "database": {
+          "label": "색인 필드"
+        },
+        "default": {
+          "label": "데이터 전달"
+        },
+        "emphasis": {
+          "label": "의미 검색 경로"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "원본"
+    },
+    {
+      "label": "추출 · 분할"
+    },
+    {
+      "label": "청크 레코드"
+    },
+    {
+      "label": "벡터 DB 필드"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "type": "external",
+      "label": "원본 문서",
+      "sublabel": "문서 ID · 버전 · 권한",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "extract",
+      "type": "messagebus",
+      "label": "추출 · 분할",
+      "sublabel": "제목 · 표 · 각주 보존",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "location",
+      "type": "backend",
+      "label": "원본 위치",
+      "sublabel": "페이지 · 절 · 문자 범위",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "text",
+      "type": "backend",
+      "label": "본문",
+      "sublabel": "상위 절 제목 연결",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "metadata",
+      "type": "backend",
+      "label": "메타데이터",
+      "sublabel": "버전 · 적용일 · 권한",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "f_store",
+      "type": "database",
+      "label": "저장 필드",
+      "sublabel": "인용 · 재분할 대조",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "f_vector",
+      "type": "database",
+      "label": "벡터 필드",
+      "sublabel": "의미 검색",
+      "stage": 3,
+      "row": 1
+    },
+    {
+      "id": "f_filter",
+      "type": "database",
+      "label": "필터 필드",
+      "sublabel": "정확 비교 · 권한",
+      "stage": 3,
+      "row": 2
+    }
+  ],
+  "flows": [
+    {
+      "from": "source",
+      "to": "extract",
+      "label": "원문",
+      "variant": "default"
+    },
+    {
+      "from": "extract",
+      "to": "location",
+      "label": "위치 정보",
+      "variant": "default",
+      "channelX": 385,
+      "route": "vertical-channel"
+    },
+    {
+      "from": "extract",
+      "to": "text",
+      "label": "본문 텍스트",
+      "variant": "default"
+    },
+    {
+      "from": "extract",
+      "to": "metadata",
+      "label": "버전 · 적용일 · 권한",
+      "variant": "default",
+      "channelX": 385,
+      "route": "vertical-channel"
+    },
+    {
+      "from": "text",
+      "to": "f_vector",
+      "label": "임베딩",
+      "variant": "emphasis"
+    },
+    {
+      "from": "location",
+      "to": "f_store",
+      "label": "위치 저장",
+      "variant": "default"
+    },
+    {
+      "from": "metadata",
+      "to": "f_filter",
+      "label": "필터 값",
+      "variant": "default"
+    }
+  ]
+}
