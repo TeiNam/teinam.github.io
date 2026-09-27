@@ -140,13 +140,13 @@
             <path d="M 40 481 L 74 481" class="a-emphasis" stroke-width="1.8" marker-end="url(#mongodb-replication-flow-arrowhead-emphasis)"/>
             <text x="83" y="484" class="t-muted" font-size="10" font-weight="500">주요 경로</text>
           </g>
-          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="data store" data-legend-x="150" data-legend-baseline="484" data-legend-width="93">
+          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="데이터 저장소" data-legend-x="150" data-legend-baseline="484" data-legend-width="108">
             <rect x="150" y="476" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
-            <text x="172" y="484" class="t-muted" font-size="10" font-weight="500">data store</text>
+            <text x="172" y="484" class="t-muted" font-size="10" font-weight="500">데이터 저장소</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="265" data-legend-baseline="484" data-legend-width="98">
-            <path d="M 265 481 L 299 481" class="a-default" stroke-width="1.4" marker-end="url(#mongodb-replication-flow-arrowhead)"/>
-            <text x="308" y="484" class="t-muted" font-size="10" font-weight="500">데이터 흐름</text>
+          <g data-legend-semantic-kind="default" data-legend-x="280" data-legend-baseline="484" data-legend-width="98">
+            <path d="M 280 481 L 314 481" class="a-default" stroke-width="1.4" marker-end="url(#mongodb-replication-flow-arrowhead)"/>
+            <text x="323" y="484" class="t-muted" font-size="10" font-weight="500">데이터 흐름</text>
           </g>
         </g>
       </svg>
