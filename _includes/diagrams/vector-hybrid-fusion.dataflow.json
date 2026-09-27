@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "하이브리드 검색의 결합 흐름",
+    "quality_profile": "showcase",
+    "viewBox": [
+      940,
+      520
+    ],
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "후보 전달"
+        },
+        "emphasis": {
+          "label": "결합 결과"
+        },
+        "dashed": {
+          "label": "선택 단계"
+        },
+        "database": {
+          "label": "결합 단계"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "질의"
+    },
+    {
+      "label": "후보 검색"
+    },
+    {
+      "label": "결합"
+    },
+    {
+      "label": "재순위화"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "query",
+      "type": "frontend",
+      "label": "사용자 질의",
+      "sublabel": "문장 + 키워드",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "dense",
+      "type": "backend",
+      "label": "벡터 검색",
+      "sublabel": "dense Top-N",
+      "stage": 1,
+      "row": 0
+    },
+    {
+      "id": "keyword",
+      "type": "backend",
+      "label": "키워드 검색",
+      "sublabel": "BM25 · 희소 벡터",
+      "stage": 1,
+      "row": 2
+    },
+    {
+      "id": "fusion",
+      "type": "database",
+      "label": "결과 결합",
+      "sublabel": "RRF · 점수 정규화",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "rerank",
+      "type": "cloud",
+      "label": "재순위화 모델",
+      "sublabel": "cross-encoder 등",
+      "stage": 3,
+      "row": 1
+    }
+  ],
+  "flows": [
+    {
+      "from": "query",
+      "to": "dense",
+      "label": "질의 벡터",
+      "variant": "default"
+    },
+    {
+      "from": "query",
+      "to": "keyword",
+      "label": "검색어",
+      "variant": "default"
+    },
+    {
+      "from": "dense",
+      "to": "fusion",
+      "label": "순위 목록 A",
+      "variant": "default"
+    },
+    {
+      "from": "keyword",
+      "to": "fusion",
+      "label": "순위 목록 B",
+      "variant": "default"
+    },
+    {
+      "from": "fusion",
+      "to": "rerank",
+      "label": "상위 후보",
+      "variant": "dashed"
+    }
+  ]
+}
