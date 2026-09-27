@@ -1,0 +1,115 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "S3 Vectors의 벡터를 OpenSearch에서 검색하는 두 경로",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "요청"
+        },
+        "backend": {
+          "label": "검색 엔진"
+        },
+        "messagebus": {
+          "label": "파이프라인"
+        },
+        "database": {
+          "label": "벡터 저장"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "export_lane",
+      "label": "내보내기 — OpenSearch Serverless로 복사"
+    },
+    {
+      "id": "engine_lane",
+      "label": "저장 계층 — OpenSearch Service의 s3vector 엔진"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "export_src",
+      "lane": "export_lane",
+      "col": 0,
+      "type": "database",
+      "label": "S3 Vectors 인덱스",
+      "sublabel": "원본 벡터",
+      "width": 150
+    },
+    {
+      "id": "export_osi",
+      "lane": "export_lane",
+      "col": 1,
+      "type": "messagebus",
+      "label": "OpenSearch Ingestion",
+      "sublabel": "1회 복사",
+      "width": 170
+    },
+    {
+      "id": "export_col",
+      "lane": "export_lane",
+      "col": 2,
+      "type": "backend",
+      "label": "Serverless 컬렉션",
+      "sublabel": "하이브리드·집계",
+      "width": 150
+    },
+    {
+      "id": "engine_app",
+      "lane": "engine_lane",
+      "col": 0,
+      "type": "frontend",
+      "label": "색인·검색 요청",
+      "sublabel": "_bulk · _search",
+      "width": 150
+    },
+    {
+      "id": "engine_domain",
+      "lane": "engine_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "OpenSearch 도메인",
+      "sublabel": "k ≤ 100 · 사후 필터",
+      "width": 170
+    },
+    {
+      "id": "engine_s3",
+      "lane": "engine_lane",
+      "col": 2,
+      "type": "database",
+      "label": "S3 Vectors 인덱스",
+      "sublabel": "벡터 필드만 저장",
+      "width": 150
+    }
+  ],
+  "edges": [
+    {
+      "from": "export_src",
+      "to": "export_osi",
+      "variant": "default"
+    },
+    {
+      "from": "export_osi",
+      "to": "export_col",
+      "label": "이후 동기화 없음",
+      "variant": "emphasis"
+    },
+    {
+      "from": "engine_app",
+      "to": "engine_domain",
+      "variant": "default"
+    },
+    {
+      "from": "engine_domain",
+      "to": "engine_s3",
+      "label": "벡터를 실시간 이관",
+      "variant": "emphasis"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "메타데이터 필터를 적용하는 세 시점",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "질의"
+        },
+        "security": {
+          "label": "필터 조건"
+        },
+        "backend": {
+          "label": "벡터 탐색"
+        },
+        "database": {
+          "label": "결과"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "pre_lane",
+      "label": "탐색 전 — 사전 필터"
+    },
+    {
+      "id": "post_lane",
+      "label": "탐색 후 — 사후 필터"
+    },
+    {
+      "id": "inline_lane",
+      "label": "탐색 중 — 필터 인지 탐색"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "pre_query",
+      "lane": "pre_lane",
+      "col": 0,
+      "type": "frontend",
+      "label": "질의",
+      "sublabel": "벡터 + 조건",
+      "width": 120
+    },
+    {
+      "id": "pre_filter",
+      "lane": "pre_lane",
+      "col": 1,
+      "type": "security",
+      "label": "조건으로 추림",
+      "sublabel": "후보 집합 확정",
+      "width": 132
+    },
+    {
+      "id": "pre_search",
+      "lane": "pre_lane",
+      "col": 2,
+      "type": "backend",
+      "label": "남은 후보 비교",
+      "sublabel": "정확 또는 ANN",
+      "width": 132
+    },
+    {
+      "id": "pre_result",
+      "lane": "pre_lane",
+      "col": 3,
+      "type": "database",
+      "label": "Top-k",
+      "sublabel": "조건 만족",
+      "width": 120
+    },
+    {
+      "id": "post_query",
+      "lane": "post_lane",
+      "col": 0,
+      "type": "frontend",
+      "label": "질의",
+      "sublabel": "벡터 + 조건",
+      "width": 120
+    },
+    {
+      "id": "post_search",
+      "lane": "post_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "ANN 탐색",
+      "sublabel": "후보 먼저",
+      "width": 132
+    },
+    {
+      "id": "post_filter",
+      "lane": "post_lane",
+      "col": 2,
+      "type": "security",
+      "label": "조건으로 거름",
+      "sublabel": "후보 일부 탈락",
+      "width": 132
+    },
+    {
+      "id": "post_result",
+      "lane": "post_lane",
+      "col": 3,
+      "type": "database",
+      "label": "Top-k",
+      "sublabel": "k개 미만 가능",
+      "width": 120
+    },
+    {
+      "id": "inline_query",
+      "lane": "inline_lane",
+      "col": 0,
+      "type": "frontend",
+      "label": "질의",
+      "sublabel": "벡터 + 조건",
+      "width": 120
+    },
+    {
+      "id": "inline_search",
+      "lane": "inline_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "그래프 탐색",
+      "sublabel": "이웃마다 조건 검사",
+      "width": 150
+    },
+    {
+      "id": "inline_result",
+      "lane": "inline_lane",
+      "col": 3,
+      "type": "database",
+      "label": "Top-k",
+      "sublabel": "조건 만족",
+      "width": 120
+    }
+  ],
+  "edges": [
+    {
+      "from": "pre_query",
+      "to": "pre_filter",
+      "variant": "default"
+    },
+    {
+      "from": "pre_filter",
+      "to": "pre_search",
+      "variant": "default"
+    },
+    {
+      "from": "pre_search",
+      "to": "pre_result",
+      "variant": "emphasis"
+    },
+    {
+      "from": "post_query",
+      "to": "post_search",
+      "variant": "default"
+    },
+    {
+      "from": "post_search",
+      "to": "post_filter",
+      "variant": "default"
+    },
+    {
+      "from": "post_filter",
+      "to": "post_result",
+      "variant": "emphasis"
+    },
+    {
+      "from": "inline_query",
+      "to": "inline_search",
+      "variant": "default"
+    },
+    {
+      "from": "inline_search",
+      "to": "inline_result",
+      "label": "조건 맞는 이웃만",
+      "variant": "emphasis"
+    },
+    {
+      "from": "post_filter",
+      "to": "post_search",
+      "label": "k개 미만이면 더 탐색",
+      "variant": "dashed",
+      "role": "return"
+    }
+  ]
+}

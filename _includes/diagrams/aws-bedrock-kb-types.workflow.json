@@ -1,0 +1,143 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "두 가지 Bedrock 지식 베이스가 맡는 범위",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "external": {
+          "label": "데이터 소스"
+        },
+        "backend": {
+          "label": "수집"
+        },
+        "database": {
+          "label": "저장소"
+        },
+        "frontend": {
+          "label": "검색 API"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "cm_lane",
+      "label": "Customer-managed — 저장소를 고객이 고르고 운영"
+    },
+    {
+      "id": "mg_lane",
+      "label": "Managed — 저장·색인·검색을 Bedrock이 운영"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cm_src",
+      "lane": "cm_lane",
+      "col": 0,
+      "type": "external",
+      "label": "데이터 소스",
+      "sublabel": "S3 · 커넥터",
+      "width": 130
+    },
+    {
+      "id": "cm_pipe",
+      "lane": "cm_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "수집",
+      "sublabel": "파서·청크·임베딩 선택",
+      "width": 150
+    },
+    {
+      "id": "cm_store",
+      "lane": "cm_lane",
+      "col": 3,
+      "type": "database",
+      "label": "벡터 저장소",
+      "sublabel": "8종 중 선택·직접 운영",
+      "width": 150
+    },
+    {
+      "id": "cm_ret",
+      "lane": "cm_lane",
+      "col": 4,
+      "type": "frontend",
+      "label": "Retrieve",
+      "sublabel": "결과 1~100개",
+      "width": 130
+    },
+    {
+      "id": "mg_src",
+      "lane": "mg_lane",
+      "col": 0,
+      "type": "external",
+      "label": "데이터 소스",
+      "sublabel": "네이티브 커넥터",
+      "width": 130
+    },
+    {
+      "id": "mg_pipe",
+      "lane": "mg_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "관리형 수집",
+      "sublabel": "파싱·청크·임베딩",
+      "width": 150
+    },
+    {
+      "id": "mg_store",
+      "lane": "mg_lane",
+      "col": 3,
+      "type": "database",
+      "label": "관리형 저장소",
+      "sublabel": "자동 확장",
+      "width": 150
+    },
+    {
+      "id": "mg_ret",
+      "lane": "mg_lane",
+      "col": 4,
+      "type": "frontend",
+      "label": "Retrieve",
+      "sublabel": "항상 하이브리드",
+      "width": 130
+    }
+  ],
+  "edges": [
+    {
+      "from": "cm_src",
+      "to": "cm_pipe",
+      "label": "수동 동기화",
+      "variant": "default"
+    },
+    {
+      "from": "cm_pipe",
+      "to": "cm_store",
+      "variant": "default"
+    },
+    {
+      "from": "cm_store",
+      "to": "cm_ret",
+      "variant": "emphasis"
+    },
+    {
+      "from": "mg_src",
+      "to": "mg_pipe",
+      "label": "일정 동기화 가능",
+      "variant": "default"
+    },
+    {
+      "from": "mg_pipe",
+      "to": "mg_store",
+      "variant": "default"
+    },
+    {
+      "from": "mg_store",
+      "to": "mg_ret",
+      "variant": "emphasis"
+    }
+  ]
+}
