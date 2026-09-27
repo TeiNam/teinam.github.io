@@ -5,10 +5,10 @@ category: database
 excerpt: "임베딩·유사도 검색·RAG의 관계부터 오픈소스와 상용 제품까지 정리하고 개발자 설문·DB-Engines·GitHub 별 수가 각각 무엇을 재는지 구분해 읽습니다."
 last_modified_at: 2026-09-27
 series: "벡터 DB"
-series_index: "1 / 2"
+series_index: "1 / 3"
 ---
 
-**시리즈** · **1. 개념과 제품·사용 지표** · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/)
+**시리즈** · **1. 개념과 제품·사용 지표** · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/)
 
 기술 문서에서 “DB 연결이 몰릴 때 응답이 느려지는 이유”를 검색한다고 생각해 봅시다. 찾고 싶은 문서의 제목은 “커넥션 풀 포화와 대기 시간 분석”일 수 있습니다. 검색어와 문서의 표현이 달라도 관련 있는 내용을 찾는 것이 의미 검색의 목표입니다.
 
