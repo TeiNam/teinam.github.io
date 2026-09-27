@@ -9,3 +9,7 @@ Gemfile.lock
 
 # tech-writer 스킬 작업 산출물
 _workspace/
+
+# 로컬 전용 포스트 초안·리서치 노트
+_drafts/
+_research/
