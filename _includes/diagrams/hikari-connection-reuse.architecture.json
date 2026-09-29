@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "기본값 애플리케이션의 풀 연결 재사용 루프",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "커넥션 풀 상태" },
+        "security": { "label": "오류 상태" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 2,
+    "gapX": 260,
+    "gapY": 110,
+    "cellW": 220,
+    "cellH": 64
+  },
+  "components": [
+    { "id": "pool_wait", "type": "backend", "label": "풀에서 대기", "sublabel": "커넥션 풀", "row": 0, "col": 0, "size": [200, 64] },
+    { "id": "in_use", "type": "backend", "label": "사용 중", "sublabel": "애플리케이션이 빌림", "row": 0, "col": 1, "size": [200, 64] },
+    { "id": "error_return", "type": "security", "label": "오류 반환", "sublabel": "애플리케이션에 오류 전달", "row": 1, "col": 1, "size": [200, 64] },
+    { "id": "conn_closed", "type": "backend", "label": "연결 닫힘", "sublabel": "새 연결 주소는 JVM DNS 캐시로 결정", "row": 1, "col": 0, "size": [200, 64] }
+  ],
+  "connections": [
+    { "from": "pool_wait", "to": "in_use", "label": "애플리케이션이 빌림", "variant": "default" },
+    { "from": "in_use", "to": "error_return", "label": "INSERT read-only 오류(1836)", "variant": "security", "labelDy": 24 },
+    { "from": "error_return", "to": "pool_wait", "label": "폐기 대상 아님", "variant": "dashed" },
+    { "from": "pool_wait", "to": "conn_closed", "label": "maxLifetime 도달(기본 30분)", "variant": "default", "labelDy": 24 }
+  ]
+}

@@ -143,7 +143,9 @@ p { text-wrap: pretty; }
    figure 가 아니라 캔버스에 overflow 를 주는 이유 — figure 에 주면 캡션까지 끌려간다. */
 .diagram { margin: 0; max-width: 100% !important; display: flex; flex-direction: column; gap: 10px; }
 .diagram-canvas { min-width: 0; overflow-x: auto; }
-.diagram-canvas svg { min-width: 820px; }
+/* 데스크톱에서는 칼럼 폭에 맞춰 줄인다 — 820px 고정이면 1280~1440 폭(칼럼 657~817px)에서 오른쪽이 잘린다.
+   640px 아래로는 줄이지 않고 가로 스크롤을 준다(글자가 너무 작아진다). 좁은 화면은 아래 미디어 쿼리가 660px. */
+.diagram-canvas svg { min-width: min(820px, max(100%, 640px)); }
 .diagram svg {
   width: 100%; height: auto; font-family: var(--mono);
   --mask: var(--surface);

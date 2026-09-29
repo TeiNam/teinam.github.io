@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Blue/Green 전환 후 옛 blue에 남은 연결",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "애플리케이션"
+        },
+        "cloud": {
+          "label": "DNS · 엔드포인트"
+        },
+        "database": {
+          "label": "DB 클러스터"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 34,
+    "gapY": 40,
+    "cellW": 220,
+    "cellH": 72
+  },
+  "components": [
+    { "id": "app_switched", "type": "frontend", "label": "전환을 따라간 애플리케이션", "sublabel": "새 엔드포인트로 재연결", "row": 0, "col": 0, "size": [200, 64] },
+    { "id": "dns", "type": "cloud", "label": "DNS / 클러스터 엔드포인트", "sublabel": "green이 원래 이름 승계", "row": 0, "col": 1, "size": [206, 64] },
+    { "id": "green_writer", "type": "database", "label": "Green writer", "sublabel": "전환 후 서비스 대상", "row": 0, "col": 2, "size": [150, 64] },
+    { "id": "green_reader", "type": "database", "label": "Green reader", "row": 1, "col": 2, "size": [140, 60] },
+    { "id": "app_stale", "type": "frontend", "label": "옛 blue에 남은 애플리케이션", "sublabel": "캐시된 주소·기존 연결이 옛 blue를 향함", "row": 2, "col": 0, "size": [220, 72] },
+    { "id": "blue_writer", "type": "database", "label": "옛 blue writer", "sublabel": "-old1", "tag": "read_only=1", "row": 2, "col": 2, "size": [172, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "green 클러스터", "wraps": ["green_writer", "green_reader"], "pad": 18 }
+  ],
+  "connections": [
+    { "from": "app_switched", "to": "dns", "label": "엔드포인트 조회", "variant": "emphasis", "labelDy": 56 },
+    { "from": "dns", "to": "green_writer", "label": "이름 승계 · 쓰기 성공", "variant": "emphasis", "labelDy": 56 },
+    { "from": "app_stale", "to": "blue_writer", "label": "probe: 읽기 성공 · 쓰기 실패", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[150, 384], [634, 384]], "labelAt": [392, 378] },
+    { "from": "app_stale", "to": "blue_writer", "label": "admin: 쓰기 성공(구성당 2,672~2,673행) · green에 없음", "variant": "security", "fromSide": "bottom", "toSide": "bottom", "via": [[150, 400], [634, 400]], "labelAt": [392, 406] }
+  ]
+}

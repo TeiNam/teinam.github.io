@@ -1,0 +1,15 @@
+scenario,iter,window_s,event_api_s,writer_before,writer_after,deleted_reader,rds_failover_events_s,cluster_dns_change_s
+s1-failover,1,360,0.454,jdbc-test-1,jdbc-test-2,,6.565,5.637
+s1-failover,2,360,0.459,jdbc-test-2,jdbc-test-1,,11.206,13.248
+s1-failover,3,360,0.417,jdbc-test-1,jdbc-test-2,,8.336,30.114
+s1-failover,4,360,0.508,jdbc-test-2,jdbc-test-1,,8.968,17.373
+s1-failover,5,360,0.472,jdbc-test-1,jdbc-test-2,,9.592,11.996
+s1-failover,6,360,0.481,jdbc-test-2,jdbc-test-1,,10.138,12.98
+s1-failover,7,360,0.46,jdbc-test-1,jdbc-test-2,,8.595,19.707
+s1-failover,8,360,0.5,jdbc-test-2,jdbc-test-1,,6.386,11.442
+s1-failover,9,2100,0.402,jdbc-test-1,jdbc-test-2,,9.437,20.223
+s1-failover,10,2100,0.49,jdbc-test-2,jdbc-test-1,,11.66,21.79
+s2-reader-delete,1,600,4.92,jdbc-test-1,jdbc-test-1,jdbc-test-2,,
+s2-reader-delete,2,600,4.881,jdbc-test-1,jdbc-test-1,jdbc-test-3,,
+s3-bluegreen-probe,1,600,67.26,jdbc-test-1,jdbc-test-1,,,30.686
+s3-bluegreen-admin,1,600,67.51,jdbc-test-1,jdbc-test-1,,,31.15
