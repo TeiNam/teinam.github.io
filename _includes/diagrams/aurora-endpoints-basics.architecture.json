@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Aurora 클러스터 엔드포인트 기본 구조",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "애플리케이션"
+        },
+        "cloud": {
+          "label": "DNS 엔드포인트"
+        },
+        "database": {
+          "label": "DB 인스턴스"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 60,
+    "gapY": 56,
+    "cellW": 200,
+    "cellH": 64
+  },
+  "components": [
+    { "id": "app", "type": "frontend", "label": "애플리케이션", "sublabel": "JDBC 드라이버 + 커넥션 풀", "row": 0, "col": 0, "size": [176, 64] },
+    { "id": "cluster_endpoint", "type": "cloud", "label": "cluster endpoint", "sublabel": "DNS · 현재 writer", "row": 0, "col": 1, "size": [192, 64] },
+    { "id": "writer", "type": "database", "label": "writer 인스턴스", "sublabel": "읽기 · 쓰기", "row": 0, "col": 2, "size": [140, 60] },
+    { "id": "reader_endpoint", "type": "cloud", "label": "reader endpoint(cluster-ro)", "sublabel": "DNS · reader들에 연결 분산", "row": 2, "col": 1, "size": [196, 64] },
+    { "id": "reader", "type": "database", "label": "reader 인스턴스", "sublabel": "읽기 전용", "row": 2, "col": 2, "size": [140, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Aurora 클러스터", "wraps": ["writer", "reader"], "pad": 20 }
+  ],
+  "connections": [
+    { "from": "app", "to": "cluster_endpoint", "label": "쓰기·읽기 연결", "variant": "emphasis", "labelDy": -20 },
+    { "from": "cluster_endpoint", "to": "writer", "label": "현재 writer", "variant": "emphasis", "labelDy": 24 },
+    { "from": "app", "to": "reader_endpoint", "label": "읽기 전용 연결", "variant": "default" },
+    { "from": "reader_endpoint", "to": "reader", "label": "reader들에 분산", "variant": "default", "labelDy": -50 },
+    { "from": "reader", "to": "writer", "label": "승격 → DNS 갱신", "variant": "dashed" }
+  ]
+}

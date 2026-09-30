@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "첫 페일오버 타임라인 (S1)",
+    "quality_profile": "showcase",
+    "viewBox": [760, 480],
+    "column_fit": "spread",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "default": { "label": "재연결 시도" },
+        "emphasis": { "label": "새 writer로 전환" },
+        "dashed": { "label": "반복 거부" },
+        "return": { "label": "응답 · 오류" }
+      }
+    }
+  },
+  "participants": [
+    { "id": "default_app", "type": "frontend", "label": "기본값 구성", "sublabel": "d02" },
+    { "id": "tuned_app", "type": "frontend", "label": "튜닝 구성", "sublabel": "t03" },
+    { "id": "dns", "type": "cloud", "label": "DNS", "sublabel": "cluster endpoint" },
+    { "id": "old_writer", "type": "database", "label": "옛 writer" },
+    { "id": "new_writer", "type": "database", "label": "새 writer" }
+  ],
+  "messages": [
+    { "from": "old_writer", "to": "tuned_app", "y": 180, "label": "0초 · 연결 끊김", "variant": "return" },
+    { "from": "old_writer", "to": "default_app", "y": 208, "label": "0초 · 연결 끊김", "variant": "return" },
+    { "from": "dns", "to": "new_writer", "y": 236, "label": "+1.6초 · DNS가 새 writer를 가리킴(runner 관찰)", "variant": "emphasis" },
+    { "from": "tuned_app", "to": "new_writer", "y": 264, "label": "+5.3초 · 재연결 · INSERT 성공", "variant": "emphasis" },
+    { "from": "default_app", "to": "old_writer", "y": 292, "label": "재연결(DNS가 바뀌기 전 주소)", "variant": "default" },
+    { "from": "old_writer", "to": "default_app", "y": 320, "label": "+10.4초 · INSERT 거부 read-only(1836)", "variant": "return" },
+    { "from": "default_app", "to": "old_writer", "y": 348, "label": "같은 연결(conn 98)로 관찰 종료까지 쓰기 거부", "variant": "dashed" }
+  ]
+}

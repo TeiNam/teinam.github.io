@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Aurora 라이터 페일오버 후 재연결 경로",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "애플리케이션 · 드라이버 로직" },
+        "database": { "label": "Aurora 클러스터 노드" },
+        "cloud": { "label": "DNS 확인" },
+        "security": { "label": "오류 · 거부 상태" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 32,
+    "gapY": 64,
+    "cellW": 208,
+    "cellH": 64
+  },
+  "components": [
+    { "id": "failover", "type": "database", "label": "Aurora writer 페일오버", "sublabel": "기존 연결 끊김", "row": 0, "col": 0, "size": [188, 64] },
+    { "id": "reconnect", "type": "backend", "label": "애플리케이션 재연결 시도", "row": 0, "col": 1, "size": [188, 64] },
+    { "id": "resolve", "type": "cloud", "label": "JVM DNS 확인", "sublabel": "cluster endpoint", "row": 0, "col": 2, "size": [188, 64] },
+    { "id": "wrapper_topology", "type": "backend", "label": "failover2 조회", "sublabel": "AWS JDBC Wrapper", "row": 1, "col": 0, "size": [188, 64] },
+    { "id": "short_ttl_retry", "type": "backend", "label": "짧은 TTL로 재시도(해석)", "sublabel": "TTL 5초 + connect/pool timeout", "row": 1, "col": 1, "size": [188, 64] },
+    { "id": "old_writer_conn", "type": "security", "label": "옛 writer에 재연결", "sublabel": "읽기 성공 · INSERT 거부(1836)", "row": 1, "col": 2, "size": [188, 64] },
+    { "id": "new_writer_c", "type": "database", "label": "새 writer 쓰기 성공", "sublabel": "중앙값 1.6~2.0초", "row": 2, "col": 0, "size": [188, 60] },
+    { "id": "new_writer_b", "type": "database", "label": "새 writer 쓰기 성공", "sublabel": "중앙값 약 10.5초", "row": 2, "col": 1, "size": [188, 60] },
+    { "id": "stale_recovery", "type": "database", "label": "연결 교체 뒤 새 writer(추정)", "sublabel": "기본값 1,762~1,803초", "row": 2, "col": 2, "size": [188, 60] }
+  ],
+  "boundaries": [
+    { "kind": "security-group", "label": "옛 writer에 남는 경로", "wraps": ["old_writer_conn", "stale_recovery"], "pad": 16 }
+  ],
+  "connections": [
+    { "from": "failover", "to": "reconnect", "variant": "emphasis" },
+    { "from": "reconnect", "to": "resolve", "variant": "default" },
+    { "from": "resolve", "to": "wrapper_topology", "label": "토폴로지로 확인", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "via": [[614, 160], [134, 160]], "labelDy": 8 },
+    { "from": "resolve", "to": "short_ttl_retry", "label": "TTL 만료 후 재조회", "variant": "default", "labelDx": -70, "labelDy": 8 },
+    { "from": "resolve", "to": "old_writer_conn", "label": "옛 주소로 재연결 · TTL -1은 계속", "variant": "dashed", "labelDy": 44 },
+    { "from": "wrapper_topology", "to": "new_writer_c", "variant": "emphasis" },
+    { "from": "short_ttl_retry", "to": "new_writer_b", "variant": "default" },
+    { "from": "old_writer_conn", "to": "stale_recovery", "label": "HikariCP 재사용", "variant": "dashed", "labelDy": 24 }
+  ]
+}
