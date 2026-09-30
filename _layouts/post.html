@@ -15,6 +15,7 @@ layout: default
       <span>{{ site.author }}</span>
       <span>{{ page.date | date: '%Y-%m-%d' }}</span>
       {%- if page.last_modified_at %}<span>updated {{ page.last_modified_at | date: '%m-%d' }}</span>{% endif %}
+      {%- if site.goatcounter != "" %}<span data-gc-path="{{ page.url }}" hidden><b></b> VIEWS</span>{% endif %}
       <span>{{ content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>
     </div>
 

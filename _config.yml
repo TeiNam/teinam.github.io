@@ -22,6 +22,10 @@ social:
   linkedin: rastalion
   github: TeiNam
 
+# GoatCounter 사이트 코드(rastalion → rastalion.goatcounter.com). 비우면 카운터를 렌더하지 않는다.
+# 사이트 설정의 "Allow adding visitor counts on your website" 를 켜야 조회수가 표시된다.
+goatcounter: "rastalion"
+
 newsletter_action: ""   # 예: https://buttondown.email/api/emails/embed-subscribe/rastalion
 
 adsense:
