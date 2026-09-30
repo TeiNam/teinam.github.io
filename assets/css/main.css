@@ -12,8 +12,8 @@
   --code-num: oklch(0.48 0.11 65); --code-cmt: oklch(0.56 0.015 250);
   --sans: "IBM Plex Sans KR", system-ui, sans-serif;
   --mono: "Spline Sans Mono", ui-monospace, monospace;
-  /* 본문 읽기 폭은 50rem(800px, 한글 한 줄 50자). 한국어 본문이 편한 범위(35~50자)의
-     상한이라 더 늘리지 않는다. shell 을 넓혀 남는 폭은 다이어그램·표·코드블록이 받는다.
+  /* 포스트 본문은 칼럼 폭을 그대로 쓴다 — 다이어그램·표가 칼럼 전체를 채우는데 산문만
+     좁으면 오른쪽이 비어 보인다. about·work(.page-body)와 docs 는 52rem 읽기 폭을 유지한다.
 
      `ch` 를 쓰면 안 된다 — 요소 자기 font-size 기준이라 같은 80ch 가 h1(42px)에서는
      2115px, p(16px)에서는 806px 이 된다. 그러면 제목만 칼럼 전체를 쓰고 본문은 좁아
@@ -43,7 +43,9 @@ main { max-width: var(--shell); margin: 0 auto; background: var(--surface); }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-h1, h2, h3 { letter-spacing: -0.03em; font-weight: 600; margin: 0; text-wrap: balance; }
+/* 한글 제목은 어절 단위로만 줄을 바꾼다(기본값은 "애|플리케이션"처럼 글자 사이에서 끊는다).
+   칸보다 긴 영어 식별자 한 덩어리는 overflow-wrap 이 넘치지 않게 끊는다. */
+h1, h2, h3 { letter-spacing: -0.03em; font-weight: 600; margin: 0; text-wrap: balance; word-break: keep-all; overflow-wrap: break-word; }
 p { text-wrap: pretty; }
 .mono { font-family: var(--mono); }
 .dim { color: var(--ink3); }
@@ -255,12 +257,11 @@ p { text-wrap: pretty; }
 .toc a.lvl3 { padding-left: 26px; font-size: 12.5px; }
 .toc a:hover { text-decoration: none; color: var(--ink); }
 .toc a.is-active { color: var(--ink); border-left-color: var(--accent); }
-/* 읽기 폭 제한은 .prose 가 아니라 자식에 둔다. 표만 가운데 칼럼 전체를 쓰게
-   하려면 부모가 읽기 폭으로 묶고 있으면 안 된다. */
+/* 포스트 산문은 칼럼 전체를 쓴다. page-body 와 함께 붙는 about·work 는 뒤의
+   `.page-body > *` 가 52rem 으로 다시 묶는다(선택자 우선순위가 같아 뒤가 이긴다). */
 .prose { display: flex; flex-direction: column; gap: 22px; }
-.prose > * { max-width: 50rem; min-width: 0; }
-/* 산문만 읽기 폭으로 묶는다. 표·코드·다이어그램은 칼럼 전체를 쓴다 — 긴 SQL 이나 `mysql`
-   클라이언트 출력을 800px 안에 접어 넣을 이유가 없다.
+.prose > * { min-width: 0; }
+/* 그 page-body 에서도 표·코드·다이어그램은 칼럼 전체를 쓴다.
    코드블록의 `.prose` 직계 자식은 rouge 가 감싼 `div.language-<lang>.highlighter-rouge` 다.
    `.highlight` 는 그 안에 한 겹 더 들어 있어서 직계 선택자로는 안 잡힌다. */
 .prose > table, .prose > .table-scroll, .prose > figure,
@@ -425,7 +426,7 @@ p { text-wrap: pretty; }
 /* .ad 가 column flex 라 cross 축 auto 마진은 stretch 를 끈다. 폭을 명시하지 않으면
    비어 있는 ins 의 콘텐츠 폭(0)으로 붕괴한다 — width:100% 를 함께 줘야 한다 */
 
-/* 광고 폭은 그 페이지에서 표·그림이 쓰는 폭에 맞춘다. 본문 산문(50rem·52rem)보다
+/* 광고 폭은 그 페이지에서 표·그림이 쓰는 폭에 맞춘다. 본문 산문(about·work·docs 의 52rem)보다
    넓지만 칼럼을 넘지는 않아서, 이미 칼럼 전체를 쓰는 표·다이어그램과 같은 선에 선다.
    포스트 992 · docs 1064 로 측정됐다.
 
