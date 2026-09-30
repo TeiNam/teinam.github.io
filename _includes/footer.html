@@ -11,6 +11,11 @@
   </div>
   <div class="foot-col">
     <span class="mono dim">© {{ site.time | date: '%Y' }} {{ site.author }}</span>
+    {%- if site.goatcounter != "" %}<span class="mono dim" data-gc-path="TOTAL" hidden><b></b> views</span>{% endif %}
   </div>
 </footer>
 <script src="{{ '/assets/js/theme.js' | relative_url }}" defer></script>
+{%- if site.goatcounter != "" %}
+<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="{{ '/assets/js/counter.js' | relative_url }}" data-base="https://{{ site.goatcounter }}.goatcounter.com" defer></script>
+{%- endif %}
