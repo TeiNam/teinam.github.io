@@ -1,7 +1,7 @@
 ---
 date: 2026-09-25 00:00:00 +0900
 title: "벡터 DB란 무엇인가: 중요해진 이유와 주요 제품, 사용 지표로 보는 시장"
-category: database
+category: ai/ml
 excerpt: "임베딩·유사도 검색·RAG의 관계부터 오픈소스와 상용 제품까지 정리하고 개발자 설문·DB-Engines·GitHub 별 수가 각각 무엇을 재는지 구분해 읽습니다."
 last_modified_at: 2026-09-27
 series: "벡터 DB"

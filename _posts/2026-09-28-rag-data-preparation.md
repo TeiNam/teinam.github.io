@@ -1,7 +1,7 @@
 ---
 date: 2026-09-28 00:00:00 +0900
 title: "RAG를 위한 데이터 준비: 범위·요건 분석부터 전처리·피처 설계까지"
-category: database
+category: ai/ml
 excerpt: "데이터 범위와 규모 조사, 검증할 수 있는 요건 정의, 의미와 근거 위치를 보존하는 전처리, 문서 RAG에 맞춘 피처 설계를 정리합니다."
 last_modified_at: 2026-09-28
 series: "RAG 데이터 준비와 평가"

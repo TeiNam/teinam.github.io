@@ -1,7 +1,7 @@
 ---
 date: 2026-09-27 10:00:00 +0900
 title: "AWS에서만 쓰는 벡터 검색: S3 Vectors부터 Bedrock Knowledge Bases까지"
-category: database
+category: ai/ml
 excerpt: "S3 Vectors, OpenSearch Serverless, DynamoDB 등 AWS 전용 벡터 검색 7종을 인덱스, 질의당 k, 필터, 규모, 확장·과금 단위로 비교하고 Bedrock Knowledge Bases가 맡는 일을 정리합니다."
 last_modified_at: 2026-09-27
 series: "벡터 DB"
