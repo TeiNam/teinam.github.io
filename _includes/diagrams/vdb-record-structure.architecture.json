@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "벡터 DB 레코드 구조와 RDB 테이블의 대응",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": { "label": "레코드의 칸" },
+        "backend": { "label": "테이블의 열" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 4,
+    "gapX": 16,
+    "gapY": 110,
+    "cellW": 156,
+    "cellH": 60
+  },
+  "components": [
+    { "id": "rec_id", "type": "database", "label": "ID", "sublabel": "레코드 식별자", "row": 0, "col": 0, "size": [150, 60] },
+    { "id": "rec_vector", "type": "database", "label": "벡터", "sublabel": "[0.12, -0.03, …]", "row": 0, "col": 1, "size": [150, 60] },
+    { "id": "rec_text", "type": "database", "label": "원문", "sublabel": "벡터로 바꾼 텍스트", "row": 0, "col": 2, "size": [150, 60] },
+    { "id": "rec_meta", "type": "database", "label": "메타데이터", "sublabel": "{부서, 작성일}", "row": 0, "col": 3, "size": [150, 60] },
+    { "id": "pk_col", "type": "backend", "label": "기본 키 열", "sublabel": "PRIMARY KEY", "row": 1, "col": 0, "size": [150, 60] },
+    { "id": "vector_col", "type": "backend", "label": "vector 타입 열", "sublabel": "벡터 값 저장", "row": 1, "col": 1, "size": [150, 60] },
+    { "id": "text_col", "type": "backend", "label": "일반 열", "sublabel": "텍스트", "row": 1, "col": 2, "size": [150, 60] },
+    { "id": "meta_col", "type": "backend", "label": "일반 열", "sublabel": "부서 · 작성일", "row": 1, "col": 3, "size": [150, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "컬렉션 · 레코드", "wraps": ["rec_id", "rec_vector", "rec_text", "rec_meta"], "pad": 30 },
+    { "kind": "region", "label": "RDB 테이블 · 행", "wraps": ["pk_col", "vector_col", "text_col", "meta_col"], "pad": 30 }
+  ],
+  "connections": [
+    { "from": "rec_id", "to": "pk_col", "variant": "dashed" },
+    { "from": "rec_vector", "to": "vector_col", "variant": "dashed" },
+    { "from": "rec_text", "to": "text_col", "variant": "dashed" },
+    { "from": "rec_meta", "to": "meta_col", "variant": "dashed" }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "데이터를 나누는 수준: 컬렉션, 파티션·테넌트, 메타데이터 필터, 샤드",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": {
+          "label": "검색 범위를 나누는 수준"
+        },
+        "external": {
+          "label": "제품 예"
+        },
+        "cloud": {
+          "label": "확장 단위"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 32,
+    "gapY": 64,
+    "cellW": 208,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "collection",
+      "type": "database",
+      "label": "데이터베이스 · 컬렉션",
+      "sublabel": "스키마·모델까지 분리",
+      "size": [
+        200,
+        72
+      ],
+      "pos": [
+        40,
+        80
+      ],
+      "tag": "가장 무거움"
+    },
+    {
+      "id": "collection_ex",
+      "type": "external",
+      "label": "Milvus database·collection",
+      "sublabel": "Qdrant · Weaviate collection",
+      "size": [
+        216,
+        72
+      ],
+      "tag": "Pinecone index",
+      "pos": [
+        288,
+        80
+      ]
+    },
+    {
+      "id": "partition",
+      "type": "database",
+      "label": "파티션 · 테넌트 · namespace",
+      "sublabel": "같은 스키마 · 검색 범위 분리",
+      "size": [
+        200,
+        72
+      ],
+      "pos": [
+        40,
+        200
+      ]
+    },
+    {
+      "id": "partition_ex",
+      "type": "external",
+      "label": "Milvus partition·partition key",
+      "sublabel": "Qdrant is_tenant · Weaviate tenant",
+      "size": [
+        216,
+        72
+      ],
+      "tag": "Pinecone namespace",
+      "pos": [
+        288,
+        200
+      ]
+    },
+    {
+      "id": "filter",
+      "type": "database",
+      "label": "메타데이터 필터",
+      "sublabel": "한 덩어리 안에서 조건으로 좁힘",
+      "size": [
+        200,
+        72
+      ],
+      "pos": [
+        40,
+        320
+      ],
+      "tag": "가장 가벼움"
+    },
+    {
+      "id": "filter_ex",
+      "type": "external",
+      "label": "필터 조건",
+      "sublabel": "Milvus · Qdrant · Weaviate · Pinecone",
+      "size": [
+        216,
+        72
+      ],
+      "pos": [
+        288,
+        320
+      ],
+      "tag": "네 제품 공통"
+    },
+    {
+      "id": "shard",
+      "type": "cloud",
+      "label": "샤드",
+      "sublabel": "한 컬렉션의 수평 조각",
+      "size": [
+        164,
+        72
+      ],
+      "pos": [
+        556,
+        200
+      ],
+      "tag": "노드에 분산"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "목적: 검색 범위 나누기",
+      "wraps": [
+        "collection",
+        "collection_ex",
+        "partition",
+        "partition_ex",
+        "filter",
+        "filter_ex"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "security-group",
+      "label": "목적: 확장",
+      "wraps": [
+        "shard"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "from": "collection",
+      "to": "partition",
+      "label": "더 가볍게",
+      "variant": "default",
+      "labelDy": 24
+    },
+    {
+      "from": "partition",
+      "to": "filter",
+      "label": "더 가볍게",
+      "variant": "default",
+      "labelDy": 24
+    },
+    {
+      "from": "collection",
+      "to": "collection_ex",
+      "variant": "dashed"
+    },
+    {
+      "from": "partition",
+      "to": "partition_ex",
+      "variant": "dashed"
+    },
+    {
+      "from": "filter",
+      "to": "filter_ex",
+      "variant": "dashed"
+    }
+  ]
+}

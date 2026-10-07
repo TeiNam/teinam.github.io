@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "뉴스 기사 컬렉션을 나누는 세 가지 안",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "cloud": { "label": "원본 데이터" },
+        "database": { "label": "컬렉션 구성" },
+        "external": { "label": "장점 · 주의점" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 24,
+    "gapY": 40,
+    "cellW": 216,
+    "cellH": 64
+  },
+  "components": [
+    { "id": "news", "type": "cloud", "label": "news", "sublabel": "매일 쌓이는 뉴스 기사", "row": 1, "col": 0, "size": [184, 64] },
+    { "id": "by_date", "type": "database", "label": "(A) 날짜 기준", "sublabel": "news_20240530, news_20240531 …", "row": 0, "col": 1, "size": [216, 64] },
+    { "id": "by_topic", "type": "database", "label": "(B) 주제 기준", "sublabel": "news_politics, news_economy, news_sports", "row": 1, "col": 1, "size": [216, 64] },
+    { "id": "by_month_topic", "type": "database", "label": "(C) 혼합(월+주제)", "sublabel": "news_202405_politics, news_202405_economy …", "row": 2, "col": 1, "size": [216, 64] },
+    { "id": "date_note", "type": "external", "label": "장점: 최근 날짜 컬렉션만 검색", "sublabel": "주의: 컬렉션이 하루에 하나씩 늘어남", "row": 0, "col": 2, "size": [216, 64] },
+    { "id": "topic_note", "type": "external", "label": "장점: 한 컬렉션에서 주제 검색", "sublabel": "주의: 오래된 기사는 컬렉션마다 날짜 조건 삭제", "row": 1, "col": 2, "size": [216, 64] },
+    { "id": "mixed_note", "type": "external", "label": "장점: 기간과 주제를 함께 좁힘", "sublabel": "주의: 컬렉션 수가 월 수×주제 수로 늘어남", "row": 2, "col": 2, "size": [216, 64] }
+  ],
+  "connections": [
+    { "from": "news", "to": "by_date", "variant": "default" },
+    { "from": "news", "to": "by_topic", "variant": "default" },
+    { "from": "news", "to": "by_month_topic", "variant": "default" },
+    { "from": "by_date", "to": "date_note", "variant": "dashed" },
+    { "from": "by_topic", "to": "topic_note", "variant": "dashed" },
+    { "from": "by_month_topic", "to": "mixed_note", "variant": "dashed" }
+  ]
+}
