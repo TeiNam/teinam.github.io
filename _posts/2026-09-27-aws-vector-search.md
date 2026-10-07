@@ -5,10 +5,10 @@ category: database
 excerpt: "S3 Vectors, OpenSearch Serverless, DynamoDB 등 AWS 전용 벡터 검색 7종을 인덱스, 질의당 k, 필터, 규모, 확장·과금 단위로 비교하고 Bedrock Knowledge Bases가 맡는 일을 정리합니다."
 last_modified_at: 2026-09-27
 series: "벡터 DB"
-series_index: "3 / 3"
+series_index: "3 / 4"
 ---
 
-**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · **3. AWS 전용 벡터 검색**
+**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · **3. AWS 전용 벡터 검색** · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/)
 
 AWS에서 사내 문서 RAG를 만든다고 생각해 봅시다. Bedrock Knowledge Bases로 지식 베이스를 만들 때 대신 만들어 주는 벡터 저장소는 S3 Vectors, OpenSearch Serverless, Aurora PostgreSQL Serverless, Neptune Analytics 네 가지입니다. 이미 운영하는 DynamoDB, MemoryDB, ElastiCache, DocumentDB에도 벡터 검색 기능이 있습니다. 모두 벡터 검색을 지원하지만 질의당 결과 수와 필터 방식, 확장 단위, 과금 단위는 서비스마다 다릅니다.
 
