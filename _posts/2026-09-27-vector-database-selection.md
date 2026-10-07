@@ -1,7 +1,7 @@
 ---
 date: 2026-09-27 00:00:00 +0900
 title: "벡터 DB는 어떻게 고를까: 선택 기준과 제품별 기능 비교"
-category: database
+category: ai/ml
 excerpt: "인덱스와 압축, 질의당 최대 k, 필터와 멀티테넌시, 하이브리드 검색, 1억 건 규모의 메모리, 샤딩과 확장을 기준으로 벡터 DB 12종을 공식 문서에 근거해 비교합니다."
 last_modified_at: 2026-09-27
 series: "벡터 DB"

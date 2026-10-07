@@ -1,7 +1,7 @@
 ---
 date: 2026-09-28 00:10:00 +0900
 title: "RAG 평가 데이터셋: Gold·QA 구축부터 검색·답변 품질 평가까지"
-category: database
+category: ai/ml
 excerpt: "Gold 데이터와 QA로 평가 데이터셋을 만들고, 데이터를 나누는 기준과 검색 품질·답변 품질을 따로 평가하는 방법, 운영하며 평가 데이터셋을 넓히는 순서를 다룹니다."
 last_modified_at: 2026-09-28
 series: "RAG 데이터 준비와 평가"
