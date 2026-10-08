@@ -11,6 +11,7 @@ subtitle: 만든 것과 다뤄 온 것.
 | --- | --- | --- |
 | [easy-rdbms](https://github.com/TeiNam/easy-rdbms) | 정규화·데이터 표준화·성능·확장성을 기준으로 DB 설계를 잡는 Claude Code·Codex 플러그인 | Shell · MySQL / PostgreSQL / SQLite |
 | [table-define-exporter](https://github.com/TeiNam/table-define-exporter) | 테이블 정의서를 뽑아 Excel·Markdown·SQL DDL 로 내보내는 CLI | Rust · MySQL 5.7+ / PostgreSQL 13–17 |
+| [database-diff-manager](https://github.com/TeiNam/database-diff-manager) | td-export 로 뽑은 스키마 정의를 버전으로 관리하고, 두 버전의 차이와 그 변경을 만드는 DDL·롤백 DDL 을 생성하는 팀용 웹 도구 | TypeScript · MySQL 8.0 / 8.4 |
 | [aws-mysql-monitor](https://github.com/TeiNam/aws-mysql-monitor) | 슬로우 쿼리를 실시간 수집해 실행 계획·CloudWatch 지표·Bedrock 튜닝 조언과 한 화면에 모은다 | Rust · RDS / Aurora MySQL 8.0+ |
 | [rds_exporter](https://github.com/TeiNam/rds_exporter) | Go 판을 Rust 로 옮기고 슬림화. 태그로 수집 대상을 고른다 | Rust · RDS / Prometheus |
 | [rds-cost-calculator](https://github.com/TeiNam/rds-cost-calculator) | 인스턴스 사양 목록을 AWS Pricing API 로 조회해 월·연 비용 리포트 생성 | Python · RDS / DMS / ElastiCache |
