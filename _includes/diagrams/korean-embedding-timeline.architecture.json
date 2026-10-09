@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "한국어 임베딩 모델의 대략적 계보(2021–2026)",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": {
+          "label": "한국어로 학습한 모델"
+        },
+        "external": {
+          "label": "다국어 모델(한국어 별도 학습 없음)"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      40,
+      48
+    ],
+    "cols": 4,
+    "gapX": 24,
+    "gapY": 56,
+    "cellW": 152,
+    "cellH": 44
+  },
+  "components": [
+    {
+      "id": "sbert_simcse",
+      "type": "backend",
+      "label": "KR-SBERT·KoSimCSE",
+      "sublabel": "ko-sroberta-multitask",
+      "row": 0,
+      "col": 0,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "kf_deberta",
+      "type": "backend",
+      "label": "kf-deberta-multitask",
+      "row": 0,
+      "col": 1,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "koe5_kure1",
+      "type": "backend",
+      "label": "KoE5 · KURE-v1",
+      "sublabel": "2024",
+      "row": 1,
+      "col": 0,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "bge_arctic",
+      "type": "backend",
+      "label": "BGE-m3-ko",
+      "sublabel": "snowflake-arctic-ko",
+      "row": 1,
+      "col": 1,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "e5_small",
+      "type": "backend",
+      "label": "e5-small-ko-v2",
+      "sublabel": "모델 병합(soup)",
+      "row": 1,
+      "col": 2,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "pixie",
+      "type": "backend",
+      "label": "PIXIE-Rune-v1.5",
+      "row": 1,
+      "col": 3,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "colbert_ko",
+      "type": "backend",
+      "label": "colbert-ko-v1",
+      "sublabel": "colbert-ko-0.1b",
+      "row": 2,
+      "col": 0,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "colbert_koen",
+      "type": "backend",
+      "label": "colbert-ko-en-v2",
+      "row": 2,
+      "col": 1,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "kure2",
+      "type": "backend",
+      "label": "KURE-v2",
+      "sublabel": "2026",
+      "row": 2,
+      "col": 2,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "multi_late",
+      "type": "external",
+      "label": "mLateOn · pplx-late",
+      "row": 2,
+      "col": 3,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "qwen3",
+      "type": "backend",
+      "label": "Qwen3-Embedding",
+      "sublabel": "2025",
+      "row": 3,
+      "col": 2,
+      "size": [
+        152,
+        44
+      ]
+    },
+    {
+      "id": "comsat_harrier",
+      "type": "backend",
+      "label": "comsat-ko-8b",
+      "sublabel": "Harrier",
+      "row": 3,
+      "col": 3,
+      "size": [
+        152,
+        44
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "SBERT · SimCSE 계열 · 2021~",
+      "wraps": [
+        "sbert_simcse",
+        "kf_deberta"
+      ],
+      "pad": 8
+    },
+    {
+      "kind": "region",
+      "label": "다국어 인코더 + 한국어 파인튜닝 · 2024~2025",
+      "wraps": [
+        "koe5_kure1",
+        "bge_arctic",
+        "e5_small",
+        "pixie"
+      ],
+      "pad": 8
+    },
+    {
+      "kind": "region",
+      "label": "후기 상호작용(ColBERT) · 2025~2026",
+      "wraps": [
+        "colbert_ko",
+        "colbert_koen",
+        "kure2",
+        "multi_late"
+      ],
+      "pad": 8
+    },
+    {
+      "kind": "region",
+      "label": "디코더 기반 대형 · 2025~2026",
+      "wraps": [
+        "qwen3",
+        "comsat_harrier"
+      ],
+      "pad": 8
+    }
+  ],
+  "connections": [
+    {
+      "from": "koe5_kure1",
+      "to": "kure2",
+      "label": "KURE 시리즈",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

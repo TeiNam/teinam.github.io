@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "단일 벡터와 후기 상호작용의 점수 계산",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": { "label": "토큰" },
+        "database": { "label": "임베딩 벡터" },
+        "backend": { "label": "유사도 계산" }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 5,
+    "gapX": 24,
+    "gapY": 110,
+    "cellW": 112,
+    "cellH": 60
+  },
+  "components": [
+    { "id": "a_q_tok", "type": "frontend", "label": "질의 토큰", "sublabel": "질의 문장", "row": 0, "col": 0, "size": [110, 60] },
+    { "id": "a_q_vec", "type": "database", "label": "질의 벡터", "sublabel": "[CLS] 1024차원 ×1", "row": 0, "col": 1, "size": [110, 60] },
+    { "id": "a_score", "type": "backend", "label": "코사인", "sublabel": "1회 계산", "row": 0, "col": 2, "size": [110, 60] },
+    { "id": "a_d_vec", "type": "database", "label": "문서 벡터", "sublabel": "[CLS] 1024차원 ×1", "row": 0, "col": 3, "size": [110, 60] },
+    { "id": "a_d_tok", "type": "frontend", "label": "문서 토큰", "sublabel": "문서 전체", "row": 0, "col": 4, "size": [110, 60] },
+    { "id": "b_q_tok", "type": "frontend", "label": "질의 토큰", "sublabel": "[MASK]로 64개까지", "row": 1, "col": 0, "size": [110, 60] },
+    { "id": "b_q_vec", "type": "database", "label": "질의 벡터", "sublabel": "토큰별 128차원", "row": 1, "col": 1, "size": [110, 60] },
+    { "id": "b_score", "type": "backend", "label": "MaxSim", "sublabel": "토큰별 최선 매칭 합", "row": 1, "col": 2, "size": [110, 60] },
+    { "id": "b_d_vec", "type": "database", "label": "문서 벡터", "sublabel": "토큰별 128차원", "row": 1, "col": 3, "size": [110, 60] },
+    { "id": "b_d_tok", "type": "frontend", "label": "문서 토큰", "sublabel": "최대 8,192개", "row": 1, "col": 4, "size": [110, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "KURE-v1 · 단일 벡터 — 빠르고 인덱스가 작다 · 장문에서 정보 병목", "wraps": ["a_q_tok", "a_q_vec", "a_score", "a_d_vec", "a_d_tok"], "pad": 30 },
+    { "kind": "region", "label": "KURE-v2 · 후기 상호작용 — 정밀하지만 벡터가 많다 · 풀링·양자화로 상쇄", "wraps": ["b_q_tok", "b_q_vec", "b_score", "b_d_vec", "b_d_tok"], "pad": 30 }
+  ],
+  "connections": [
+    { "from": "a_q_tok", "to": "a_q_vec" },
+    { "from": "a_q_vec", "to": "a_score" },
+    { "from": "a_d_tok", "to": "a_d_vec" },
+    { "from": "a_d_vec", "to": "a_score" },
+    { "from": "b_q_tok", "to": "b_q_vec" },
+    { "from": "b_q_vec", "to": "b_score" },
+    { "from": "b_d_tok", "to": "b_d_vec" },
+    { "from": "b_d_vec", "to": "b_score" }
+  ]
+}

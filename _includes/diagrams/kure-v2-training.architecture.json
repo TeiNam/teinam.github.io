@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "KURE-v2 학습: 약지도 사전 파인튜닝(PFT) 뒤 지도 파인튜닝(SFT)",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": {
+          "label": "학습 데이터"
+        },
+        "backend": {
+          "label": "학습 단계"
+        },
+        "frontend": {
+          "label": "결과 모델"
+        },
+        "external": {
+          "label": "교사 모델 점수"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 32,
+    "gapY": 64,
+    "cellW": 208,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "pft_data",
+      "type": "database",
+      "label": "한·영 약지도 쌍",
+      "sublabel": "약 2,070만 쌍",
+      "row": 0,
+      "col": 0,
+      "size": [
+        188,
+        64
+      ]
+    },
+    {
+      "id": "pft_train",
+      "type": "backend",
+      "label": "PFT · InfoNCE",
+      "sublabel": "단일 언어 배치 16,384",
+      "row": 0,
+      "col": 1,
+      "size": [
+        188,
+        64
+      ]
+    },
+    {
+      "id": "unsup",
+      "type": "frontend",
+      "label": "KURE-v2-unsupervised",
+      "sublabel": "0.7283",
+      "row": 0,
+      "col": 2,
+      "size": [
+        188,
+        64
+      ]
+    },
+    {
+      "id": "sft_data",
+      "type": "database",
+      "label": "정답 1 + 하드 네거티브 7",
+      "sublabel": "percpos 마이닝",
+      "row": 1,
+      "col": 0,
+      "size": [
+        188,
+        72
+      ]
+    },
+    {
+      "id": "sft_train",
+      "type": "backend",
+      "label": "SFT",
+      "sublabel": "대조 손실(배치 256) + KL 증류",
+      "row": 1,
+      "col": 1,
+      "size": [
+        188,
+        72
+      ]
+    },
+    {
+      "id": "kure",
+      "type": "frontend",
+      "label": "KURE-v2",
+      "row": 1,
+      "col": 2,
+      "size": [
+        188,
+        72
+      ]
+    },
+    {
+      "id": "ko_relabel",
+      "type": "database",
+      "label": "한국어 약 146만",
+      "sublabel": "Qwen3-32B 재판정",
+      "row": 2,
+      "col": 0,
+      "size": [
+        188,
+        64
+      ]
+    },
+    {
+      "id": "reranker",
+      "type": "external",
+      "label": "Qwen3-Reranker-4B 점수",
+      "row": 2,
+      "col": 1,
+      "size": [
+        188,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "1단계 PFT",
+      "wraps": [
+        "pft_data",
+        "pft_train",
+        "unsup"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "2단계 SFT",
+      "wraps": [
+        "sft_data",
+        "sft_train",
+        "kure",
+        "reranker",
+        "ko_relabel"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "from": "pft_data",
+      "to": "pft_train",
+      "variant": "default"
+    },
+    {
+      "from": "pft_train",
+      "to": "unsup",
+      "variant": "emphasis"
+    },
+    {
+      "from": "unsup",
+      "to": "sft_train",
+      "label": "초기 가중치",
+      "variant": "emphasis"
+    },
+    {
+      "from": "sft_data",
+      "to": "sft_train",
+      "variant": "default"
+    },
+    {
+      "from": "sft_train",
+      "to": "kure",
+      "variant": "emphasis"
+    },
+    {
+      "from": "ko_relabel",
+      "to": "sft_data",
+      "variant": "default"
+    },
+    {
+      "from": "reranker",
+      "to": "sft_data",
+      "label": "위음성 필터",
+      "variant": "dashed"
+    },
+    {
+      "from": "reranker",
+      "to": "sft_train",
+      "label": "KL 증류",
+      "variant": "dashed"
+    }
+  ]
+}

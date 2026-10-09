@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "임베딩 모델을 읽는 다섯 축: 백본·표현·풀링·학습 목표·입력 형식",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": {
+          "label": "읽을 대상 모델"
+        },
+        "database": {
+          "label": "설계 축과 선택지"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 3,
+    "gapX": 40,
+    "gapY": 24,
+    "cellW": 208,
+    "cellH": 72
+  },
+  "components": [
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "임베딩 모델",
+      "sublabel": "텍스트 → 벡터",
+      "size": [
+        128,
+        72
+      ],
+      "pos": [
+        288,
+        176
+      ]
+    },
+    {
+      "id": "backbone",
+      "type": "database",
+      "label": "① 백본",
+      "sublabel": "인코더 전용 · 디코더 전용",
+      "size": [
+        208,
+        72
+      ],
+      "pos": [
+        40,
+        128
+      ]
+    },
+    {
+      "id": "representation",
+      "type": "database",
+      "label": "② 표현",
+      "sublabel": "Dense · Sparse · Multi-vector",
+      "size": [
+        208,
+        72
+      ],
+      "pos": [
+        40,
+        224
+      ]
+    },
+    {
+      "id": "pooling",
+      "type": "database",
+      "label": "③ 풀링",
+      "sublabel": "[CLS] · 평균 · 마지막 토큰(EOS) · 없음",
+      "size": [
+        280,
+        72
+      ],
+      "pos": [
+        456,
+        80
+      ]
+    },
+    {
+      "id": "objective",
+      "type": "database",
+      "label": "④ 학습 목표",
+      "sublabel": "SimCSE · MNRL(InfoNCE) · GIST · KL 증류",
+      "size": [
+        280,
+        72
+      ],
+      "pos": [
+        456,
+        176
+      ]
+    },
+    {
+      "id": "input",
+      "type": "database",
+      "label": "⑤ 입력 형식",
+      "sublabel": "접두어 없음 · query:/passage: · 질의만 접두어 · 지시문",
+      "size": [
+        280,
+        72
+      ],
+      "pos": [
+        456,
+        272
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "model",
+      "to": "backbone"
+    },
+    {
+      "from": "model",
+      "to": "representation"
+    },
+    {
+      "from": "model",
+      "to": "pooling"
+    },
+    {
+      "from": "model",
+      "to": "objective"
+    },
+    {
+      "from": "model",
+      "to": "input"
+    }
+  ]
+}
