@@ -63,7 +63,7 @@ AWS ProServe 에서 Database Architect 로 일합니다(2025년 7월~). 데이�
 {%- endfor %}
 </ul>
 
-유효한 것만 싣습니다. 각 배지는 [Credly](https://www.credly.com/users/rastalion/badges) 검증 페이지로 연결됩니다.
+유효한 자격증만 싣습니다. 각 배지는 [Credly](https://www.credly.com/users/rastalion/badges) 검증 페이지로 연결됩니다.
 
 ## 일하는 방식
 
