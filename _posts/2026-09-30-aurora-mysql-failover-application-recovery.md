@@ -167,7 +167,7 @@ cluster endpoint는 현재 writer를 가리키는 DNS 이름입니다. 페일오
 
 {% include diagram.html src="aurora-first-failover-timeline.svg" caption="첫 페일오버: 튜닝 구성은 +5.3초에 새 writer, 기본값 구성은 +10.4초에 옛 writer" %}
 
-기본값 구성은 연결이 끊긴 직후 다시 연결을 시도했고 약 10초 뒤 reader가 된 옛 writer에 연결됐습니다. 첫 반복에서 이후의 쓰기는 계속 같은 물리 연결 `98` 하나에서 거부됐습니다. 물리 연결은 DB 서버와 맺은 실제 연결 하나이며 `CONNECTION_ID()` 값으로 구분합니다. 로그의 핵심 필드를 추리면 다음과 같습니다.[^dns-path]
+기본값 구성(`d02`)은 연결이 끊기자 바로 다시 연결을 시도했지만 약 10초 뒤 연결된 곳은 reader로 강등된 옛 writer였습니다. 이 반복에서는 그 뒤의 쓰기가 모두 물리 연결(DB 서버와 맺은 실제 연결) 하나에서 거부됐습니다. 거부된 쓰기 로그의 핵심 필드를 추리면 다음과 같습니다.[^dns-path]
 
 ```text
 server_id = jdbc-test-1
@@ -178,7 +178,7 @@ err_code  = 1836
 err_msg   = (conn=98) Running in read-only mode
 ```
 
-`server_id`는 응답한 인스턴스, `conn_id`는 물리 연결 번호입니다. `read_only = 1`과 오류 코드 `1836`은 이 노드가 읽기 전용이어서 쓰기를 거부했다는 기록입니다.
+`server_id`는 응답한 인스턴스, `conn_id`는 `CONNECTION_ID()`로 읽은 물리 연결 번호입니다. 쓰기를 계속 거부한 연결 하나가 이 `98`번이었습니다. `read_only = 1`과 오류 코드 `1836`은 이 노드가 읽기 전용이어서 쓰기를 거부했다는 기록입니다.
 
 일반 드라이버 기본값 구성 세 개(`d01`·`d02`·`d04`)는 30회 모두, JVM DNS를 무기한 캐시한 구성(`v01`, 6절)은 10회 모두 옛 writer에 연결된 채 머물렀습니다. 그동안 읽기는 성공하고 쓰기는 거부됐습니다.
 
