@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "의미 기반 분할: 이웃 문장의 거리가 커지는 곳에서 자르기",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1000,
+      400
+    ],
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "처리 흐름"
+        },
+        "emphasis": {
+          "label": "분할 판정"
+        },
+        "database": {
+          "label": "결과 청크"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "문장 나누기"
+    },
+    {
+      "label": "임베딩"
+    },
+    {
+      "label": "거리 계산"
+    },
+    {
+      "label": "분할"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sentences",
+      "type": "external",
+      "label": "문장 목록",
+      "sublabel": ". ? ! 뒤 공백에서 분리",
+      "stage": 0,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "groups",
+      "type": "backend",
+      "label": "문장 묶음",
+      "sublabel": "앞뒤 1문장씩, 최대 3문장",
+      "stage": 1,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "distance",
+      "type": "backend",
+      "label": "이웃 거리",
+      "sublabel": "1 − 코사인 유사도",
+      "stage": 2,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "threshold",
+      "type": "backend",
+      "label": "임계값",
+      "sublabel": "그 문서 거리의 95 백분위수",
+      "stage": 2,
+      "row": 1,
+      "width": 150
+    },
+    {
+      "id": "chunks",
+      "type": "database",
+      "label": "청크",
+      "sublabel": "거리 > 임계값 지점에서 자름",
+      "stage": 3,
+      "row": 0,
+      "width": 150
+    }
+  ],
+  "flows": [
+    {
+      "from": "sentences",
+      "to": "groups",
+      "label": "묶음마다 임베딩",
+      "variant": "default",
+      "labelDy": -23
+    },
+    {
+      "from": "groups",
+      "to": "distance",
+      "label": "이웃끼리 비교",
+      "variant": "default",
+      "labelDy": -23
+    },
+    {
+      "from": "distance",
+      "to": "threshold",
+      "label": "거리 분포",
+      "variant": "default",
+      "labelDy": 24
+    },
+    {
+      "from": "distance",
+      "to": "chunks",
+      "label": "분할 지점 판정",
+      "variant": "emphasis",
+      "labelDy": -23
+    }
+  ]
+}

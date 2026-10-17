@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "문서가 레코드가 되기까지: 청킹, 임베딩, 저장",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "데이터 흐름"
+        },
+        "emphasis": {
+          "label": "벡터 생성 경로"
+        },
+        "database": {
+          "label": "저장소"
+        }
+      }
+    },
+    "viewBox": [
+      1000,
+      400
+    ]
+  },
+  "stages": [
+    {
+      "label": "원문"
+    },
+    {
+      "label": "청킹"
+    },
+    {
+      "label": "임베딩"
+    },
+    {
+      "label": "저장"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "doc",
+      "type": "external",
+      "label": "원문 문서",
+      "sublabel": "예: 취업규칙 50쪽",
+      "stage": 0,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "splitter",
+      "type": "backend",
+      "label": "분할기",
+      "sublabel": "크기·구분자·구조·의미",
+      "stage": 1,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "chunks",
+      "type": "messagebus",
+      "label": "청크 1 … n",
+      "sublabel": "모델 최대 입력 이하",
+      "stage": 1,
+      "row": 1,
+      "width": 150
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "임베딩 모델",
+      "sublabel": "dense · sparse 벡터",
+      "stage": 2,
+      "row": 0,
+      "width": 150
+    },
+    {
+      "id": "record",
+      "type": "database",
+      "label": "레코드",
+      "sublabel": "ID · 원문 · 벡터 · 메타데이터",
+      "stage": 3,
+      "row": 0,
+      "width": 150
+    }
+  ],
+  "flows": [
+    {
+      "from": "doc",
+      "to": "splitter",
+      "label": "원문 텍스트",
+      "variant": "default"
+    },
+    {
+      "from": "splitter",
+      "to": "chunks",
+      "label": "청크로 자름",
+      "variant": "default",
+      "labelDy": 24
+    },
+    {
+      "from": "chunks",
+      "to": "model",
+      "label": "청크마다",
+      "variant": "emphasis"
+    },
+    {
+      "from": "model",
+      "to": "record",
+      "label": "레코드로 저장",
+      "variant": "emphasis",
+      "labelDy": -23
+    }
+  ]
+}

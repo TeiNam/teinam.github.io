@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "하이브리드 검색: dense·sparse 검색 결과를 합치는 흐름",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "질의와 결과"
+        },
+        "database": {
+          "label": "벡터 인덱스"
+        },
+        "backend": {
+          "label": "결과 결합"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 4,
+    "gapX": 64,
+    "gapY": 40,
+    "cellW": 176,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "query",
+      "type": "frontend",
+      "label": "사용자 질의",
+      "sublabel": "dense·sparse 질의 벡터",
+      "row": 1,
+      "col": 0,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "dense_idx",
+      "type": "database",
+      "label": "dense 인덱스",
+      "sublabel": "HNSW 등 ANN",
+      "row": 0,
+      "col": 1,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "sparse_idx",
+      "type": "database",
+      "label": "sparse 인덱스",
+      "sublabel": "역색인",
+      "row": 2,
+      "col": 1,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "fusion",
+      "type": "backend",
+      "label": "결과 결합",
+      "sublabel": "RRF · 정규화 가중합",
+      "row": 1,
+      "col": 2,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "result",
+      "type": "frontend",
+      "label": "최종 결과",
+      "sublabel": "상위 k개 청크",
+      "row": 1,
+      "col": 3,
+      "size": [
+        176,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "한 컬렉션 · 같은 레코드의 두 벡터",
+      "wraps": [
+        "dense_idx",
+        "sparse_idx"
+      ],
+      "pad": 28
+    }
+  ],
+  "connections": [
+    {
+      "from": "query",
+      "to": "dense_idx",
+      "label": "의미 검색"
+    },
+    {
+      "from": "query",
+      "to": "sparse_idx",
+      "label": "키워드 검색"
+    },
+    {
+      "from": "dense_idx",
+      "to": "fusion",
+      "label": "의미 후보 목록",
+      "labelDy": 7
+    },
+    {
+      "from": "sparse_idx",
+      "to": "fusion",
+      "label": "키워드 후보 목록"
+    },
+    {
+      "from": "fusion",
+      "to": "result",
+      "label": "순위 합산"
+    }
+  ]
+}
