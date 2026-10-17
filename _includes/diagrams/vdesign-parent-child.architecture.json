@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "부모-자식 검색: 자식 청크로 찾고 부모 문서를 넘기는 구성",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "external": {
+          "label": "원문"
+        },
+        "database": {
+          "label": "저장소"
+        },
+        "frontend": {
+          "label": "질의와 답변"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 4,
+    "gapX": 96,
+    "gapY": 72,
+    "cellW": 176,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "parent",
+      "type": "external",
+      "label": "부모 문서",
+      "sublabel": "원문 또는 큰 청크",
+      "row": 0,
+      "col": 0,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "children",
+      "type": "external",
+      "label": "자식 청크",
+      "sublabel": "doc_id = 부모 ID",
+      "row": 0,
+      "col": 1,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "vstore",
+      "type": "database",
+      "label": "벡터 저장소",
+      "sublabel": "자식 텍스트 + 벡터",
+      "row": 0,
+      "col": 2,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "query",
+      "type": "frontend",
+      "label": "사용자 질의",
+      "sublabel": "질의 벡터",
+      "row": 0,
+      "col": 3,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "docstore",
+      "type": "database",
+      "label": "문서 저장소",
+      "sublabel": "부모 ID → 부모 문서",
+      "row": 1,
+      "col": 1,
+      "size": [
+        176,
+        64
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "frontend",
+      "label": "LLM",
+      "sublabel": "부모 문서로 답변",
+      "row": 1,
+      "col": 3,
+      "size": [
+        176,
+        64
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "parent",
+      "to": "children",
+      "label": "작게 자름"
+    },
+    {
+      "from": "children",
+      "to": "vstore",
+      "label": "임베딩해 저장"
+    },
+    {
+      "from": "parent",
+      "to": "docstore",
+      "label": "부모 ID로 저장",
+      "variant": "dashed"
+    },
+    {
+      "from": "query",
+      "to": "vstore",
+      "label": "자식 검색"
+    },
+    {
+      "from": "vstore",
+      "to": "docstore",
+      "label": "doc_id로 조회"
+    },
+    {
+      "from": "docstore",
+      "to": "llm",
+      "label": "부모 문서 반환"
+    }
+  ]
+}
