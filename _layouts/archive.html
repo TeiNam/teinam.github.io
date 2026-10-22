@@ -5,7 +5,16 @@ layout: default
   필터 순서는 _config.yml 의 category_order 를 따른다. 거기 없는 카테고리는
   뒤에 붙여서, 새 카테고리를 만들었을 때 필터에서 조용히 빠지지 않게 한다.
 {%- endcomment -%}
-{%- assign present = site.posts | map: "category" | compact | uniq -%}
+{%- comment -%}
+  post_category 가 있으면 그 카테고리 글만 싣는다(/issue/). 없으면 issue 를 뺀 나머지(/writing/).
+  issue 는 시점 브리핑이라 기술 노트와 목록을 나눈다 — 홈(home.html)도 같은 기준으로 뺀다.
+{%- endcomment -%}
+{%- if page.post_category -%}
+  {%- assign posts = site.posts | where: "category", page.post_category -%}
+{%- else -%}
+  {%- assign posts = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+{%- endif -%}
+{%- assign present = posts | map: "category" | compact | uniq -%}
 {%- assign cats = "" | split: "," -%}
 {%- for c in site.category_order -%}
   {%- if present contains c -%}
@@ -20,7 +29,7 @@ layout: default
 <section class="archive-head">
   <div>
     <h1>{{ page.title }}</h1>
-    <p>{{ page.subtitle | default: site.tagline }} · {{ site.posts.size }}편</p>
+    <p>{{ page.subtitle | default: site.tagline }} · {{ posts.size }}편</p>
   </div>
   <div class="filters" data-filters>
     <button class="is-active" data-filter="all" type="button">all</button>
@@ -31,7 +40,7 @@ layout: default
 {% include ad.html slot=site.adsense.leaderboard variant="leaderboard" format="horizontal" %}
 
 <section class="card-grid" data-cards>
-  {%- for post in site.posts %}
+  {%- for post in posts %}
   <a class="post-card" href="{{ post.url | relative_url }}" data-category="{{ post.category }}">
     <span class="card-meta"><span>{{ post.date | date: '%Y-%m-%d' }}</span><span class="accent">{{ post.category }}</span></span>
     <strong>{{ post.title }}</strong>
