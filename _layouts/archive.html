@@ -9,12 +9,17 @@ layout: default
   post_category 가 있으면 그 카테고리 글만 싣는다(/issue/). 없으면 issue 를 뺀 나머지(/writing/).
   issue 는 시점 브리핑이라 기술 노트와 목록을 나눈다 — 홈(home.html)도 같은 기준으로 뺀다.
 {%- endcomment -%}
+{%- comment -%}
+  /issue/ 안에서는 글이 모두 category: issue 라서 필터와 카드 라벨은 subcategory(예: 보안)를 쓴다.
+{%- endcomment -%}
+{%- assign cat_key = "category" -%}
 {%- if page.post_category -%}
   {%- assign posts = site.posts | where: "category", page.post_category -%}
+  {%- assign cat_key = "subcategory" -%}
 {%- else -%}
   {%- assign posts = site.posts | where_exp: "p", "p.category != 'issue'" -%}
 {%- endif -%}
-{%- assign present = posts | map: "category" | compact | uniq -%}
+{%- assign present = posts | map: cat_key | compact | uniq -%}
 {%- assign cats = "" | split: "," -%}
 {%- for c in site.category_order -%}
   {%- if present contains c -%}
@@ -41,8 +46,8 @@ layout: default
 
 <section class="card-grid" data-cards>
   {%- for post in posts %}
-  <a class="post-card" href="{{ post.url | relative_url }}" data-category="{{ post.category }}">
-    <span class="card-meta"><span>{{ post.date | date: '%Y-%m-%d' }}</span><span class="accent">{{ post.category }}</span></span>
+  <a class="post-card" href="{{ post.url | relative_url }}" data-category="{{ post[cat_key] }}">
+    <span class="card-meta"><span>{{ post.date | date: '%Y-%m-%d' }}</span><span class="accent">{{ post[cat_key] }}</span></span>
     <strong>{{ post.title }}</strong>
     <span class="card-excerpt">{{ post.excerpt | strip_html | truncate: 90 }}</span>
     <span class="mono dim card-read">{{ post.content | number_of_words | divided_by: 500 | plus: 1 }} MIN</span>

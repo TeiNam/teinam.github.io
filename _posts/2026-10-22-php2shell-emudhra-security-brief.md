@@ -2,6 +2,7 @@
 date: 2026-10-22 00:00:00 +0900
 title: "PHP2Shell 긴급 패치, 같은 주 인증서 사건에 Python·Node.js·Java·Go도 대응"
 category: issue
+subcategory: 보안
 excerpt: "PHP가 인증 없는 원격 코드 실행 취약점 2건(PHP2Shell)을 예정보다 하루 앞당겨 고쳤습니다. 같은 주 eMudhra 중간 CA 8개의 개인키가 공개키만으로 복원되는 상태였다는 사실이 드러나 Python·Node.js·Go가 릴리스를, OpenJDK가 보안 권고를 냈습니다. 2026년 10월 20~22일 언어 런타임 보안 이슈를 정리합니다."
 last_modified_at: 2026-10-22
 permalink: /issue/:title/
