@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "eMudhra 중간 CA 키 노출: 클라이언트마다 조치할 곳",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "security": {
+          "label": "노출된 중간 CA"
+        },
+        "external": {
+          "label": "위조 가능한 인증서"
+        },
+        "frontend": {
+          "label": "TLS 클라이언트와 신뢰 저장소"
+        },
+        "backend": {
+          "label": "조치"
+        }
+      }
+    },
+    "output": "_workspace/diagrams/emudhra-trust-stores.html"
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 4,
+    "gapX": 150,
+    "gapY": 28,
+    "cellW": 216,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "ca",
+      "type": "security",
+      "label": "eMudhra 중간 CA 8개",
+      "sublabel": "개인키 d < 256",
+      "row": 2,
+      "col": 0,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "forged",
+      "type": "external",
+      "label": "위조 인증서",
+      "sublabel": "아무 도메인",
+      "row": 2,
+      "col": 1,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "browser",
+      "type": "frontend",
+      "label": "브라우저 10/17~10/20 차단",
+      "sublabel": "Firefox·Chrome·Apple·Microsoft",
+      "row": 0,
+      "col": 2,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "pip",
+      "type": "frontend",
+      "label": "Python pip",
+      "sublabel": "운영체제 목록 + 내장 certifi",
+      "row": 1,
+      "col": 2,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "node",
+      "type": "frontend",
+      "label": "Node.js",
+      "sublabel": "내장 CA 인증서 목록",
+      "row": 2,
+      "col": 2,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "java",
+      "type": "frontend",
+      "label": "Java",
+      "sublabel": "배포처마다 다른 신뢰 저장소",
+      "row": 3,
+      "col": 2,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "go",
+      "type": "frontend",
+      "label": "Go crypto/x509",
+      "sublabel": "표준 라이브러리 속 차단 목록",
+      "row": 5,
+      "col": 2,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "fix_pip",
+      "type": "backend",
+      "label": "pip 26.2.2",
+      "sublabel": "pip 업데이트",
+      "row": 1,
+      "col": 3,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "fix_node",
+      "type": "backend",
+      "label": "22.23.4 · 24.22.1 · 26.12.1",
+      "sublabel": "Node.js 업데이트",
+      "row": 2,
+      "col": 3,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "fix_java_os",
+      "type": "backend",
+      "label": "운영체제 인증서 갱신",
+      "row": 3,
+      "col": 3,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "fix_java_jdk",
+      "type": "backend",
+      "label": "JDK 직접 업데이트",
+      "row": 4,
+      "col": 3,
+      "size": [
+        216,
+        64
+      ]
+    },
+    {
+      "id": "fix_go",
+      "type": "backend",
+      "label": "Go 1.26.10 · 1.27.3",
+      "sublabel": "새 툴체인으로 다시 빌드",
+      "row": 5,
+      "col": 3,
+      "size": [
+        216,
+        64
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "ca",
+      "to": "forged",
+      "label": "공개 인증서로 개인키 복원"
+    },
+    {
+      "from": "forged",
+      "to": "browser"
+    },
+    {
+      "from": "forged",
+      "to": "pip"
+    },
+    {
+      "from": "forged",
+      "to": "node"
+    },
+    {
+      "from": "forged",
+      "to": "java"
+    },
+    {
+      "from": "forged",
+      "to": "go"
+    },
+    {
+      "from": "pip",
+      "to": "fix_pip"
+    },
+    {
+      "from": "node",
+      "to": "fix_node"
+    },
+    {
+      "from": "java",
+      "to": "fix_java_os",
+      "label": "운영체제 제공 OpenJDK"
+    },
+    {
+      "from": "java",
+      "to": "fix_java_jdk",
+      "label": "FreeBSD·Homebrew·독립형"
+    },
+    {
+      "from": "go",
+      "to": "fix_go"
+    }
+  ]
+}
