@@ -43,11 +43,19 @@ layout: default
       <span class="mono dim">{{ page.series_index }}</span>
     </div>
     {%- endif %}
-    {%- assign related = site.posts | where_exp: "p", "p.url != page.url" | slice: 0, 3 %}
+    {%- comment %} issue 글은 issue 끼리, 나머지는 나머지끼리 — archive.html 과 같은 기준 {% endcomment -%}
+    {%- if page.category == 'issue' -%}
+      {%- assign pool = site.posts | where: "category", "issue" -%}
+    {%- else -%}
+      {%- assign pool = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+    {%- endif -%}
+    {%- assign related = pool | where_exp: "p", "p.url != page.url" | slice: 0, 3 %}
+    {%- if related.size > 0 %}
     <div class="rail-list">
       <span class="label">Related</span>
       {%- for r in related %}<a href="{{ r.url | relative_url }}">{{ r.title }}</a>{% endfor %}
     </div>
+    {%- endif %}
     {% include ad.html slot=site.adsense.sidebar variant="sidebar" width=160 height=600 %}
   </aside>
 </div>

@@ -1,12 +1,14 @@
 ---
 layout: default
 ---
-{%- assign lead = site.posts.first -%}
-{%- assign rest = site.posts | slice: 1, 8 -%}
+{%- comment %} issue 글은 /issue/ 에만 싣는다 — archive.html 과 같은 기준 {% endcomment -%}
+{%- assign notes = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+{%- assign lead = notes.first -%}
+{%- assign rest = notes | slice: 1, 8 -%}
 {%- comment %} 디자인은 hero 글을 목록에서 뺀다. 다만 글이 1편이면 rest 가 비어 섹션이 통째로
      사라지고 홈이 hero + 3칸으로 끝난다. 그때만 전체 목록으로 되돌린다.
      Liquid 에서 범위 밖 slice 는 nil 이고 nil == 0 은 false 라 unless 로 검사한다 {% endcomment %}
-{%- unless rest.size > 0 %}{%- assign rest = site.posts -%}{%- endunless -%}
+{%- unless rest.size > 0 %}{%- assign rest = notes -%}{%- endunless -%}
 
 {%- comment %} 히어로는 image 가 있을 때만 2단이다. 없는데 2단으로 두면 오른쪽
      칼럼이 빈 채로 남아 제목이 폭의 절반만 쓴다 {% endcomment -%}

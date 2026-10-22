@@ -50,7 +50,7 @@ updated: 2026-08-24
 ---
 ```
 
-`category` 는 아래 여섯 중 하나로 씁니다. `/writing/` 의 필터 버튼이 이 값에서 자동으로 생성되므로,
+`category` 는 아래 중 하나로 씁니다. `/writing/` 의 필터 버튼이 이 값에서 자동으로 생성되므로,
 슬러그가 흔들리면 필터가 쪼개집니다.
 
 | slug | 다루는 것 |
@@ -61,6 +61,7 @@ updated: 2026-08-24
 | `mongodb` | MongoDB |
 | `redis` | Redis·Valkey |
 | `etc` | DB 와 직접 관계없는 리눅스·인프라 일반 |
+| `issue` | 보안 이슈 등 시점 브리핑. `/writing/`·홈이 아니라 `/issue/` 에만 실리고, front matter 에 `permalink: /issue/:title/` 를 같이 적는다 |
 
 필터 버튼 순서는 `_config.yml` 의 `category_order` 가 정합니다. 거기 없는 카테고리는 목록 뒤에
 붙으므로, 새 카테고리를 만들면 필터에서 누락되지는 않지만 순서를 원하는 자리에 두려면
