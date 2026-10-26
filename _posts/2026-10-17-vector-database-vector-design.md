@@ -5,10 +5,10 @@ category: ai/ml
 excerpt: "레코드에 dense·sparse 벡터를 어떻게 두는지, 원문을 어떤 단위로 잘라 벡터로 만드는지를 작은 예제와 함께 정리합니다. 모델의 차원·입력 길이 제약, 청크 크기 실험 결과, 분할 방식과 부모-자식 검색 구성을 공식 문서와 공개 실험에 근거해 다룹니다."
 last_modified_at: 2026-10-17
 series: "벡터 DB"
-series_index: "5 / 5"
+series_index: "5 / 6"
 ---
 
-**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · **5. 벡터 구조와 청킹 전략**
+**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · **5. 벡터 구조와 청킹 전략** · [6. 메타데이터 설계](/writing/vector-database-metadata-design/)
 
 [4편](/writing/vector-database-schema-design/)에서 사내 문서 검색 서비스의 컬렉션을 나눴습니다. 이제 그 안에 레코드를 넣을 차례입니다. 그런데 50쪽짜리 취업규칙을 통째로 벡터 하나로 만들면 “연차휴가는 언제 생기나요?”라는 질문에 맞는 조항을 집어내기 어렵습니다. 50쪽 분량은 대부분의 임베딩 모델 입력 상한을 넘어서 뒷부분이 잘리고, 들어간 부분도 숫자 배열 하나에 뭉뚱그려 담기기 때문입니다. 반대로 문장마다 벡터를 만들면 “이 조항은 계약직에는 적용하지 않습니다” 같은 문장은 ‘이 조항’이 어떤 조항인지 담지 못한 채 저장됩니다.
 

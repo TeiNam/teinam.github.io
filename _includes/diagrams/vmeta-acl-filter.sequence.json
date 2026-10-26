@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "권한 조건을 붙인 벡터 검색",
+    "output": "_workspace/diagrams/vmeta-acl-filter.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "default": { "label": "요청" },
+        "security": { "label": "인증 조회" },
+        "emphasis": { "label": "필터를 붙인 검색" },
+        "return": { "label": "응답" }
+      }
+    }
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "사용자", "sublabel": "브라우저·앱" },
+    { "id": "server", "type": "backend", "label": "애플리케이션 서버", "sublabel": "권한 조건 생성" },
+    { "id": "auth", "type": "security", "label": "인증 시스템", "sublabel": "그룹 목록" },
+    { "id": "vectordb", "type": "database", "label": "벡터 DB", "sublabel": "예: Qdrant" }
+  ],
+  "messages": [
+    {
+      "id": "ask",
+      "from": "user",
+      "to": "server",
+      "y": 180,
+      "label": "질문 + 선택 조건(부서·기간)",
+      "variant": "default",
+      "note": "클라이언트가 보낸 그룹 값은 권한 조건으로 쓰지 않음"
+    },
+    {
+      "id": "lookup-groups",
+      "from": "server",
+      "to": "auth",
+      "y": 245,
+      "label": "get_groups(user.id)",
+      "variant": "security",
+      "note": "인증된 세션의 사용자 기준"
+    },
+    { "id": "groups", "from": "auth", "to": "server", "y": 295, "label": "사용자 그룹 목록", "variant": "return" },
+    {
+      "id": "filtered-query",
+      "from": "server",
+      "to": "vectordb",
+      "y": 335,
+      "label": "질의 벡터 + 필터",
+      "variant": "emphasis",
+      "note": "권한 조건 acl_groups ∈ 사용자 그룹을 선택 조건과 합침"
+    },
+    { "id": "chunks", "from": "vectordb", "to": "server", "y": 405, "label": "권한이 맞는 청크만", "variant": "return" },
+    { "id": "answer", "from": "server", "to": "user", "y": 440, "label": "검색 결과", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "server", "from": 175, "to": 446, "type": "backend" },
+    { "participant": "auth", "from": 240, "to": 301, "type": "security" },
+    { "participant": "vectordb", "from": 330, "to": 411, "type": "database" }
+  ]
+}
