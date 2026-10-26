@@ -5,10 +5,10 @@ category: ai/ml
 excerpt: "벡터 DB 레코드를 이루는 ID·벡터·원문·메타데이터와 RDB 테이블과의 대응, 컬렉션을 나누는 기준과 파티션·테넌트·샤드 같은 대안, 여러 컬렉션을 함께 검색할 때 맞춰야 할 벡터 공간을 공식 문서에 근거해 정리합니다."
 last_modified_at: 2026-10-07
 series: "벡터 DB"
-series_index: "4 / 5"
+series_index: "4 / 6"
 ---
 
-**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · **4. 스키마와 컬렉션 설계** · [5. 벡터 구조와 청킹 전략](/writing/vector-database-vector-design/)
+**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · **4. 스키마와 컬렉션 설계** · [5. 벡터 구조와 청킹 전략](/writing/vector-database-vector-design/) · [6. 메타데이터 설계](/writing/vector-database-metadata-design/)
 
 사내 문서 검색 서비스를 만든다고 해 봅시다. 인사팀 규정과 영업팀 제안서가 있고 제품 사진도 검색되면 좋겠고 업계 뉴스는 매일 수백 건씩 들어옵니다. 벡터 DB를 골랐다면 다음 질문은 “이 데이터를 컬렉션 하나에 넣을까, 여러 개로 나눌까”입니다.
 

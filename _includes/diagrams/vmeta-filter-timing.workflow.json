@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "필터를 적용하는 세 시점",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/vmeta-filter-timing.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "처리 단계", "visible": true },
+        "database": { "label": "인덱스·목록", "visible": true },
+        "external": { "label": "결과", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "post_lane", "label": "사후 필터" },
+    { "id": "pre_lane", "label": "사전 필터" },
+    { "id": "during_lane", "label": "탐색 중 필터" }
+  ],
+  "nodes": [
+    { "id": "post_search", "lane": "post_lane", "col": 0, "type": "backend", "label": "벡터 검색", "sublabel": "상위 후보를 먼저 뽑음" },
+    { "id": "post_drop", "lane": "post_lane", "col": 1, "type": "backend", "label": "조건 검사", "sublabel": "안 맞는 후보는 버림" },
+    { "id": "post_result", "lane": "post_lane", "col": 2, "type": "external", "label": "결과", "sublabel": "k개보다 적을 수 있음" },
+    { "id": "pre_index", "lane": "pre_lane", "col": 0, "type": "database", "label": "역색인", "sublabel": "inverted index" },
+    { "id": "pre_allow", "lane": "pre_lane", "col": 1, "type": "database", "label": "allow list", "sublabel": "조건에 맞는 ID 목록" },
+    { "id": "pre_search", "lane": "pre_lane", "col": 2, "type": "backend", "label": "벡터 검색", "sublabel": "목록 안에서만" },
+    { "id": "dur_graph", "lane": "during_lane", "col": 0, "type": "database", "label": "HNSW 그래프", "sublabel": "Qdrant: payload 간선 추가" },
+    { "id": "dur_walk", "lane": "during_lane", "col": 1, "type": "backend", "label": "그래프 탐색", "sublabel": "ACORN: 이웃의 이웃 확인" },
+    { "id": "dur_result", "lane": "during_lane", "col": 2, "type": "external", "label": "결과", "sublabel": "조건에 맞는 레코드만" }
+  ],
+  "edges": [
+    { "from": "post_search", "to": "post_drop", "label": "상위 후보", "variant": "default" },
+    { "from": "post_drop", "to": "post_result", "label": "남은 후보", "variant": "default" },
+    { "from": "pre_index", "to": "pre_allow", "label": "ID 추출", "variant": "emphasis" },
+    { "from": "pre_allow", "to": "pre_search", "label": "검색 범위", "variant": "emphasis" },
+    { "from": "dur_graph", "to": "dur_walk", "label": "이웃 따라감", "variant": "default" },
+    { "from": "dur_walk", "to": "dur_result", "label": "맞는 것만 모음", "variant": "default" }
+  ]
+}

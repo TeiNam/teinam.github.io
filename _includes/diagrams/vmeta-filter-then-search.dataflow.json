@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "필터로 후보를 줄인 뒤 벡터 검색",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/vmeta-filter-then-search.html",
+    "legend": {
+      "entries": {
+        "default": { "label": "데이터 흐름" },
+        "emphasis": { "label": "검색 후보 경로" },
+        "database": { "label": "저장소" }
+      }
+    }
+  },
+  "stages": [
+    { "label": "전체 후보" },
+    { "label": "메타데이터 필터" },
+    { "label": "남은 후보" },
+    { "label": "벡터 검색" },
+    { "label": "결과" }
+  ],
+  "nodes": [
+    { "id": "all_chunks", "type": "database", "label": "컬렉션 전체 청크", "sublabel": "필터 없으면 모두 후보", "stage": 0, "row": 0 },
+    { "id": "meta_filter", "type": "backend", "label": "메타데이터 필터", "sublabel": "department = hr · 시행 중", "stage": 1, "row": 0 },
+    { "id": "matched", "type": "messagebus", "label": "조건에 맞는 청크", "sublabel": "인사팀 · 시행 중 문서", "stage": 2, "row": 0 },
+    { "id": "excluded", "type": "external", "label": "후보에서 빠짐", "sublabel": "다른 부서 문서 · 지난 판", "stage": 2, "row": 1 },
+    { "id": "vector_search", "type": "backend", "label": "벡터 검색", "sublabel": "질문과 뜻이 가까운 순", "stage": 3, "row": 0 },
+    { "id": "top_results", "type": "external", "label": "상위 결과", "stage": 4, "row": 0 }
+  ],
+  "flows": [
+    { "from": "all_chunks", "to": "meta_filter", "label": "모든 청크", "variant": "default" },
+    { "from": "meta_filter", "to": "matched", "label": "조건 통과", "variant": "emphasis" },
+    { "from": "meta_filter", "to": "excluded", "label": "조건 불일치", "variant": "default" },
+    { "from": "matched", "to": "vector_search", "label": "남은 후보만", "variant": "emphasis" },
+    { "from": "vector_search", "to": "top_results", "label": "가까운 청크", "variant": "emphasis" }
+  ]
+}
