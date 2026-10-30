@@ -1,8 +1,8 @@
 ---
 layout: default
 ---
-{%- comment %} issue 글은 /issue/ 에만 싣는다 — archive.html 과 같은 기준 {% endcomment -%}
-{%- assign notes = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+{%- comment %} 홈은 writing·issue·products 를 모두 싣는다. 카테고리별 목록은 /writing/·/issue/·/products/ {% endcomment -%}
+{%- assign notes = site.posts -%}
 {%- assign lead = notes.first -%}
 {%- assign rest = notes | slice: 1, 8 -%}
 {%- comment %} 디자인은 hero 글을 목록에서 뺀다. 다만 글이 1편이면 rest 가 비어 섹션이 통째로

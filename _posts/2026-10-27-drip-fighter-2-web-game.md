@@ -1,11 +1,12 @@
 ---
 date: 2026-10-27 00:00:00 +0900
 title: "말빨로 싸우는 도트 랩배틀, 웹게임 ‘DRIP FIGHTER II’를 공개합니다"
-category: issue
-subcategory: 프로젝트
+category: products
+subcategory: 게임
 excerpt: "친구끼리 방을 만들어 디스 한 줄씩 주고받는 브라우저 랩배틀 게임 DRIP FIGHTER II를 만들어 공개했습니다. 최대 8명이 한 방에 모여 1:1 토너먼트를 벌이고, AI가 드립마다 데미지를 매기며, 관전자는 투표로 점수에 끼어듭니다."
 last_modified_at: 2026-10-27
-permalink: /issue/:title/
+permalink: /products/:title/
+redirect_from: /issue/drip-fighter-2-web-game/
 ---
 
 브라우저에서 친구들과 말빨로 랩배틀을 벌이는 웹게임 ‘DRIP FIGHTER II’를 만들어 [drip-battle.rastalion.dev](https://drip-battle.rastalion.dev)에 공개했습니다. 방을 만들고 6자리 방 코드나 링크를 공유하면 최대 8명이 한 방에 모입니다. READY를 누른 사람끼리 랜덤 대진 토너먼트로 1:1 배틀을 하고 나머지는 관전하며 투표와 이모지로 반응합니다. 드립 한 줄을 던지면 AI가 채점해 데미지를 매기고 체력이 0이 되면 K.O.입니다. 설치나 회원가입 없이 닉네임만 넣으면 바로 할 수 있습니다.

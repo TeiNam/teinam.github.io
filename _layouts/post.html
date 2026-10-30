@@ -43,11 +43,11 @@ layout: default
       <span class="mono dim">{{ page.series_index }}</span>
     </div>
     {%- endif %}
-    {%- comment %} issue 글은 issue 끼리, 나머지는 나머지끼리 — archive.html 과 같은 기준 {% endcomment -%}
-    {%- if page.category == 'issue' -%}
-      {%- assign pool = site.posts | where: "category", "issue" -%}
+    {%- comment %} issue·products 글은 같은 카테고리끼리, 나머지는 나머지끼리 — archive.html 과 같은 기준 {% endcomment -%}
+    {%- if page.category == 'issue' or page.category == 'products' -%}
+      {%- assign pool = site.posts | where: "category", page.category -%}
     {%- else -%}
-      {%- assign pool = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+      {%- assign pool = site.posts | where_exp: "p", "p.category != 'issue'" | where_exp: "p", "p.category != 'products'" -%}
     {%- endif -%}
     {%- assign related = pool | where_exp: "p", "p.url != page.url" | slice: 0, 3 %}
     {%- if related.size > 0 %}

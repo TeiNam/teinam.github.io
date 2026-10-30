@@ -40,6 +40,7 @@ adsense:
 nav:
   - { name: writing, url: /writing/ }
   - { name: issue, url: /issue/ }
+  - { name: products, url: /products/ }
   - { name: docs, url: /docs/ }
   - { name: career, url: /career/ }
   - { name: work, url: /work/ }
