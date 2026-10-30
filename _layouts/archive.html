@@ -6,18 +6,18 @@ layout: default
   뒤에 붙여서, 새 카테고리를 만들었을 때 필터에서 조용히 빠지지 않게 한다.
 {%- endcomment -%}
 {%- comment -%}
-  post_category 가 있으면 그 카테고리 글만 싣는다(/issue/). 없으면 issue 를 뺀 나머지(/writing/).
-  issue 는 시점 브리핑이라 기술 노트와 목록을 나눈다 — 홈(home.html)도 같은 기준으로 뺀다.
+  post_category 가 있으면 그 카테고리 글만 싣는다(/issue/·/products/). 없으면 issue·products 를 뺀 나머지(/writing/).
+  issue 는 시점 브리핑, products 는 만든 것 소개라 기술 노트와 목록을 나눈다. 홈(home.html)은 셋을 모두 싣는다.
 {%- endcomment -%}
 {%- comment -%}
-  /issue/ 안에서는 글이 모두 category: issue 라서 필터와 카드 라벨은 subcategory(예: 보안)를 쓴다.
+  /issue/·/products/ 안에서는 글이 모두 같은 category 라서 필터와 카드 라벨은 subcategory(예: 보안)를 쓴다.
 {%- endcomment -%}
 {%- assign cat_key = "category" -%}
 {%- if page.post_category -%}
   {%- assign posts = site.posts | where: "category", page.post_category -%}
   {%- assign cat_key = "subcategory" -%}
 {%- else -%}
-  {%- assign posts = site.posts | where_exp: "p", "p.category != 'issue'" -%}
+  {%- assign posts = site.posts | where_exp: "p", "p.category != 'issue'" | where_exp: "p", "p.category != 'products'" -%}
 {%- endif -%}
 {%- assign present = posts | map: cat_key | compact | uniq -%}
 {%- assign cats = "" | split: "," -%}
