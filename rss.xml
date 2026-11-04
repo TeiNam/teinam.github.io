@@ -1,0 +1,29 @@
+---
+permalink: /rss.xml
+layout: null
+sitemap: false
+---
+{%- comment %} RSS 2.0 피드. jekyll-feed 의 /feed.xml 은 Atom 이라 네이버 서치어드바이저의
+     RSS 제출이 "형식이 올바르지 않습니다"로 거절한다. 본문 전체를 넣으면 10편에 1MB 를
+     넘어 제출 크기 제한에 걸릴 수 있어 요약만 싣는다. 본문은 링크로 수집된다 {% endcomment -%}
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title | xml_escape }}</title>
+    <link>{{ '/' | absolute_url }}</link>
+    <description>{{ site.description | xml_escape }}</description>
+    <language>ko</language>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    <atom:link href="{{ page.url | absolute_url }}" rel="self" type="application/rss+xml"/>
+    {%- for post in site.posts limit: 20 %}
+    <item>
+      <title>{{ post.title | xml_escape }}</title>
+      <link>{{ post.url | absolute_url }}</link>
+      <guid isPermaLink="true">{{ post.url | absolute_url }}</guid>
+      <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+      <category>{{ post.category | xml_escape }}</category>
+      <description>{{ post.excerpt | strip_html | strip_newlines | strip | xml_escape }}</description>
+    </item>
+    {%- endfor %}
+  </channel>
+</rss>
