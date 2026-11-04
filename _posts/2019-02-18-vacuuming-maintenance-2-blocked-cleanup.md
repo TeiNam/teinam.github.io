@@ -6,6 +6,7 @@ excerpt: "운영에서 배큠이 문제가 되는 순간은 \"배큠이 아예 �
 last_modified_at: 2026-09-20
 series: "주기적인 유지관리 Vacuuming"
 series_index: "2 / 4"
+image: /assets/img/og/vacuuming-maintenance-2-blocked-cleanup.png
 ---
 
 **시리즈** · [1. 배큠의 기초와 VACUUM FULL](/writing/vacuuming-maintenance/) · **2. dead tuple 을 지우지 못할 때** · [3. 장애가 되는 경로](/writing/vacuuming-maintenance-3-outages/) · [4. 시간을 줄이는 방법](/writing/vacuuming-maintenance-4-reducing-time/)

@@ -4,6 +4,7 @@ title: "PostgreSQL 버그 리포팅 가이드 라인"
 category: postgresql
 excerpt: "PostgreSQL 공식 버그 보고 지침 요약입니다. 버그 식별 기준, 리포트 작성 요령, 제출 경로(웹 양식, 메일링 리스트), 보안 취약점 보고 경로 등을 다룹니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/postgresql-bug-reporting-guideline.png
 ---
 
 > **NOTE** — 이 글은 PostgreSQL 공식 [버그 보고 지침](https://www.postgresql.org/docs/current/bug-reporting.html)을 요약한 것입니다.

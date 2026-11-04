@@ -4,6 +4,7 @@ permalink: /career/aws-lp/ownership/
 redirect_from:
   - /handbook/career/aws-lp/ownership/
 description: "끝까지 책임지는 자세"
+last_modified_at: 2026-08-27
 ---
 ## 주인의식을 갖는다 (Ownership):
 

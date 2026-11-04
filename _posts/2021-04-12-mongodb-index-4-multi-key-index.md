@@ -4,6 +4,7 @@ title: "MongoDB Index #.4 Multi key Index"
 category: mongodb
 excerpt: "MongoDB는 배열 필드를 인덱싱할 때 각 엘리먼트에 대한 인덱스 키를 자동으로 생성합니다. 이것이 멀티 키 인덱스이며, 배열 필드에 대한 효율적인 쿼리를 지원합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-index-4-multi-key-index.png
 ---
 
 이전 포스팅

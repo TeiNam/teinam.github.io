@@ -4,6 +4,7 @@ title: "회원 가입 및 로그인을 위한 테이블 설계"
 category: mysql
 excerpt: "회원 가입과 로그인에 쓰이는 테이블을 1:1 관계까지 정규화해 분리하는 이유, 그리고 회원·인증·휴면·탈퇴 스키마를 나눌 때 함께 걸리는 법정 요건을 정리합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/table-design-for-signup-login.png
 ---
 
 《개발자의 글쓰기》라는 책을 읽다 보면 이런 에피소드가 나옵니다. 문장을 주고 특정 핵심 단어로 문장을 요약해 보라고 했을 때 DBA는 추려낸 단어에서 중복된 단어는 제거해야 한다고 말한다고 하죠. 이처럼 DBA는 습관적으로 데이터 중복에 민감함을 드러냅니다.
@@ -18,12 +19,12 @@ last_modified_at: 2026-09-20
 
 데이터베이스는 인덱스를 타든 풀스캔을 하든, 특정 값을 읽으려면 그 값이 들어 있는 행이 담긴 블록 전체를 먼저 읽습니다.
 
-![](/assets/img/wp/2022/08/table-design-inline-1.png)
+![컬럼 4개 테이블 그림. ① Column 3을 따라 내려가 값 Red가 있는 행에 도착하고, ② 그 행 전체를 가로로 읽는다](/assets/img/wp/2022/08/table-design-inline-1.png)
 
 1. 인덱스를 통해 해당 값이 있는 row에 도착하지만,
 2. Row 값의 일부분인 해당 값만 읽어오는 것이 아니라 해당 값이 있는 Row 전체 블록을 읽어옵니다.
 
-![](/assets/img/wp/2022/08/table-design-inline-2.png)
+![컬럼이 7개 이상으로 늘어난 테이블 그림. 같은 값 Red를 찾아도 ② 가로로 읽어야 하는 행이 더 길다](/assets/img/wp/2022/08/table-design-inline-2.png)
 
 입출력의 최소 단위는 행이 아니라 이 블록이고, InnoDB에서는 페이지라고 부릅니다. 기본 크기는 16KB이며 `innodb_page_size` 로 정해집니다. 그래서 행이 넓어지면 한 페이지에 담기는 행 수가 줄고, 같은 건수를 읽는 데 읽어야 할 페이지가 늘어납니다. 컬럼이 많을수록 읽기가 많아진다는 말의 실제 내용이 이것입니다.
 
@@ -47,7 +48,7 @@ last_modified_at: 2026-09-20
 
 ## RDBMS 테이블 설계
 
-![](/assets/img/wp/2022/08/member.png)
+![회원 테이블 ERD. member.user를 중심으로 auth(social_login·password·cidi), member(profile·authentication·subscription·device), dormant, log(user_activity·login·dormant·withdrawal), withdrawal.user 스키마로 나뉜다](/assets/img/wp/2022/08/member.png)
 
 MySQL 8.4 LTS를 기준으로 작성했고, 한 인스턴스 안에서 스키마 단위로 첫 번째 분리를 했습니다. ERD의 레이어 한 칸이 스키마입니다. MySQL 8.0은 2026-04-21부터 Oracle Sustaining Support 단계로 넘어갔으니, 새로 만드는 서비스라면 8.4 LTS 이상에서 시작합니다.
 

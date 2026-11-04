@@ -4,6 +4,7 @@ title: "Redis #.9 분산캐시와 사용시 주의사항"
 category: redis
 excerpt: "Redis를 분산 캐시로 운영할 때 마주치는 주의사항을 2026년 9월 기준 Redis 8.10 문서에 맞춰 정리했습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/redis-9-distributed-cache-cautions.png
 ---
 
 Redis 분산 캐시 시리즈의 마지막 편입니다. Redis를 분산 캐시로 운영할 때 마주치는 주의사항을 2026년 9월 기준 Redis 8.10 문서에 맞춰 정리했습니다.

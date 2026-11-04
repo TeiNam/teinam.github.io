@@ -4,6 +4,7 @@ permalink: /career/aws-lp/invent-and-simplify/
 redirect_from:
   - /handbook/career/aws-lp/invent-and-simplify/
 description: "복잡함을 해결하고 혁신 추구"
+last_modified_at: 2026-08-27
 ---
 ## 발명하고 단순화한다 (Invent and Simplify):
 

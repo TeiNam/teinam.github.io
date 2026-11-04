@@ -4,6 +4,7 @@ permalink: /career/junior/
 redirect_from:
   - /handbook/career/junior/
 description: "이직이 어려운 이유"
+last_modified_at: 2026-08-27
 ---
 ## 이직이 어려운 이유와 주니어의 이직 전략 실수
 

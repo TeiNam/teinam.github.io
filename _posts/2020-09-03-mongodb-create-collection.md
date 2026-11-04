@@ -4,6 +4,7 @@ title: "MongoDB Collection 생성하기"
 category: mongodb
 excerpt: "MongoDB 컬렉션은 RDBMS 테이블과 비슷해 보이지만 도큐먼트마다 필드 구성이 달라도 됩니다. mongosh 기준으로 컬렉션을 만들고, 조회하고, 지우는 방법을 정리했습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-create-collection.png
 ---
 
 데이터베이스를 만들려면 컬렉션을 만들어야 한다고 했습니다. 그럼 컬렉션이란 무엇일까요? RDBMS를 주로 다루던 분들은 테이블처럼 받아들이면 출발점으로는 충분합니다.

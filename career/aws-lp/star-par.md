@@ -4,6 +4,7 @@ permalink: /career/aws-lp/star-par/
 redirect_from:
   - /handbook/career/aws-lp/star-par/
 description: "효과적으로 면접 답변을 하기 위한 말하기 방법"
+last_modified_at: 2026-08-27
 ---
 ## STAR 기법이란?
 

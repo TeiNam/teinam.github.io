@@ -4,6 +4,7 @@ title: "“DB 페일오버는 1초라는데” 애플리케이션은 왜 DB를 �
 category: mysql
 excerpt: "Aurora MySQL 페일오버를 19개 JDBC 구성으로 동시에 관찰했습니다. 약 2초와 약 30분으로 갈린 쓰기 복구, 옛 writer 재접속, 에러 없는 쓰기 정지를 실제 기록으로 살펴보고, 반복별 측정 자료를 CSV로 함께 공개합니다."
 last_modified_at: 2026-09-30
+image: /assets/img/og/aurora-mysql-failover-application-recovery.png
 ---
 DB 클러스터가 새 쓰기 인스턴스(writer)를 승격했는데도 애플리케이션의 쓰기가 계속 실패할 수 있습니다. 이런 실패 중에는 연결이 살아 있고 읽기도 성공하는데 쓰기만 거부되는 경우도 있습니다.
 

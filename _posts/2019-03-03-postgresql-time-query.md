@@ -4,6 +4,7 @@ title: "PostgreSQL 시간 조회"
 category: postgresql
 excerpt: "PostgreSQL의 날짜·시간 함수와 타임존 설정 방법입니다. now()는 트랜잭션 시작 시각을, clock_timestamp()는 실제 호출 시각을 반환합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/postgresql-time-query.png
 ---
 
 PostgreSQL의 날짜·시간 관련 함수와 타임존 설정 방법입니다. 각 예제는 `psql` 클라이언트에서 바로 실행할 수 있습니다.

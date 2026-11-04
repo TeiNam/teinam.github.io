@@ -4,6 +4,7 @@ permalink: /career/aws-lp/are-right-a-lot/
 redirect_from:
   - /handbook/career/aws-lp/are-right-a-lot/
 description: "판단력과 정확"
+last_modified_at: 2026-08-27
 ---
 ## 리더는 정확하고 옳아야 한다 (Are Right, A Lot):
 

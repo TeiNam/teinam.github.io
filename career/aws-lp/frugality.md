@@ -4,6 +4,7 @@ permalink: /career/aws-lp/frugality/
 redirect_from:
   - /handbook/career/aws-lp/frugality/
 description: "자원의 효율적 활용"
+last_modified_at: 2026-08-27
 ---
 ## 절약한다 (Frugality):
 

@@ -4,6 +4,7 @@ title: "Redis #.7 HA구성하기 (Master-Slave)"
 category: redis
 excerpt: "Redis를 단일 인스턴스로 운영하면 그 인스턴스가 죽는 순간 서비스 전체가 멈춥니다. Redis 8.10 기준으로 복제를 설정하고 Sentinel로 자동 페일오버까지 구성하는 방법을 정리합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/redis-7-ha-master-slave.png
 ---
 
 ## 복제가 필요한 이유

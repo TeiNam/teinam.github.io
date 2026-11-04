@@ -5,6 +5,7 @@ redirect_from:
   - /handbook/career/
   - /handbook/
 description: "IT 이직 준비 위키: 주니어를 위한 A to Z 가이드"
+last_modified_at: 2026-09-20
 ---
 ## IT직군 이직 준비하기
 

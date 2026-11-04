@@ -4,6 +4,7 @@ permalink: /career/aws-lp/dive-deep/
 redirect_from:
   - /handbook/career/aws-lp/dive-deep/
 description: "세부까지 파고드는 분석력"
+last_modified_at: 2026-08-27
 ---
 ## 깊게 고민한다 (Dive Deep):
 

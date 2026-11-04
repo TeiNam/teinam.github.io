@@ -4,6 +4,7 @@ title: "MongoDB Index #.1 Architecture"
 category: mongodb
 excerpt: "인덱스는 키와 레코드 위치를 정렬된 상태로 보관해 검색을 빠르게 만드는 자료구조이며, 이 글은 MongoDB가 제공하는 인덱스 종류와 그 내부 구조를 정리합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-index-1-architecture.png
 ---
 
 ## Index란?

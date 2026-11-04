@@ -4,6 +4,7 @@ title: "MongoDB Index#.3 Hash Index"
 category: mongodb
 excerpt: "해시 인덱스는 필드 값의 해시를 저장하여 균등한 데이터 분산을 제공하는 인덱스입니다. 주로 해시 샤딩에 사용되며, MongoDB 4.4부터는 복합 인덱스에도 해시 필드를 포함할 수 있습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-index-3-hashed-index.png
 ---
 
 ## 이전 포스팅
@@ -18,7 +19,7 @@ MongoDB에서 해시 인덱스는 주로 **해시 샤딩**을 위해 사용합�
 
 다만 해시 샤딩을 사용하면 등가 조건 쿼리는 단일 샤드로 라우팅되지만, 범위 쿼리는 모든 샤드로 브로드캐스트됩니다.
 
-![](/assets/img/wp/2021/03/linearHashIndex.jpg)
+![해시 디렉터리 그림. 깊이 3인 디렉터리의 000~111 항목이 버킷 A·B·C·D·A2를 가리키고, 버킷마다 키 값이 담겨 있다](/assets/img/wp/2021/03/linearHashIndex.jpg)
 
 ### 내부 구조
 

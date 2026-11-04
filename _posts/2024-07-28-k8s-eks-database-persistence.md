@@ -4,6 +4,7 @@ title: "쿠버네티스와 EKS에서의 데이터베이스 영속성: PV, Storag
 category: database
 excerpt: "EKS 위 작은 데이터베이스에 RDS 를 붙이기 아까울 때, PersistentVolume·StorageClass·Amazon EBS 로 컨테이너 데이터를 남기는 방법을 비용·백업·가용성 기준으로 비교합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/k8s-eks-database-persistence.png
 ---
 
 ## RDS 사용하기는 아깝고, EKS 올리기엔 불안한 컨테이너 데이터베이스

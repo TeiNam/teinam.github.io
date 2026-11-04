@@ -4,6 +4,7 @@ permalink: /career/dba-rnr/
 redirect_from:
   - /writing/dba-team-rnr/
 description: "DBA·DB팀의 역할과 책임을 정의할 때 볼 기준"
+last_modified_at: 2026-09-20
 ---
 
 대기업은 DBA 포지션이 오래전부터 유지된 경우가 많아 그 회사에 맞는 R&R이 이미 정의되어 있습니다. 반면 스타트업은 DBA가 없다가 생기면서 R&R과 정책을 직접 정의해야 하는 경우가 많습니다.

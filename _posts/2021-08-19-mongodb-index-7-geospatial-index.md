@@ -4,6 +4,7 @@ title: "MongoDB Index #.7 Geospatial Index"
 category: mongodb
 excerpt: "MongoDB 공간 인덱스 2dsphere와 2d의 차이, GeoJSON 타입과 좌표 순서, $near·$geoWithin·$geoNear의 인덱스 요구 조건을 MongoDB 8.0 기준으로 정리했습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-index-7-geospatial-index.png
 ---
 
 MongoDB는 공간 인덱스를 두 가지 제공합니다. `2dsphere` 는 구체(sphere) 위의 도형을 해석하는 쿼리를 지원하고, `2d` 는 평면 위의 도형을 해석하는 쿼리를 지원합니다.

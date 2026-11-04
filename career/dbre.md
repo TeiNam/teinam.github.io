@@ -4,6 +4,7 @@ permalink: /career/dbre/
 redirect_from:
   - /writing/what-is-dbre/
 description: "DBRE 가 어떤 직군이고 DBA 와 무엇이 다른지"
+last_modified_at: 2026-09-20
 ---
 
 IT에 종사하면서 DB를 만지게 되는 직군은 크게 세 가지입니다.

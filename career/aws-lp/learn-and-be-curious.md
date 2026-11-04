@@ -4,6 +4,7 @@ permalink: /career/aws-lp/learn-and-be-curious/
 redirect_from:
   - /handbook/career/aws-lp/learn-and-be-curious/
 description: "끊임없는 학습과 호기심"
+last_modified_at: 2026-08-27
 ---
 ## 계속 배우고 호기심을 갖는다 (Learn and Be Curious):
 

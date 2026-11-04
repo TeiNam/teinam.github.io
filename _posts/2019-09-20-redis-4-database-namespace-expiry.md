@@ -4,6 +4,7 @@ title: "Redis #.4 Database namespace & Expiry"
 category: redis
 excerpt: "Redis의 네임스페이스는 하나의 인스턴스 안에 논리적으로 분리된 데이터베이스를 의미합니다. 숫자로 구분되며 기본은 0번입니다. 만료(expiry) 기능으로 키의 생존 시간을 지정해 자동 삭제할 수 있습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/redis-4-database-namespace-expiry.png
 ---
 
 ## Namespace

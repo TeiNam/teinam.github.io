@@ -4,6 +4,7 @@ permalink: /career/aws-lp/deliver-results/
 redirect_from:
   - /handbook/career/aws-lp/deliver-results/
 description: "결과 중심의 태도"
+last_modified_at: 2026-08-27
 ---
 ## 성과를 낸다 (Deliver Results):
 

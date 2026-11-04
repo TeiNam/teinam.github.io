@@ -8,6 +8,7 @@ description: AWS ProServe 의 Database Architect teinam(RastaLion) 의 소개. O
 # 그러면 WebSite 엔터티가 두 URL 에 생겨 어느 쪽이 사이트인지 흐려진다.
 seo:
   type: AboutPage
+last_modified_at: 2026-10-09
 ---
 {%- comment %} URL 을 Liquid 변수로 먼저 조립한다. 마크다운 본문에 도메인과 Liquid 여는
    괄호가 붙어 있으면 마크다운 포매터가 그것을 벌거벗은 URL 로 보고 자동 링크로 감싸

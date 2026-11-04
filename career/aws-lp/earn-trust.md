@@ -4,6 +4,7 @@ permalink: /career/aws-lp/earn-trust/
 redirect_from:
   - /handbook/career/aws-lp/earn-trust/
 description: "신뢰 형성 및 유지"
+last_modified_at: 2026-08-27
 ---
 ## 다른 사람의 신뢰를 얻는다 (Earn Trust):
 

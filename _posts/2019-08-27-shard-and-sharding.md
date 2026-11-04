@@ -4,6 +4,7 @@ title: "샤드와 샤딩 (Shard and Sharding)"
 category: mysql
 excerpt: "데이터베이스 샤드는 데이터베이스 또는 검색엔진의 수평적 파티션을 말합니다. 각 샤드는 별도의 데이터베이스 서버 인스턴스에 분리 저장되어 부하를 분산시킵니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/shard-and-sharding.png
 ---
 
 ## 샤드 (Shard: Database Architecture)
