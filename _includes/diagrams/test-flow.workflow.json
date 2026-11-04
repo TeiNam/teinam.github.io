@@ -1,0 +1,205 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "테스트 진행 순서",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/test-flow.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "security": {
+          "label": "기준·판단",
+          "visible": true
+        },
+        "backend": {
+          "label": "검사 단계",
+          "visible": true
+        },
+        "cloud": {
+          "label": "배포·확인",
+          "visible": true
+        },
+        "external": {
+          "label": "결함 처리",
+          "visible": true
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "dev_lane",
+      "label": "준비·개발"
+    },
+    {
+      "id": "env_lane",
+      "label": "테스트 환경"
+    },
+    {
+      "id": "release_lane",
+      "label": "출시·운영"
+    },
+    {
+      "id": "defect_lane",
+      "label": "결함 처리",
+      "variant": "exception"
+    }
+  ],
+  "groups": [
+    {
+      "id": "parallel_checks",
+      "label": "5·6단계는 병렬 진행 가능",
+      "lane": "env_lane",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "s6",
+    "s7",
+    "s8"
+  ],
+  "nodes": [
+    {
+      "id": "s1",
+      "lane": "dev_lane",
+      "col": 0,
+      "type": "security",
+      "label": "1. 요구와 기준 정리",
+      "sublabel": "요구사항·위험·수용 기준"
+    },
+    {
+      "id": "s2",
+      "lane": "dev_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "2. 개발 중 빠른 검사",
+      "sublabel": "정적 검사·단위/컴포넌트"
+    },
+    {
+      "id": "s3",
+      "lane": "dev_lane",
+      "col": 2,
+      "type": "backend",
+      "label": "3. 구성요소 연결 검사",
+      "sublabel": "통합/계약·영향 범위 회귀"
+    },
+    {
+      "id": "s4",
+      "lane": "env_lane",
+      "col": 2,
+      "type": "cloud",
+      "label": "4. 테스트 환경 준비",
+      "sublabel": "배포·스모크"
+    },
+    {
+      "id": "s5",
+      "lane": "env_lane",
+      "col": 3,
+      "type": "backend",
+      "label": "5. 제품 동작 검사",
+      "sublabel": "기능/E2E/회귀/탐색적"
+    },
+    {
+      "id": "s6",
+      "lane": "env_lane",
+      "col": 4,
+      "type": "backend",
+      "label": "6. 변경 위험 검사",
+      "sublabel": "성능·보안·접근성·호환성·복구"
+    },
+    {
+      "id": "s7",
+      "lane": "release_lane",
+      "col": 4,
+      "type": "security",
+      "label": "7. 인수·출시 판단",
+      "sublabel": "수용 기준·UAT·알려진 문제"
+    },
+    {
+      "id": "s8",
+      "lane": "release_lane",
+      "col": 5,
+      "type": "cloud",
+      "label": "8. 운영 배포·확인",
+      "sublabel": "스모크·관찰"
+    },
+    {
+      "id": "d1",
+      "lane": "defect_lane",
+      "col": 1,
+      "type": "external",
+      "label": "결함 발견·수정"
+    },
+    {
+      "id": "d2",
+      "lane": "defect_lane",
+      "col": 2,
+      "type": "external",
+      "label": "해당 결함 재확인"
+    },
+    {
+      "id": "d3",
+      "lane": "defect_lane",
+      "col": 3,
+      "type": "external",
+      "label": "영향 범위 회귀 검사"
+    },
+    {
+      "id": "d4",
+      "lane": "defect_lane",
+      "col": 4,
+      "type": "external",
+      "label": "필요한 검증 단계로 복귀"
+    }
+  ],
+  "edges": [
+    {
+      "from": "s1",
+      "to": "s2"
+    },
+    {
+      "from": "s2",
+      "to": "s3"
+    },
+    {
+      "from": "s3",
+      "to": "s4"
+    },
+    {
+      "from": "s4",
+      "to": "s5"
+    },
+    {
+      "from": "s5",
+      "to": "s6"
+    },
+    {
+      "from": "s6",
+      "to": "s7"
+    },
+    {
+      "from": "s7",
+      "to": "s8"
+    },
+    {
+      "from": "d1",
+      "to": "d2"
+    },
+    {
+      "from": "d2",
+      "to": "d3"
+    },
+    {
+      "from": "d3",
+      "to": "d4"
+    }
+  ]
+}
