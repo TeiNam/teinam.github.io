@@ -9,6 +9,9 @@
 {%- else -%}
 {%- seo -%}
 {%- endif %}
+{%- comment %} 네이버 서치어드바이저 소유 확인. jekyll-seo-tag 의 webmaster_verifications 는
+     naver 를 지원하지 않아 직접 쓴다. 홈에만 있으면 되지만 모든 쪽에 두어도 무해하다 {% endcomment %}
+<meta name="naver-site-verification" content="8457f92d7bb3988689e333b45d430ef6d8ab42c4">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
