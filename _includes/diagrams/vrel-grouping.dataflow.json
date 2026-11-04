@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "doc_id로 묶어 문서마다 청크 하나 남기기",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/vrel-grouping.html",
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "같은 문서 청크"
+        },
+        "emphasis": {
+          "label": "대표 청크"
+        },
+        "database": {
+          "label": "검색된 청크"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "상위 청크 6개"
+    },
+    {
+      "label": "doc_id로 묶기"
+    },
+    {
+      "label": "문서별 대표 청크"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hr_rules_chunks",
+      "type": "database",
+      "label": "hr-rules 청크 4개",
+      "sublabel": "0.91 · 0.89 · 0.87 · 0.84",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "hr_faq_chunk",
+      "type": "database",
+      "label": "hr-faq#0003",
+      "sublabel": "0.85",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "leave_chunk",
+      "type": "database",
+      "label": "leave-guide#0002",
+      "sublabel": "0.82",
+      "stage": 0,
+      "row": 2
+    },
+    {
+      "id": "group",
+      "type": "backend",
+      "label": "doc_id로 묶기",
+      "sublabel": "group_by / group_by_field · 그룹당 1개",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "hr_rules_top",
+      "type": "external",
+      "label": "hr-rules#0012",
+      "sublabel": "0.91",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "hr_faq_top",
+      "type": "external",
+      "label": "hr-faq#0003",
+      "sublabel": "0.85",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "leave_top",
+      "type": "external",
+      "label": "leave-guide#0002",
+      "sublabel": "0.82",
+      "stage": 2,
+      "row": 2
+    }
+  ],
+  "flows": [
+    {
+      "from": "hr_rules_chunks",
+      "to": "group",
+      "label": "doc_id = hr-rules",
+      "variant": "default"
+    },
+    {
+      "from": "hr_faq_chunk",
+      "to": "group",
+      "label": "doc_id = hr-faq",
+      "variant": "default"
+    },
+    {
+      "from": "leave_chunk",
+      "to": "group",
+      "label": "doc_id = leave-guide",
+      "variant": "default"
+    },
+    {
+      "from": "group",
+      "to": "hr_rules_top",
+      "label": "hr-rules 최고점",
+      "variant": "emphasis"
+    },
+    {
+      "from": "group",
+      "to": "hr_faq_top",
+      "label": "hr-faq 최고점",
+      "variant": "emphasis"
+    },
+    {
+      "from": "group",
+      "to": "leave_top",
+      "label": "leave-guide 최고점",
+      "variant": "emphasis"
+    }
+  ]
+}
