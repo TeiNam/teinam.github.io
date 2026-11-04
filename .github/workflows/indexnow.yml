@@ -1,0 +1,61 @@
+# GitHub Pages 배포가 끝나면 최근에 바뀐 URL 을 IndexNow 로 알린다.
+# IndexNow 는 Bing·Naver·Yandex 등이 함께 받는 프로토콜이다(Google 은 참여하지 않는다).
+# 키는 공개가 전제다 — 사이트 루트의 663ac823e571238efa55b4ffafac3d55.txt 로 소유를 증명한다.
+name: IndexNow
+
+on:
+  workflow_run:
+    workflows: ["pages-build-deployment"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "최근 며칠 안에 lastmod 가 바뀐 URL 을 보낼지"
+        default: "3"
+
+permissions: {}
+
+jobs:
+  ping:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SITE: https://rastalion.dev
+      INDEXNOW_KEY: 663ac823e571238efa55b4ffafac3d55
+      DAYS: ${{ github.event.inputs.days || '3' }}
+    steps:
+      - name: Submit recently modified URLs
+        shell: python3 {0}
+        run: |
+          import json, os, re, sys, urllib.request
+          from datetime import datetime, timedelta, timezone
+
+          site, key = os.environ["SITE"], os.environ["INDEXNOW_KEY"]
+          since = datetime.now(timezone.utc) - timedelta(days=int(os.environ["DAYS"]))
+          with urllib.request.urlopen(f"{site}/sitemap.xml", timeout=30) as r:
+              xml = r.read().decode()
+
+          urls = []
+          for block in re.findall(r"<url>(.*?)</url>", xml, re.S):
+              loc = re.search(r"<loc>(.*?)</loc>", block)
+              mod = re.search(r"<lastmod>(.*?)</lastmod>", block)
+              if not (loc and mod):
+                  continue
+              d = datetime.fromisoformat(mod.group(1))
+              if (d if d.tzinfo else d.replace(tzinfo=timezone.utc)) >= since:
+                  urls.append(loc.group(1))
+          if not urls:
+              print("최근에 바뀐 URL 이 없습니다")
+              sys.exit(0)
+
+          body = json.dumps({"host": site.split("//")[1], "key": key,
+                             "keyLocation": f"{site}/{key}.txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  print(r.status, len(urls), "URLs", *urls, sep="\n")
+          except urllib.error.HTTPError as e:
+              # 202 는 키 확인 대기, 422 는 URL·키 불일치. 실패는 워크플로를 빨갛게 둔다
+              sys.exit(f"IndexNow {e.code}: {e.read().decode()[:300]}")

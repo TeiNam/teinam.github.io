@@ -1,0 +1,27 @@
+---
+permalink: /llms-full.txt
+layout: null
+sitemap: false
+---
+{%- comment %} llms.txt 의 목록을 따라가지 않고 한 번에 읽을 수 있게 포스트 본문을 모은다.
+     Jekyll 은 포스트를 먼저 렌더하므로 post.content 는 HTML 이다. 태그만 걷고
+     코드 블록에 남는 엔티티를 되돌린다. &amp; 는 마지막에 풀어야 &amp;lt; 가 < 로 두 번 풀리지 않는다 {% endcomment -%}
+# {{ site.title }} — 전체 본문
+
+> {{ site.description }}
+
+- 언어: 한국어. 제품명·파라미터·SQL 식별자는 영어 원형을 유지합니다.
+- 저자: {{ site.author }} ({{ '/about/' | absolute_url }})
+- 목록판: {{ '/llms.txt' | absolute_url }}
+- 포스트 {{ site.posts.size }}편, 최신순. 각 글의 날짜는 발행일, updated 는 마지막 검증일입니다.
+{% for post in site.posts %}
+---
+
+## {{ post.title }}
+
+- URL: {{ post.url | absolute_url }}
+- 분류: {{ post.category }}{% if post.subcategory %} / {{ post.subcategory }}{% endif %}
+- 날짜: {{ post.date | date: '%Y-%m-%d' }}{% if post.last_modified_at %} (updated {{ post.last_modified_at | date: '%Y-%m-%d' }}){% endif %}
+
+{{ post.content | strip_html | replace: '&lt;', '<' | replace: '&gt;', '>' | replace: '&quot;', '"' | replace: '&#39;', "'" | replace: '&#8617;', '' | replace: '&amp;', '&' | strip }}
+{% endfor %}

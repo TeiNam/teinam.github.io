@@ -11,6 +11,7 @@ sitemap: false
 - 저자: {{ site.author }} ({{ site.email }})
 - 사이트맵: {{ '/sitemap.xml' | absolute_url }}
 - 피드: {{ '/feed.xml' | absolute_url }}
+- 전체 본문: {{ '/llms-full.txt' | absolute_url }} (포스트 본문을 한 파일로 모은 판)
 
 구성은 다섯으로 나뉩니다. **Docs** 는 기준으로 삼고 반복해서 들춰 보는 문서, **Writing** 은 시점이 있는 기술 기록, **Notes** 는 뉴스·이슈 브리핑과 실무 참고 문서, **Products** 는 직접 만들어 공개한 서비스·게임 소개, **Career** 는 일과 경력 기록입니다. 각 문서의 `last_modified_at` 이 마지막 검증 시점이고, 본문에 적힌 버전·수치는 그 시점의 공식 문서를 대조한 값입니다.
 
