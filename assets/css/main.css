@@ -347,6 +347,8 @@ p { text-wrap: pretty; }
 /* 첫 칼럼에 mono 를 강제하면 Sentry·Mandrill 같은 고유명사까지 고정폭이 된다.
    식별자는 마크다운에서 이미 백틱으로 감싸므로 code 가 mono 를 맡는다. */
 .prose td:first-child { color: var(--ink); }
+/* 첫 칼럼은 항목 이름이다. 칼럼이 셋이면 좁아져 '범위·수준'이 '범위·수/준'으로 쪼개지므로 단어 단위로만 끊는다 */
+.prose th:first-child, .prose td:first-child { word-break: keep-all; }
 /* anywhere 는 min-content 폭 계산에 반영되므로 긴 식별자가 칼럼 폭을 밀어내지
    않는다. break-word 는 반영되지 않아 여기서는 쓸 수 없다. */
 .prose th code, .prose td code { overflow-wrap: anywhere; }
