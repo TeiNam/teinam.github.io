@@ -1,47 +1,71 @@
 {%- comment %}
   jekyll-seo-tag 가 내보내는 BlogPosting 위에 얹는 구조화 데이터.
 
-  - 홈: 저자 Person 만 넣는다. WebSite 는 jekyll-seo-tag 가 이미 내보내므로 겹쳐 쓰면
-    같은 @type 이 두 번 나온다. seo-tag 의 author 에는 이름만 있어서, sameAs 로
-    GitHub·LinkedIn 을 묶고 knowsAbout 으로 다루는 주제를 적는 것이 이쪽의 몫이다.
+  - 저자 Person: 홈과 소개 페이지에 같은 @id(소개 페이지 URL + #person)로 넣어 하나의 엔터티로
+    묶는다. 소개 페이지에서는 ProfilePage 의 mainEntity 로 들어간다(head.html 이 그 페이지에서만
+    seo-tag 의 JSON-LD 를 뺀다). seo-tag 의 author 에는 이름과 url(_data/authors.yml)만 있어서,
+    sameAs 로 GitHub·LinkedIn 을 묶고 knowsAbout 으로 다루는 주제를 적는 것이 이쪽의 몫이다.
+    홈의 WebSite 는 jekyll-seo-tag 가 이미 내보내므로 겹쳐 쓰지 않는다.
     SearchAction 은 넣지 않는다 — 이 사이트의 검색은 헤더 안에서 끝나는 클라이언트
     검색이고 `?q=` 로 받는 결과 페이지가 없다. 없는 엔드포인트는 거짓 신호가 된다.
   - docs·career: BreadcrumbList. 실제로 존재하는 URL 만 단계로 쓴다(홈 → 섹션 → 현재 쪽).
     breadcrumb 프런트매터는 "Docs / Database / 가이드명" 같은 표시용 문자열이라
     중간 단계의 URL 을 만들어 낼 수 없다. 그래서 이름만 그쪽에서 가져온다.
+  - 포스트: BreadcrumbList(홈 → Writing·Notes·Products 목록 → 글). 목록은 archive.html 과 같은
+    기준으로 고른다 — notes·products 는 각자의 목록, 나머지는 /writing/.
 {% endcomment -%}
+{%- capture person -%}
+{
+    "@type": "Person",
+    "@id": {{ '/about/' | absolute_url | append: '#person' | jsonify }},
+    "name": {{ site.author | jsonify }},
+    "url": {{ '/about/' | absolute_url | jsonify }},
+    "email": {{ site.email | jsonify }},
+    "sameAs": [
+      "https://github.com/{{ site.social.github }}",
+      "https://www.linkedin.com/in/{{ site.social.linkedin }}"
+    ],
+    {%- comment %} category_order 를 재사용하면 "mysql" 같은 소문자 슬러그가 그대로 들어간다.
+         그쪽은 /writing/ 필터 버튼 순서용이고, 엔터티 주제는 제품 표기를 써야 한다 {% endcomment %}
+    "knowsAbout": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Redis", "Vector Database", "Data Pipeline", "Database Administration"],
+    {%- comment %} 유효한 자격만. _data/badges.yml 은 만료된 배지를 담지 않는다 {% endcomment %}
+    {%- if site.data.badges %}
+    "hasCredential": [
+      {%- for b in site.data.badges %}
+      {
+        "@type": "EducationalOccupationalCredential",
+        "name": {{ b.name | jsonify }},
+        "url": {{ b.url | jsonify }},
+        "credentialCategory": "certificate",
+        "recognizedBy": { "@type": "Organization", "name": {{ b.issuer | jsonify }} },
+        "dateCreated": {{ b.issued | jsonify }}{% if b.expires %},
+        "expires": {{ b.expires | jsonify }}{% endif %}
+      }{% unless forloop.last %},{% endunless %}
+      {%- endfor %}
+    ],
+    {%- endif %}
+    "mainEntityOfPage": {{ '/about/' | absolute_url | jsonify }}
+  }
+{%- endcapture -%}
 {%- if page.url == '/' -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": {{ site.author | jsonify }},
-  "url": {{ '/about/' | absolute_url | jsonify }},
-  "email": {{ site.email | jsonify }},
-  "sameAs": [
-    "https://github.com/{{ site.social.github }}",
-    "https://www.linkedin.com/in/{{ site.social.linkedin }}"
-  ],
-  {%- comment %} category_order 를 재사용하면 "mysql" 같은 소문자 슬러그가 그대로 들어간다.
-       그쪽은 /writing/ 필터 버튼 순서용이고, 엔터티 주제는 제품 표기를 써야 한다 {% endcomment %}
-  "knowsAbout": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Redis", "Data Pipeline", "Database Administration"],
-  {%- comment %} 유효한 자격만. _data/badges.yml 은 만료된 배지를 담지 않는다 {% endcomment %}
-  {%- if site.data.badges %}
-  "hasCredential": [
-    {%- for b in site.data.badges %}
-    {
-      "@type": "EducationalOccupationalCredential",
-      "name": {{ b.name | jsonify }},
-      "url": {{ b.url | jsonify }},
-      "credentialCategory": "certificate",
-      "recognizedBy": { "@type": "Organization", "name": {{ b.issuer | jsonify }} },
-      "dateCreated": {{ b.issued | jsonify }}{% if b.expires %},
-      "expires": {{ b.expires | jsonify }}{% endif %}
-    }{% unless forloop.last %},{% endunless %}
-    {%- endfor %}
-  ],
+  {{ person | remove_first: '{' | strip }}
+</script>
+{%- elsif page.url == '/about/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ page.title | jsonify }},
+  "description": {{ page.description | default: site.description | jsonify }},
+  "inLanguage": {{ site.lang | jsonify }},
+  {%- if page.last_modified_at %}
+  "dateModified": {{ page.last_modified_at | date_to_xmlschema | jsonify }},
   {%- endif %}
-  "mainEntityOfPage": {{ site.url | append: site.baseurl | append: '/' | jsonify }}
+  "mainEntity": {{ person }}
 }
 </script>
 {%- endif -%}
@@ -60,6 +84,25 @@
       "item": {{ site.url | append: site.baseurl | append: '/' | jsonify }} },
     { "@type": "ListItem", "position": 2, "name": {{ section_name | jsonify }},
       "item": {{ section_url | absolute_url | jsonify }} },
+    { "@type": "ListItem", "position": 3, "name": {{ page.title | jsonify }} }
+  ]
+}
+</script>
+{%- endif -%}
+{%- if page.layout == 'post' -%}
+{%- if page.category == 'notes' -%}{%- assign list_name = 'Notes' -%}{%- assign list_url = '/notes/' -%}
+{%- elsif page.category == 'products' -%}{%- assign list_name = 'Products' -%}{%- assign list_url = '/products/' -%}
+{%- else -%}{%- assign list_name = 'Writing' -%}{%- assign list_url = '/writing/' -%}
+{%- endif -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": {{ site.title | jsonify }},
+      "item": {{ site.url | append: site.baseurl | append: '/' | jsonify }} },
+    { "@type": "ListItem", "position": 2, "name": {{ list_name | jsonify }},
+      "item": {{ list_url | absolute_url | jsonify }} },
     { "@type": "ListItem", "position": 3, "name": {{ page.title | jsonify }} }
   ]
 }

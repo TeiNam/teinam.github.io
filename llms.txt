@@ -12,7 +12,7 @@ sitemap: false
 - 사이트맵: {{ '/sitemap.xml' | absolute_url }}
 - 피드: {{ '/feed.xml' | absolute_url }}
 
-구성은 셋으로 나뉩니다. **Docs** 는 기준으로 삼고 반복해서 들춰 보는 문서, **Writing** 은 시점이 있는 기록, **Career** 는 일과 경력 기록입니다. 각 문서의 `last_modified_at` 이 마지막 검증 시점이고, 본문에 적힌 버전·수치는 그 시점의 공식 문서를 대조한 값입니다.
+구성은 다섯으로 나뉩니다. **Docs** 는 기준으로 삼고 반복해서 들춰 보는 문서, **Writing** 은 시점이 있는 기술 기록, **Notes** 는 뉴스·이슈 브리핑과 실무 참고 문서, **Products** 는 직접 만들어 공개한 서비스·게임 소개, **Career** 는 일과 경력 기록입니다. 각 문서의 `last_modified_at` 이 마지막 검증 시점이고, 본문에 적힌 버전·수치는 그 시점의 공식 문서를 대조한 값입니다.
 
 ## Docs — 기준 문서
 {% for group in site.data.docs_nav %}
@@ -21,11 +21,17 @@ sitemap: false
 {% endfor %}{% endfor %}
 가이드는 여러 쪽으로 나뉘어 있습니다. 쪽 목록은 각 가이드 첫 쪽에 있습니다.
 
-## Writing — 포스트
-{% assign cats = site.categories | sort %}{% for cat in cats %}
+## Writing — 기술 포스트
+{% assign cats = site.categories | sort %}{% for cat in cats %}{% unless cat[0] == 'notes' or cat[0] == 'products' %}
 ### {{ cat[0] }}
 {% assign posts = cat[1] | sort: "date" | reverse %}{% for post in posts %}- [{{ post.title }}]({{ post.url | absolute_url }}){% if post.excerpt %} — {{ post.excerpt | strip_newlines | strip }}{% endif %}
-{% endfor %}{% endfor %}
+{% endfor %}{% endunless %}{% endfor %}
+## Notes — 뉴스·이슈와 실무
+{% assign posts = site.categories['notes'] | sort: "date" | reverse %}{% for post in posts %}- [{{ post.title }}]({{ post.url | absolute_url }}){% if post.subcategory %} ({{ post.subcategory }}){% endif %}{% if post.excerpt %} — {{ post.excerpt | strip_newlines | strip }}{% endif %}
+{% endfor %}
+## Products — 만든 것
+{% assign posts = site.categories['products'] | sort: "date" | reverse %}{% for post in posts %}- [{{ post.title }}]({{ post.url | absolute_url }}){% if post.excerpt %} — {{ post.excerpt | strip_newlines | strip }}{% endif %}
+{% endfor %}
 ## Career
 {% for group in site.data.career_nav %}
 ### {{ group.group }}
