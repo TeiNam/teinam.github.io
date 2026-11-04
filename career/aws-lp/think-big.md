@@ -4,6 +4,7 @@ permalink: /career/aws-lp/think-big/
 redirect_from:
   - /handbook/career/aws-lp/think-big/
 description: "케일 있는 사고"
+last_modified_at: 2026-08-27
 ---
 ## 크게 생각한다 (Think Big):
 

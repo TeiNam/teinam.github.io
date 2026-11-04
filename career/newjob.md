@@ -4,6 +4,7 @@ permalink: /career/newjob/
 redirect_from:
   - /handbook/career/newjob/
 description: "언제 이직을 해야할까?"
+last_modified_at: 2026-08-27
 ---
 ## 언제 이직해야 할까?
 

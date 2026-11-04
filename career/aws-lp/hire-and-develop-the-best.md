@@ -4,6 +4,7 @@ permalink: /career/aws-lp/hire-and-develop-the-best/
 redirect_from:
   - /handbook/career/aws-lp/hire-and-develop-the-best/
 description: "최고의 인재 채용 및 육성"
+last_modified_at: 2026-08-27
 ---
 ## 최고의 인재를 채용하고 육성한다 (Hire and Develop the Best):
 

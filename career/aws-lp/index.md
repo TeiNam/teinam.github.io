@@ -4,6 +4,7 @@ permalink: /career/aws-lp/
 redirect_from:
   - /handbook/career/aws-lp/
 description: "아마존 리더십 원칙"
+last_modified_at: 2026-08-27
 ---
 ## Amazon Leadership Principles 정리 & 인터뷰 준비
 

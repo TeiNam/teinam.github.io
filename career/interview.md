@@ -4,6 +4,7 @@ permalink: /career/interview/
 redirect_from:
   - /handbook/career/interview/
 description: "기술면접 후 임원 면접이나 컬처핏에서 주로 묻는 행동 면접에 대한 내용"
+last_modified_at: 2026-08-27
 ---
 ## 행동 면접 완전 정복
 

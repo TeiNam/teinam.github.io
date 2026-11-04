@@ -4,6 +4,7 @@ permalink: /career/nego/
 redirect_from:
   - /handbook/career/nego/
 description: "몸 값을 높여 보자"
+last_modified_at: 2026-08-27
 ---
 ## 연봉 협상
 

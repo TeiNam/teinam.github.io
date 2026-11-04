@@ -4,6 +4,7 @@ title: "MongoDB Developer Workshop 후기 (with Google Cloud)"
 category: mongodb
 excerpt: "MongoDB Korea의 오프라인 핸즈온 세미나 후기입니다. 게임업계 MongoDB 레퍼런스와 BigQuery 데이터 파이프라인, Atlas 핸즈온을 경험했습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-developer-workshop-review.png
 ---
 
 오랜만에 포스팅입니다. 정말 오랜만이네요. 이직하고 나서 딱히 쓸 글이 없었습니다. 다들 저보다 잘하시고, 연차는 쌓여가는데 초급 포스팅만 계속 하기도 좀 그랬습니다.
@@ -82,11 +83,11 @@ BigQuery에 데이터를 적재하는 방법을 소개했습니다. 초기 데�
 - 초기 로딩: Mongo → Cloud Dataflow → BigQuery
 - 초기 로딩: Mongo → ETL 도구 (Data Fusion) → BigQuery
 
-![](/assets/img/wp/2022/04/6cc4c16a-868d-463d-bb1a-90d95aaf8c68.png)
+![초기 적재 경로 그림. MongoDB에서 Dataflow(like Spark) 또는 Data Fusion(ETL Tool)을 거쳐 BigQuery(DW + Lake)로 간다](/assets/img/wp/2022/04/6cc4c16a-868d-463d-bb1a-90d95aaf8c68.png)
 
 - 실시간 동기화: Mongo (Change Stream) → Cloud Pub/Sub (like Kafka) → Cloud Dataflow (분산 처리 엔진 like Spark) → BigQuery
 
-![](/assets/img/wp/2022/04/37997a99-0a49-42bf-b86a-697d0481c45d.png)
+![실시간 동기화 경로 그림. MongoDB → PubSub(like Kafka) → Dataflow(like Spark) → BigQuery(DW + Lake)](/assets/img/wp/2022/04/37997a99-0a49-42bf-b86a-697d0481c45d.png)
 
 특히 MongoDB Change Stream 기능을 이용하여 변경 이벤트를 실시간으로 분석 시스템에 전달할 수 있다는 점으로 MongoDB와 BigQuery의 연계성을 강조했습니다.
 
@@ -98,7 +99,7 @@ MongoDB Atlas는 AWS나 GCP, Azure 등의 퍼블릭 클라우드와 함께 사�
 
 동일한 데이터베이스 노드를 각기 다른 클라우드에 배포할 수 있다는 것이 큰 장점입니다.
 
-![](/assets/img/wp/2022/04/5ce8927f-697f-4717-921f-69bf1eca9850.png)
+![멀티 클라우드 MongoDB Atlas 클러스터 그림. AWS 쪽 노드 3개는 VPC 피어링으로 서비스 운영에, Google Cloud 쪽 노드 1개는 BigQuery 데이터 분석에 쓴다](/assets/img/wp/2022/04/5ce8927f-697f-4717-921f-69bf1eca9850.png)
 
 직접 Atlas에서 클러스터를 배포하고, 간단한 MongoDB 실습까지 진행했습니다.
 

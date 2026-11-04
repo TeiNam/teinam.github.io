@@ -3,6 +3,7 @@ layout: page
 title: Work
 permalink: /work/
 subtitle: 만든 것과 다뤄 온 것.
+last_modified_at: 2026-10-09
 ---
 ## 개인 프로젝트
 
