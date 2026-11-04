@@ -5,10 +5,10 @@ category: ai/ml
 excerpt: "벡터 DB 레코드에 붙이는 메타데이터로 검색 범위를 좁히고, 권한을 거르고, 출처를 추적하는 방법을 정리합니다. 필터가 벡터 검색의 앞·중간·뒤 어디에 걸리는지에 따라 달라지는 결과, 필터 필드의 인덱스와 타입 제약, 필드 이름과 값의 표준을 공식 문서에 근거해 작은 예제와 함께 다룹니다."
 last_modified_at: 2026-10-27
 series: "벡터 DB"
-series_index: "6 / 6"
+series_index: "6 / 7"
 ---
 
-**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · [5. 벡터 구조와 청킹 전략](/writing/vector-database-vector-design/) · **6. 메타데이터 설계**
+**시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · [5. 벡터 구조와 청킹 전략](/writing/vector-database-vector-design/) · **6. 메타데이터 설계** · [7. 관계 설계](/writing/vector-database-relationship-design/)
 
 [5편](/writing/vector-database-vector-design/)에서 사내 문서를 청크로 잘라 벡터로 만들었습니다. 이제 서비스를 열었더니 이런 일이 생깁니다. 인사팀 직원이 “연차휴가 이월 규정”을 물었는데 검색 결과에 3년 전 개정 이전의 취업규칙과 영업팀 회의록이 함께 나옵니다. 벡터만 보면 모두 “연차휴가”와 가까운 문장이기 때문입니다. 더 곤란한 경우도 있습니다. 일반 직원의 질문에 인사 평가 결과가 담긴 문서가 답변 근거로 올라오는 것입니다.
 

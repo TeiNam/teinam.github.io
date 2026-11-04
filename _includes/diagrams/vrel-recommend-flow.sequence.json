@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "좋아요 참조로 만드는 추천",
+    "output": "_workspace/diagrams/vrel-recommend-flow.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "default": {
+          "label": "요청"
+        },
+        "dashed": {
+          "label": "배치 참조"
+        },
+        "emphasis": {
+          "label": "추천 검색"
+        },
+        "return": {
+          "label": "응답"
+        }
+      }
+    }
+  },
+  "participants": [
+    {
+      "id": "app",
+      "type": "external",
+      "label": "앱",
+      "sublabel": "좋아요·추천 화면"
+    },
+    {
+      "id": "customer",
+      "type": "database",
+      "label": "Customer 컬렉션",
+      "sublabel": "ref2vec-centroid"
+    },
+    {
+      "id": "product",
+      "type": "database",
+      "label": "Product 컬렉션",
+      "sublabel": "상품 설명 벡터"
+    }
+  ],
+  "segments": [
+    {
+      "from": 160,
+      "to": 320,
+      "label": "좋아요"
+    },
+    {
+      "from": 330,
+      "to": 520,
+      "label": "추천"
+    }
+  ],
+  "messages": [
+    {
+      "id": "like",
+      "from": "app",
+      "to": "customer",
+      "y": 190,
+      "label": "reference_add(likedItem)",
+      "variant": "default",
+      "note": "참조한 상품 벡터의 평균으로 고객 벡터 재계산"
+    },
+    {
+      "id": "batch",
+      "from": "app",
+      "to": "customer",
+      "y": 270,
+      "label": "reference_add_many(배치 참조)",
+      "variant": "dashed",
+      "note": "고객 벡터가 다시 계산되지 않음"
+    },
+    {
+      "id": "fetch",
+      "from": "app",
+      "to": "customer",
+      "y": 360,
+      "label": "fetch_object_by_id(include_vector, likedItem 참조)",
+      "variant": "default"
+    },
+    {
+      "id": "fetched",
+      "from": "customer",
+      "to": "app",
+      "y": 400,
+      "label": "고객 벡터 + 좋아한 상품 ID",
+      "variant": "return"
+    },
+    {
+      "id": "search",
+      "from": "app",
+      "to": "product",
+      "y": 440,
+      "label": "near_vector(고객 벡터)",
+      "variant": "emphasis",
+      "note": "Filter.by_id().contains_none(좋아한 ID)"
+    },
+    {
+      "id": "results",
+      "from": "product",
+      "to": "app",
+      "y": 500,
+      "label": "추천 결과",
+      "variant": "return",
+      "note": "트레일 러닝화 0.4308 · 요가 매트 0.6838 · 등산 배낭 0.8103"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "customer",
+      "from": 185,
+      "to": 276,
+      "type": "database"
+    },
+    {
+      "participant": "customer",
+      "from": 355,
+      "to": 406,
+      "type": "database"
+    },
+    {
+      "participant": "product",
+      "from": 435,
+      "to": 506,
+      "type": "database"
+    }
+  ]
+}

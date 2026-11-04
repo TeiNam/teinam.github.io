@@ -1,0 +1,47 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "관계를 담는 세 가지 방법",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/vrel-three-ways.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": { "label": "저장된 레코드", "visible": true },
+        "backend": { "label": "조회 단계", "visible": true },
+        "external": { "label": "결과·변경", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "id_lane", "label": "① ID 저장" },
+    { "id": "copy_lane", "label": "② 복사" },
+    { "id": "ref_lane", "label": "③ 참조 기능" }
+  ],
+  "nodes": [
+    { "id": "id_record", "lane": "id_lane", "col": 0, "type": "database", "label": "상품 레코드", "sublabel": "brand_id만 저장" },
+    { "id": "id_search", "lane": "id_lane", "col": 1, "type": "backend", "label": "벡터 검색", "sublabel": "조회 1" },
+    { "id": "id_lookup", "lane": "id_lane", "col": 2, "type": "backend", "label": "브랜드 조회", "sublabel": "조회 2 · 다른 컬렉션 또는 RDB" },
+    { "id": "id_result", "lane": "id_lane", "col": 3, "type": "external", "label": "브랜드 정보 붙은 결과" },
+    { "id": "copy_record", "lane": "copy_lane", "col": 0, "type": "database", "label": "상품 레코드", "sublabel": "brand_name 등을 복사" },
+    { "id": "copy_search", "lane": "copy_lane", "col": 1, "type": "backend", "label": "벡터 검색", "sublabel": "조회 한 번으로 끝" },
+    { "id": "copy_result", "lane": "copy_lane", "col": 2, "type": "external", "label": "브랜드 정보 붙은 결과" },
+    { "id": "copy_change", "lane": "copy_lane", "col": 3, "type": "external", "label": "브랜드 정보 변경", "sublabel": "그 브랜드 상품을 모두 고침" },
+    { "id": "ref_record", "lane": "ref_lane", "col": 0, "type": "database", "label": "상품 레코드", "sublabel": "hasBrand 참조" },
+    { "id": "ref_search", "lane": "ref_lane", "col": 1, "type": "backend", "label": "벡터 검색", "sublabel": "조회 한 번" },
+    { "id": "ref_follow", "lane": "ref_lane", "col": 2, "type": "backend", "label": "DB가 참조를 따라감", "sublabel": "return_references" },
+    { "id": "ref_result", "lane": "ref_lane", "col": 3, "type": "external", "label": "브랜드 정보 붙은 결과" }
+  ],
+  "edges": [
+    { "from": "id_record", "to": "id_search", "label": "검색 대상", "variant": "default" },
+    { "from": "id_search", "to": "id_lookup", "label": "결과의 brand_id", "variant": "default" },
+    { "from": "id_lookup", "to": "id_result", "label": "브랜드 정보 합침", "variant": "default" },
+    { "from": "copy_record", "to": "copy_search", "label": "복사본 포함 검색", "variant": "default" },
+    { "from": "copy_search", "to": "copy_result", "label": "복사한 필드 그대로", "variant": "default" },
+    { "from": "copy_change", "to": "copy_record", "label": "사본을 모두 고침", "variant": "dashed" },
+    { "from": "ref_record", "to": "ref_search", "label": "참조째 검색", "variant": "default" },
+    { "from": "ref_search", "to": "ref_follow", "label": "결과의 hasBrand", "variant": "default" },
+    { "from": "ref_follow", "to": "ref_result", "label": "브랜드 속성 받음", "variant": "default" }
+  ]
+}
