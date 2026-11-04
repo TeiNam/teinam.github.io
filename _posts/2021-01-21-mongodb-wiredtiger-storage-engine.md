@@ -4,6 +4,7 @@ title: "MongoDB의 wiredTiger 스토리지 엔진"
 category: mongodb
 excerpt: "MongoDB 8.0 의 기본 스토리지 엔진인 WiredTiger 의 공유 캐시, 체크포인트, 저널, 압축, MVCC 동작을 공식 문서 기준으로 정리합니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/mongodb-wiredtiger-storage-engine.png
 ---
 
 ## WiredTiger 스토리지 엔진

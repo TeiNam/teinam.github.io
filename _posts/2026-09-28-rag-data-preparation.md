@@ -6,6 +6,7 @@ excerpt: "데이터 범위와 규모 조사, 검증할 수 있는 요건 정의,
 last_modified_at: 2026-09-28
 series: "RAG 데이터 준비와 평가"
 series_index: "1 / 2"
+image: /assets/img/og/rag-data-preparation.png
 ---
 
 

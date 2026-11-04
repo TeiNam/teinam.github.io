@@ -10,10 +10,10 @@ layout: default
      Liquid 에서 범위 밖 slice 는 nil 이고 nil == 0 은 false 라 unless 로 검사한다 {% endcomment %}
 {%- unless rest.size > 0 %}{%- assign rest = notes -%}{%- endunless -%}
 
-{%- comment %} 히어로는 image 가 있을 때만 2단이다. 없는데 2단으로 두면 오른쪽
+{%- comment %} 히어로는 hero_image 가 있을 때만 2단이다. 없는데 2단으로 두면 오른쪽
      칼럼이 빈 채로 남아 제목이 폭의 절반만 쓴다 {% endcomment -%}
 {%- if lead %}
-<section class="hero{% unless lead.image %} hero--solo{% endunless %}">
+<section class="hero{% unless lead.hero_image %} hero--solo{% endunless %}">
   <div class="hero-copy">
     <span class="kicker"><i></i>{{ lead.category | default: 'writing' | upcase }}</span>
     <h1><a href="{{ lead.url | relative_url }}">{{ lead.title }}</a></h1>
@@ -25,9 +25,9 @@ layout: default
       <a href="{{ lead.url | relative_url }}">read →</a>
     </div>
   </div>
-  {%- if lead.image %}
+  {%- if lead.hero_image %}
   <figure class="hero-fig">
-    <img src="{{ lead.image | relative_url }}" alt="{{ lead.image_alt }}">
+    <img src="{{ lead.hero_image | relative_url }}" alt="{{ lead.image_alt }}">
     {%- if lead.image_caption %}<figcaption>{{ lead.image_caption }}</figcaption>{% endif %}
   </figure>
   {%- endif %}

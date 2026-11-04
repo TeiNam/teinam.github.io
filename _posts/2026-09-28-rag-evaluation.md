@@ -6,6 +6,7 @@ excerpt: "Gold 데이터와 QA로 평가 데이터셋을 만들고, 데이터를
 last_modified_at: 2026-09-28
 series: "RAG 데이터 준비와 평가"
 series_index: "2 / 2"
+image: /assets/img/og/rag-evaluation.png
 ---
 
 **시리즈** · [1. 데이터 범위·요건·전처리·피처](/writing/rag-data-preparation/) · **2. 평가 데이터셋과 품질 평가**

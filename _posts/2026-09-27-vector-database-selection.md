@@ -6,6 +6,7 @@ excerpt: "인덱스와 압축, 질의당 최대 k, 필터와 멀티테넌시, �
 last_modified_at: 2026-09-27
 series: "벡터 DB"
 series_index: "2 / 7"
+image: /assets/img/og/vector-database-selection.png
 ---
 
 **시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · **2. 선택 기준과 기능 비교** · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · [5. 벡터 구조와 청킹 전략](/writing/vector-database-vector-design/) · [6. 메타데이터 설계](/writing/vector-database-metadata-design/) · [7. 관계 설계](/writing/vector-database-relationship-design/)

@@ -6,6 +6,7 @@ excerpt: "레코드에 dense·sparse 벡터를 어떻게 두는지, 원문을 �
 last_modified_at: 2026-10-17
 series: "벡터 DB"
 series_index: "5 / 7"
+image: /assets/img/og/vector-database-vector-design.png
 ---
 
 **시리즈** · [1. 개념과 제품·사용 지표](/writing/vector-database-overview/) · [2. 선택 기준과 기능 비교](/writing/vector-database-selection/) · [3. AWS 전용 벡터 검색](/writing/aws-vector-search/) · [4. 스키마와 컬렉션 설계](/writing/vector-database-schema-design/) · **5. 벡터 구조와 청킹 전략** · [6. 메타데이터 설계](/writing/vector-database-metadata-design/) · [7. 관계 설계](/writing/vector-database-relationship-design/)

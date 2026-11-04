@@ -4,6 +4,7 @@ title: "한글 임베딩에 대한 고찰: KURE-v1·v2부터 Qwen3까지, 한국
 category: ai/ml
 excerpt: "KURE-v1과 v2의 동작 방식 차이를 중심으로 한국어 임베딩 모델 20여 종의 백본·표현 방식·학습 목표를 다섯 가지 설계 축으로 나눠 읽고, MTEB(kor, v2) 태스크별 점수와 상황별 선택 기준을 정리합니다."
 last_modified_at: 2026-10-09
+image: /assets/img/og/korean-embedding-review.png
 ---
 
 **관련 글** · [RAG 평가 데이터셋과 품질 평가](/writing/rag-evaluation/) · [벡터 DB 스키마와 컬렉션 설계](/writing/vector-database-schema-design/)

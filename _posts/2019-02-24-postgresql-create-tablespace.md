@@ -4,6 +4,7 @@ title: "PostgreSQL Tablespace 생성"
 category: postgresql
 excerpt: "PostgreSQL의 테이블스페이스는 테이블·인덱스를 저장할 파일시스템 경로를 지정하는 기능으로, 디스크 용량·성능 관리를 위해 오브젝트를 분산 배치할 수 있습니다."
 last_modified_at: 2026-09-20
+image: /assets/img/og/postgresql-create-tablespace.png
 ---
 
 ## Tablespace 개념
