@@ -520,7 +520,7 @@ p { text-wrap: pretty; }
   .site-head, .hero, .recent, .archive-head, .newsletter, .site-foot { padding-left: 24px; padding-right: 24px; }
   /* ponytail: nav 를 숨기지 않고 줄바꿈. 항목이 6개 넘어가면 그때 햄버거 */
   .site-head { flex-wrap: wrap; gap: 12px 20px; }
-  .site-nav { order: 3; width: 100%; gap: 18px; }
+  .site-nav { order: 3; width: 100%; gap: 8px 18px; flex-wrap: wrap; } /* 메뉴 7개는 390px 한 줄에 안 들어간다 */
   .site-search { flex: 1 1 150px; }
   .site-search input, .search-results { width: 100%; }
   .hero, .pillars, .newsletter, .archive-head, .site-foot { grid-template-columns: 1fr; display: grid; }
