@@ -10,6 +10,8 @@ description: Database와 A.I 그리고 그 사이의 Data Pipeline 을 다루는
 url: "https://rastalion.dev"
 baseurl: ""
 lang: ko
+# 빌드 서버(GitHub Pages)는 UTC 라 없으면 00:00 +0900 글이 하루 전 날짜로 찍힌다
+timezone: Asia/Seoul
 
 permalink: /writing/:title/
 markdown: kramdown
