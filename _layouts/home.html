@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-{%- comment %} 홈은 writing·issue·products 를 모두 싣는다. 카테고리별 목록은 /writing/·/issue/·/products/ {% endcomment -%}
+{%- comment %} 홈은 writing·notes·products 를 모두 싣는다. 카테고리별 목록은 /writing/·/notes/·/products/ {% endcomment -%}
 {%- assign notes = site.posts -%}
 {%- assign lead = notes.first -%}
 {%- assign rest = notes | slice: 1, 8 -%}

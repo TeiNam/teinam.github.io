@@ -1,11 +1,12 @@
 ---
 date: 2026-10-22 00:00:00 +0900
 title: "PHP2Shell 긴급 패치, 같은 주 인증서 사건에 Python·Node.js·Java·Go도 대응"
-category: issue
+category: notes
 subcategory: 보안
 excerpt: "PHP가 인증 없는 원격 코드 실행 취약점 2건(PHP2Shell)을 예정보다 하루 앞당겨 고쳤습니다. 같은 주 eMudhra 중간 CA 8개의 개인키가 공개키만으로 복원되는 상태였다는 사실이 드러나 Python·Node.js·Go가 릴리스를, OpenJDK가 보안 권고를 냈습니다. 2026년 10월 20~22일 언어 런타임 보안 이슈를 정리합니다."
 last_modified_at: 2026-10-22
-permalink: /issue/:title/
+permalink: /notes/:title/
+redirect_from: /issue/php2shell-emudhra-security-brief/
 ---
 
 PHP 프로젝트가 10월 21일(UTC) 인증 없이 원격 코드 실행(RCE)으로 이어질 수 있는 취약점 2건을 고친 PHP 8.5.12·8.4.27·8.3.36·8.2.35를 내놨습니다. ‘PHP2Shell’로 불리는 이 취약점은 웹 요청을 처리하는 모든 PHP 설치에 영향을 줍니다. Apache `mod_php`에서는 요청 하나로 애플리케이션 코드가 실행되기도 전에 공격이 시작되는 익스플로잇이 시연됐습니다.[^phpnet-adv] 같은 주에는 인증 기관 eMudhra의 중간 인증서 8개 개인키가 공개키만으로 복원되는 상태였다는 사실이 드러났습니다. 이 일로 Python·Node.js·Go가 보안 릴리스를, OpenJDK가 보안 권고를 잇달아 냈습니다.
