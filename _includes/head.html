@@ -1,6 +1,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{%- comment %} 소개 페이지는 seo-tag 가 내보내는 JSON-LD(AboutPage) 대신 structured-data.html 의
+     ProfilePage + Person 을 쓴다. seo-tag 는 ProfilePage 의 mainEntity 를 넣을 수 없어서
+     둘 다 두면 같은 URL 에 페이지 엔터티가 두 개 생긴다. 메타 태그는 그대로 쓴다 {% endcomment -%}
+{%- if page.url == '/about/' -%}
+{%- capture seo_tag %}{% seo %}{% endcapture -%}
+{{ seo_tag | split: '<script type="application/ld+json">' | first }}<!-- End Jekyll SEO tag -->
+{%- else -%}
 {%- seo -%}
+{%- endif %}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">

@@ -12,7 +12,7 @@ layout: default
     <span class="kicker"><i></i>{{ page.category | default: 'writing' | upcase }}</span>
     <h1>{{ page.title }}</h1>
     <div class="meta-rule">
-      <span>{{ site.author }}</span>
+      <span><a href="{{ '/about/' | relative_url }}" rel="author">{{ site.author }}</a></span>
       <span>{{ page.date | date: '%Y-%m-%d' }}</span>
       {%- if page.last_modified_at %}<span>updated {{ page.last_modified_at | date: '%m-%d' }}</span>{% endif %}
       {%- if site.goatcounter != "" %}<span data-gc-path="{{ page.url }}" hidden><b></b> VIEWS</span>{% endif %}
