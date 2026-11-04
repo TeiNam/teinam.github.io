@@ -61,7 +61,7 @@ updated: 2026-08-24
 | `mongodb` | MongoDB |
 | `redis` | Redis·Valkey |
 | `etc` | DB 와 직접 관계없는 리눅스·인프라 일반 |
-| `issue` | 뉴스·이슈(보안 이슈 등 시점 브리핑)만. `/writing/` 이 아니라 `/issue/` 와 홈에 실리고, front matter 에 `permalink: /issue/:title/` 와 `/issue/` 필터에 쓰일 `subcategory`(예: `보안`)를 같이 적는다 |
+| `notes` | 뉴스·이슈(보안 이슈 등 시점 브리핑)만. `/writing/` 이 아니라 `/notes/` 와 홈에 실리고, front matter 에 `permalink: /notes/:title/` 와 `/notes/` 필터에 쓰일 `subcategory`(예: `보안`)를 같이 적는다 |
 | `products` | 직접 만들어 공개한 서비스·게임 소개. `/writing/` 이 아니라 `/products/` 와 홈에 실리고, front matter 에 `permalink: /products/:title/` 와 `subcategory`(예: `게임`)를 같이 적는다 |
 
 필터 버튼 순서는 `_config.yml` 의 `category_order` 가 정합니다. 거기 없는 카테고리는 목록 뒤에
