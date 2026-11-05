@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "rdbms-modeling 설계 단계",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/easy-rdbms-modeling.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "설계 단계", "visible": true },
+        "security": { "label": "사용자 확인", "visible": true },
+        "external": { "label": "다른 스킬로 넘김", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "design_lane", "label": "rdbms-modeling" },
+    { "id": "user_lane", "label": "사용자" },
+    { "id": "side_lane", "label": "엔진 미정", "variant": "exception" }
+  ],
+  "mainPath": ["c1", "u1", "l1", "u2", "p1"],
+  "nodes": [
+    { "id": "c1", "lane": "design_lane", "col": 0, "type": "backend", "label": "1. 개념", "sublabel": "업무 개념·관계·용어" },
+    { "id": "u1", "lane": "user_lane", "col": 1, "type": "security", "label": "확인", "sublabel": "누락·이름·상태·이력" },
+    { "id": "l1", "lane": "design_lane", "col": 2, "type": "backend", "label": "2. 논리", "sublabel": "키·관계·3NF·BCNF" },
+    { "id": "u2", "lane": "user_lane", "col": 3, "type": "security", "label": "확인", "sublabel": "종류인가 상태인가" },
+    { "id": "p1", "lane": "design_lane", "col": 4, "type": "backend", "label": "3. 물리", "sublabel": "확정된 엔진의 DDL" },
+    { "id": "s1", "lane": "side_lane", "col": 4, "type": "external", "label": "db-select", "sublabel": "DB부터 고른다" }
+  ],
+  "edges": [
+    { "from": "c1", "to": "u1" },
+    { "from": "u1", "to": "l1" },
+    { "from": "l1", "to": "u2" },
+    { "from": "u2", "to": "p1" },
+    { "from": "p1", "to": "s1", "label": "엔진이 정해지지 않았으면" }
+  ]
+}
