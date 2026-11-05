@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "오락실 배포 흐름",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/games-deploy.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "security": { "label": "검사", "visible": true },
+        "backend": { "label": "빌드·배포", "visible": true },
+        "cloud": { "label": "저장소·레지스트리", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "gh_lane", "label": "GitHub Actions" },
+    { "id": "nas_lane", "label": "NAS" }
+  ],
+  "mainPath": ["g1", "g2", "g3", "g4", "n1", "n2"],
+  "nodes": [
+    { "id": "g1", "lane": "gh_lane", "col": 0, "type": "cloud", "label": "main 머지" },
+    { "id": "g2", "lane": "gh_lane", "col": 1, "type": "security", "label": "링크·미리보기 검사", "sublabel": "가리키는 파일이 있는지" },
+    { "id": "g3", "lane": "gh_lane", "col": 2, "type": "backend", "label": "이미지 빌드" },
+    { "id": "g4", "lane": "gh_lane", "col": 3, "type": "cloud", "label": "GHCR 업로드" },
+    { "id": "n1", "lane": "nas_lane", "col": 3, "type": "backend", "label": "self-hosted 러너", "sublabel": "새 이미지로 다시 띄움" },
+    { "id": "n2", "lane": "nas_lane", "col": 4, "type": "security", "label": "헬스 체크", "sublabel": "healthy 까지 확인" }
+  ],
+  "edges": [
+    { "from": "g1", "to": "g2" },
+    { "from": "g2", "to": "g3" },
+    { "from": "g3", "to": "g4" },
+    { "from": "g4", "to": "n1" },
+    { "from": "n1", "to": "n2" }
+  ]
+}
