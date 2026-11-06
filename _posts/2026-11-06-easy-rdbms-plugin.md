@@ -3,13 +3,36 @@ date: 2026-11-06 00:00:00 +0900
 title: "AI가 마음대로 정하던 DB 설계를 붙잡는 Claude Code·Codex 플러그인 ‘easy-rdbms’"
 category: products
 subcategory: 개발 도구
-excerpt: "바이브 코딩으로 앱을 만들 때 AI가 기본값으로 정해 버리는 데이터베이스 설계를 처음부터 바로잡는 Claude Code·Codex 플러그인 easy-rdbms를 소개합니다. DB 선택, 이름 규칙, 개념→논리→물리 단계 모델링, 스키마·쿼리·마이그레이션 리뷰를 MySQL 8.4·PostgreSQL 18·SQLite 기준으로 다룹니다."
+excerpt: "바이브 코딩으로 앱을 만들 때 AI가 기본값으로 정해 버리는 데이터베이스 설계를 처음부터 바로잡는 Claude Code·Codex 플러그인 easy-rdbms를 소개합니다. DB 선택, 이름 규칙, 개념→논리→물리 단계 모델링, 스키마·쿼리·마이그레이션 리뷰를 MySQL 8.4·9.7 LTS·PostgreSQL 18·SQLite 기준으로 다룹니다. 0.8.0부터 Kiro에서도 씁니다."
 last_modified_at: 2026-11-06
 permalink: /products/:title/
 image: /assets/img/og/easy-rdbms-plugin.png
 ---
 
-AI 코딩 에이전트에게 앱을 맡기면 데이터베이스(DB) 설계도 에이전트가 알아서 정합니다. 테이블 이름, 기본 키의 타입, 금액 컬럼의 타입, 삭제할 때의 동작까지 그럴듯해 보이는 기본값을 고릅니다. easy-rdbms는 이 결정들을 처음부터 데이터베이스 엔지니어가 설계하는 방식으로 잡아 주는 Claude Code·Codex 플러그인입니다. DB 선택, 이름 규칙, 단계별 모델링, 스키마·쿼리·마이그레이션 리뷰를 맡습니다. 대상은 MySQL 8.4 LTS·PostgreSQL 18·SQLite 3.37 이상입니다. 코드는 [GitHub](https://github.com/TeiNam/easy-rdbms)에 MIT 라이선스로 공개했고 이 글은 0.6.0 기준입니다.
+AI 코딩 에이전트에게 앱을 맡기면 데이터베이스(DB) 설계도 에이전트가 알아서 정합니다. 테이블 이름, 기본 키의 타입, 금액 컬럼의 타입, 삭제할 때의 동작까지 그럴듯해 보이는 기본값을 고릅니다. easy-rdbms는 이 결정들을 처음부터 데이터베이스 엔지니어가 설계하는 방식으로 잡아 주는 Claude Code·Codex 플러그인이고, 0.8.0부터는 Kiro에서도 씁니다. DB 선택, 이름 규칙, 단계별 모델링, 스키마·쿼리·마이그레이션 리뷰를 맡습니다. 대상은 MySQL 8.4·9.7 LTS·PostgreSQL 18·SQLite 3.37 이상입니다. 코드는 [GitHub](https://github.com/TeiNam/easy-rdbms)에 MIT 라이선스로 공개했고 이 글은 0.8.0 기준입니다.
+
+## 0.8.0 업데이트: Kiro 지원과 MySQL 9.7 LTS
+
+2026년 11월 6일에 0.7.0과 0.8.0이 연달아 나왔습니다. 바뀐 점은 세 가지입니다.
+
+- **Kiro에서도 씁니다(0.8.0).** 저장소 루트에 [Agent Plugins](https://agent-plugins.org/) 형식의 `plugin.json`을 두어 Kiro가 저장소를 Power로 설치하고 같은 `skills/`의 스킬 9개를 읽습니다. Kiro IDE에서는 Powers 패널 → **Add Custom Power** → **Import power from GitHub**에 `https://github.com/TeiNam/easy-rdbms`를 넣습니다. Kiro CLI V3는 카탈로그 이름이나 로컬 경로만 받으므로 저장소를 내려받은 뒤 설치합니다. Kiro는 세션 훅·명령·서브에이전트를 쓰지 않으므로 DB 엔진은 스킬이 저장소 파일로 직접 확인합니다.
+- **새 프로젝트의 기본 버전이 정해졌습니다(0.7.0).** 기존 DB가 없고 버전도 정하지 않았다면 설치형·Docker는 PostgreSQL 18과 MySQL 9.7 LTS를, Aurora MySQL·RDS for MySQL은 8.4.x를 기준으로 설계합니다. RDS의 MySQL 9.7은 2026년 11월 현재 Database Preview 환경에만 있기 때문입니다. 이 기본값은 2026년 11월 기준이고 스킬이 설계할 때 다시 확인합니다. 이미 쓰는 DB가 있으면 그 버전을 유지한 채 호환 조건을 확인합니다. 유동 태그인 `lts`는 다음 LTS가 나오면 그쪽으로 넘어가므로 Docker 이미지는 `mysql:9.7`로 고정합니다.
+- **MySQL 9.7 LTS를 지원합니다(0.7.0).** `mysql-guideline`이 8.4와 9.7 두 LTS를 함께 다룹니다. 9.7에서는 change buffer 기본값이 `all`이고 `mysql_native_password` 인증이 제거됐습니다. Community 판의 `VECTOR` 타입에는 인덱스를 만들 수 없고 `DISTANCE()` 함수도 없습니다. CI는 PostgreSQL 18 + MySQL 9.7과 PostgreSQL 16 + MySQL 8.4 두 조합으로 예제를 실행합니다. 11월 6일에는 MySQL 9.7.4에서 통과했습니다.
+
+Kiro CLI V3에서는 다음과 같이 설치합니다.
+
+```bash
+git clone https://github.com/TeiNam/easy-rdbms.git
+kiro-cli powers install ./easy-rdbms
+```
+
+이미 설치했다면 Claude Code는 `/easy-rdbms:update`, Codex는 `$easy-rdbms:update`로 업데이트합니다. Kiro에서는 easy-rdbms 업데이트를 요청하거나, IDE에서 Power의 **Check for updates**를 누릅니다. CLI에서는 내려받은 저장소를 갱신한 뒤 같은 경로로 다시 설치합니다.
+
+```bash
+git -C easy-rdbms pull --ff-only && kiro-cli powers install ./easy-rdbms
+```
+
+새 기본 버전은 모델로도 시험했습니다. 버전을 정하지 않은 신규 프로젝트의 기본 버전을 물었을 때, 스킬을 읽은 Haiku·Sonnet·Opus는 모두 Docker MySQL 9.7 LTS, Aurora·RDS 8.4.x, PostgreSQL 18을 고르고 8.4와 9.7의 change buffer 차이를 짚었습니다.
 
 ## AI가 고른 기본값은 첫날에는 맞습니다
 
@@ -42,11 +65,11 @@ codex plugin marketplace add TeiNam/easy-rdbms
 codex plugin add easy-rdbms@easy-rdbms
 ```
 
-Codex는 플러그인 훅(정해진 시점에 실행되는 스크립트)을 자동으로 신뢰하지 않습니다. 설치한 뒤 `/hooks`에서 Easy RDBMS의 `SessionStart` 훅을 확인하고 신뢰해야 DB 엔진 자동 감지가 켜집니다. 업데이트는 Claude Code에서 `/easy-rdbms:update`, Codex에서 `$easy-rdbms:update`로 합니다.
+Codex는 플러그인 훅(정해진 시점에 실행되는 스크립트)을 자동으로 신뢰하지 않습니다. 설치한 뒤 `/hooks`에서 Easy RDBMS의 `SessionStart` 훅을 확인하고 신뢰해야 DB 엔진 자동 감지가 켜집니다. 업데이트는 Claude Code에서 `/easy-rdbms:update`, Codex에서 `$easy-rdbms:update`로 합니다. Kiro에 설치하는 방법은 앞의 0.8.0 업데이트 절에 정리했습니다.
 
 ## 무엇이 들어 있나요
 
-스킬 9개가 들어 있고 Claude Code와 Codex가 같은 `skills/` 디렉터리를 함께 씁니다. 스킬(skill)은 에이전트가 특정 작업을 할 때 꺼내 읽는 지침 묶음입니다. 작업 내용이 스킬과 맞으면 자동으로 쓰이고 이름을 불러 직접 쓸 수도 있습니다.
+스킬 9개가 들어 있고 Claude Code·Codex·Kiro가 같은 `skills/` 디렉터리를 함께 씁니다. 스킬(skill)은 에이전트가 특정 작업을 할 때 꺼내 읽는 지침 묶음입니다. 작업 내용이 스킬과 맞으면 자동으로 쓰이고 이름을 불러 직접 쓸 수도 있습니다.
 
 | 스킬 | 쓰는 곳 |
 | --- | --- |
@@ -54,7 +77,7 @@ Codex는 플러그인 훅(정해진 시점에 실행되는 스크립트)을 자�
 | `rdbms-modeling` | 개념 → 논리 → 물리 설계, 단계 사이마다 확인 |
 | `rdbms-review` | 이미 있는 SQL·스키마·마이그레이션 리뷰 |
 | `rdbms-naming` | 테이블·컬럼·인덱스·제약 조건 이름과 데이터 타입 선택 |
-| `mysql-guideline` | MySQL 8.4 LTS 이상, Aurora MySQL |
+| `mysql-guideline` | MySQL 8.4·9.7 LTS, Aurora MySQL |
 | `postgres-guideline` | PostgreSQL 18, 16/17 호환, 관리형·Aurora, FDW·PostGIS·pgvector |
 | `sqlite-guideline` | SQLite 3.37 이상, 임베디드·로컬·프로토타입 |
 | `database-migrations` | 무중단 스키마 변경과 롤백 전략 |
@@ -76,7 +99,7 @@ Claude Code에서는 `/schema-design`·`/schema-review` 명령과 `rdbms-modeler
 
 ## 세션을 열면 DB 엔진부터 알아봅니다
 
-세션이 시작될 때 `SessionStart` 훅이 프로젝트의 `docker-compose.yml`·`.env`·`prisma/schema.prisma`·`package.json`·`requirements.txt`·`go.mod` 같은 파일을 읽어 어떤 DB를 쓰는지 찾습니다. 드라이버 이름이나 접속 문자열로 PostgreSQL·MySQL·MariaDB·SQLite를 가려내고 `rds.amazonaws.com`이나 `supabase` 같은 흔적이 있으면 배포 형태도 함께 알려 줍니다. 엔진이 하나로 정해지면 에이전트가 같은 질문을 다시 하지 않고 버전과 배포 형태만 확인합니다. 아무것도 찾지 못하면 아무 말도 하지 않습니다.
+세션이 시작될 때 `SessionStart` 훅이 프로젝트의 `docker-compose.yml`·`.env`·`prisma/schema.prisma`·`package.json`·`requirements.txt`·`go.mod` 같은 파일을 읽어 어떤 DB를 쓰는지 찾습니다. 드라이버 이름이나 접속 문자열로 PostgreSQL·MySQL·MariaDB·SQLite를 가려내고 `rds.amazonaws.com`이나 `supabase` 같은 흔적이 있으면 배포 형태도 함께 알려 줍니다. 엔진이 하나로 정해지면 에이전트가 같은 질문을 다시 하지 않고 버전과 배포 형태만 확인합니다. 아무것도 찾지 못하면 아무 말도 하지 않습니다. Kiro에는 이 훅이 없어서 스킬이 저장소 파일을 보고 엔진을 직접 확인합니다.
 
 ## 리뷰는 심각도 순서로 보여 줍니다
 
@@ -102,7 +125,7 @@ DB 선택도 같습니다. `db-select`는 지금 규모에 맞는 구성을 고�
 
 ## 문서 속 예제는 실제 DB에서 돌려 봅니다
 
-스킬 문서에 들어 있는 SQL 예제는 CI(지속적 통합)에서 일회용 PostgreSQL 16·18과 MySQL 8.4 컨테이너에서 실제로 실행합니다. PostgreSQL 18에서는 PostGIS와 pgvector 확장까지 설치해 돌립니다. 비교 문서의 ‘플러그인을 쓴 쪽’ DDL도 그대로 실행해 잘못된 값을 넣으면 체크 제약이 실제로 거부하는지 확인합니다. DB 감지 훅은 32가지 경우로 시험합니다.
+스킬 문서에 들어 있는 SQL 예제는 CI(지속적 통합)에서 일회용 컨테이너에서 실제로 실행합니다. 조합은 PostgreSQL 18 + MySQL 9.7과 PostgreSQL 16 + MySQL 8.4 두 가지입니다. PostgreSQL 18에서는 PostGIS와 pgvector 확장까지 설치해 돌립니다. 비교 문서의 ‘플러그인을 쓴 쪽’ DDL도 그대로 실행해 잘못된 값을 넣으면 체크 제약이 실제로 거부하는지 확인합니다. DB 감지 훅은 32가지 경우로 시험합니다.
 
 모델별 동작도 시험했습니다. 2026년 11월 3일, PostgreSQL 18 마이그레이션과 앱 코드에 결함 11개를 심었습니다. 이 코드의 리뷰를 Claude Haiku·Sonnet·Opus에 플러그인을 켠 채로 맡기고 Opus에는 플러그인 없이도 한 번 더 맡겼습니다. 네 번 모두 11개를 다 찾았습니다. 차이는 처방에서 났습니다. 플러그인 없이 리뷰한 Opus는 이력 테이블로 걸린 `ON DELETE CASCADE`를 MEDIUM으로 보고 `RESTRICT`를 제안했는데, 이렇게 하면 주문을 지울 수 없게 되어 이력 정책과 충돌합니다. 결함을 찾는 능력은 같았고 결과를 가른 것은 정책이었습니다.
 
