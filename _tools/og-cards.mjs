@@ -1,6 +1,8 @@
 // 포스트별 공유 카드(1200x630 PNG)를 만들고 프런트매터에 image: 를 넣는다.
-// GitHub Pages 는 플러그인 없이 빌드하므로 카드는 미리 만들어 커밋한다.
-// 새 글을 쓴 뒤 한 번 돌리면 image: 가 없는 글만 처리한다(--force 면 전부 다시).
+// image: 가 없는 글만 처리한다(--force 면 전부 다시).
+// 배포 워크플로(.github/workflows/pages.yml)가 Jekyll 빌드 직전에 돌리므로 새 글은
+// 따로 돌리지 않아도 카드가 붙는다. CI 에서 만든 카드와 image: 줄은 러너 안에서만
+// 쓰이고 커밋되지 않는다. 로컬에서 미리 보거나 카드를 커밋해 두려면 직접 돌린다.
 //
 //   node _tools/og-cards.mjs [--force] [파일...]
 //   OG_BROWSER=/path/to/chrome node _tools/og-cards.mjs
@@ -15,6 +17,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(ROOT, 'assets/img/og');
 const BROWSER = process.env.OG_BROWSER || '/Applications/ego lite.app/Contents/MacOS/ego lite';
+// GitHub 러너(Ubuntu 24.04)는 AppArmor 가 Chrome 샌드박스의 user namespace 를 막는다
+const SANDBOX_ARGS = process.env.CI ? ['--no-sandbox'] : [];
 const WIDTH = 1200;
 const HEIGHT = 630;
 const LONG_TITLE = 34; // 이 글자 수를 넘으면 제목 글자를 줄여 3줄 안에 담는다
@@ -63,7 +67,7 @@ function cardHtml({ title, category, date }) {
 async function startBrowser() {
   if (!existsSync(BROWSER)) throw new Error(`브라우저가 없습니다: ${BROWSER} (OG_BROWSER 로 지정)`);
   const prof = mkdtempSync(join(tmpdir(), 'og-'));
-  const proc = spawn(BROWSER, ['--headless=new', '--remote-debugging-port=0', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
+  const proc = spawn(BROWSER, [...SANDBOX_ARGS, '--headless=new', '--remote-debugging-port=0', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   let port;
   for (let i = 0; i < 100 && !port; i++) {
