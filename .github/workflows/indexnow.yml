@@ -5,7 +5,8 @@ name: IndexNow
 
 on:
   workflow_run:
-    workflows: ["pages-build-deployment"]
+    # Pages 는 Actions 배포(pages.yml)다. legacy 빌드로 되돌릴 때를 위해 옛 이름도 둔다
+    workflows: ["Pages", "pages-build-deployment"]
     types: [completed]
   workflow_dispatch:
     inputs:
