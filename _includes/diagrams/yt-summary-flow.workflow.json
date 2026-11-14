@@ -1,0 +1,132 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "자막에서 노트까지",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/yt-summary-flow.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": {
+          "label": "플러그인이 처리",
+          "visible": true
+        },
+        "cloud": {
+          "label": "AI 제공자 호출",
+          "visible": true
+        },
+        "external": {
+          "label": "중단",
+          "visible": true
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "main_lane",
+      "label": "요약 한 건"
+    },
+    {
+      "id": "stop_lane",
+      "label": "노트를 만들지 않는 경우",
+      "variant": "exception"
+    }
+  ],
+  "mainPath": [
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5"
+  ],
+  "nodes": [
+    {
+      "id": "n1",
+      "lane": "main_lane",
+      "col": 0,
+      "type": "backend",
+      "label": "영상 정보 수집",
+      "sublabel": "제목·업로드 날짜·자막 트랙"
+    },
+    {
+      "id": "n2",
+      "lane": "main_lane",
+      "col": 1,
+      "type": "backend",
+      "label": "자막 선택",
+      "sublabel": "요약 언어의 수동 → 자동 → 그 밖"
+    },
+    {
+      "id": "n3",
+      "lane": "main_lane",
+      "col": 2,
+      "type": "cloud",
+      "label": "번역",
+      "sublabel": "언어가 다를 때만, 6,000자씩"
+    },
+    {
+      "id": "n4",
+      "lane": "main_lane",
+      "col": 3,
+      "type": "cloud",
+      "label": "요약",
+      "sublabel": "장르 판별, 여섯 구분자"
+    },
+    {
+      "id": "n5",
+      "lane": "main_lane",
+      "col": 4,
+      "type": "backend",
+      "label": "노트 저장",
+      "sublabel": "YY-MM-DD 영상제목.md"
+    },
+    {
+      "id": "e1",
+      "lane": "stop_lane",
+      "col": 1,
+      "type": "external",
+      "label": "자막 없음·불완전",
+      "sublabel": "직접 붙여 넣기 안내"
+    },
+    {
+      "id": "e2",
+      "lane": "stop_lane",
+      "col": 3,
+      "type": "external",
+      "label": "입력 상한 초과·응답 잘림",
+      "sublabel": "노트를 저장하지 않음"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n1",
+      "to": "n2"
+    },
+    {
+      "from": "n2",
+      "to": "n3"
+    },
+    {
+      "from": "n3",
+      "to": "n4"
+    },
+    {
+      "from": "n4",
+      "to": "n5"
+    },
+    {
+      "from": "n2",
+      "to": "e1"
+    },
+    {
+      "from": "n4",
+      "to": "e2"
+    },
+    {
+      "from": "n3",
+      "to": "e2"
+    }
+  ]
+}
