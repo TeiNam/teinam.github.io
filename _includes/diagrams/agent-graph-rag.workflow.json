@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Graph RAG 색인과 검색",
+    "quality_profile": "showcase",
+    "output": "_workspace/diagrams/agent-graph-rag.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "플러그인이 처리", "visible": true },
+        "cloud": { "label": "임베딩 API 호출", "visible": true },
+        "database": { "label": "인덱스 파일", "visible": true }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "index_lane", "label": "색인" },
+    { "id": "search_lane", "label": "검색" }
+  ],
+  "mainPath": ["i1", "i2", "i3", "s2", "s3", "s4", "s5"],
+  "nodes": [
+    { "id": "i1", "lane": "index_lane", "col": 0, "type": "backend", "label": "청크 분할", "sublabel": "최대 2,000자, 겹침 200자" },
+    { "id": "i2", "lane": "index_lane", "col": 1, "type": "cloud", "label": "청크 임베딩" },
+    { "id": "i3", "lane": "index_lane", "col": 2, "type": "database", "label": "인덱스 저장", "sublabel": ".agent-llms-index.json" },
+    { "id": "s1", "lane": "search_lane", "col": 1, "type": "cloud", "label": "질문 임베딩" },
+    { "id": "s2", "lane": "search_lane", "col": 2, "type": "backend", "label": "벡터 검색", "sublabel": "시드 노트" },
+    { "id": "s3", "lane": "search_lane", "col": 3, "type": "backend", "label": "그래프 순회", "sublabel": "아웃링크·백링크" },
+    { "id": "s4", "lane": "search_lane", "col": 4, "type": "backend", "label": "점수 계산", "sublabel": "거리 감쇠, 0.55 미만 제외" },
+    { "id": "s5", "lane": "search_lane", "col": 5, "type": "backend", "label": "키워드 융합", "sublabel": "RRF, 키워드 자리 2개" }
+  ],
+  "edges": [
+    { "from": "i1", "to": "i2" },
+    { "from": "i2", "to": "i3" },
+    { "from": "i3", "to": "s2" },
+    { "from": "s1", "to": "s2" },
+    { "from": "s2", "to": "s3" },
+    { "from": "s3", "to": "s4" },
+    { "from": "s4", "to": "s5" }
+  ]
+}
